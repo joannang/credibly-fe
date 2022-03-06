@@ -1,0 +1,52 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# next
+/.next
+
+# dependencies
+node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+/output
+
+# production
+/build
+
+# workbox
+workbox
+out
+manifest.json
+
+# cert files
+*.pem
+*.cer
+*.pfx
+*.p12
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+*bundle.js
+
+.eslintcache
+
+# Output of Snyk security plugins
+.dccache
+
+# OpenZeppelin artifacts
+ethereum/cache
+ethereum/artifacts/@openzeppelin
+ethereum/artifacts/build-info
+.openzeppelin
+cache

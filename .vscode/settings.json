@@ -1,0 +1,6 @@
+{
+    "solidity.packageDefaultDependenciesContractsDirectory": "",
+    "solidity.packageDefaultDependenciesDirectory": "ethereum/node_modules",
+    "solidity.compileUsingRemoteVersion": "v0.8.6+commit.e5fab6f",
+    "solidity.enableLocalNodeCompiler": true
+}
