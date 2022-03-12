@@ -16,6 +16,7 @@
     "dependencies": {
         "@ant-design/icons": "^4.6.2",
         "@metamask/detect-provider": "^1.2.0",
+        "@openzeppelin/contracts": "^4.5.0",
         "@types/react": "latest",
         "antd": "^4.16.6",
         "axios": "latest",
@@ -26,6 +27,7 @@
         "mobx": "latest",
         "mobx-react": "latest",
         "next": "latest",
+        "openzeppelin-solidity": "^4.5.0",
         "react": "latest",
         "react-cookie": "^4.0.3",
         "react-dom": "latest",
