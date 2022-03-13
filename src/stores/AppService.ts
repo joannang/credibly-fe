@@ -6,7 +6,7 @@ import {
 } from '@ethersproject/providers';
 import { ENDPOINT } from '../settings';
 import restPost from '../lib/restPost';
-import { UserType } from './AppStore';
+import { RegisterAccountType, UserType } from './AppStore';
 import { MARKET_ADDRESS } from '../settings';
 import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
 
@@ -56,22 +56,36 @@ class AppService {
     /**
      * REST Example below
      */
-    signUpAsync(user: UserType): any {
+    // signUpAsync(user: UserType): any {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             const data = {
+    //                 userName: user.userName,
+    //                 userPassword: user.userPassword,
+    //                 userWalletAddress: user.userWalletAddress,
+    //             };
+
+    //             const response = await restPost({
+    //                 endpoint: ENDPOINT + '/signup',
+    //                 data: data,
+    //             });
+    //             resolve(response.data);
+    //         } catch (err) {
+    //             reject(err.message);
+    //         }
+    //     });
+    // }
+
+    registerAsync(accountDetails: RegisterAccountType): any {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = {
-                    userName: user.userName,
-                    userPassword: user.userPassword,
-                    userWalletAddress: user.userWalletAddress,
-                };
-
                 const response = await restPost({
-                    endpoint: ENDPOINT + '/signup',
-                    data: data,
+                    endpoint: `${ENDPOINT}/auth/register`,
+                    data: accountDetails
                 });
                 resolve(response.data);
             } catch (err) {
-                reject(err.message);
+                reject(err.response.data.error);
             }
         });
     }
@@ -79,7 +93,7 @@ class AppService {
     loginAsync(email: string, password: string): any {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = {email, password};
+                const data = { email, password };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/login`,
                     data

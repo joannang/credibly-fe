@@ -21,6 +21,14 @@ export type UserType = {
     token: string;
 };
 
+export type RegisterAccountType = {
+    email: string;
+    uen?: string;
+    password: string;
+    walletAddress: string;
+    accountType: number;
+}
+
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
@@ -40,21 +48,25 @@ class AppStore {
         this.uiState = uiState;
     }
 
-    signUp = async (user: UserType) => {
-        try {
-            const response = await this.appService.signUpAsync(user); // isOk & message
-            if (response.isOk) {
-                sessionStorage.setItem('authenticated', 'true');
-                this.uiState.setSuccess(
-                    'Sign up successful! Please log in to use Nomnom :)'
-                );
-            } else {
-                this.uiState.setError(response.message);
-            }
-        } catch (err) {
-            this.uiState.setError(err.message);
-        }
-    };
+    // signUp = async (user: UserType) => {
+    //     try {
+    //         const response = await this.appService.signUpAsync(user); // isOk & message
+    //         if (response.isOk) {
+    //             sessionStorage.setItem('authenticated', 'true');
+    //             this.uiState.setSuccess(
+    //                 'Sign up successful! Please log in to use Nomnom :)'
+    //             );
+    //         } else {
+    //             this.uiState.setError(response.message);
+    //         }
+    //     } catch (err) {
+    //         this.uiState.setError(err.message);
+    //     }
+    // };
+
+    register = async (accountDetails: RegisterAccountType) => {
+        await this.appService.registerAsync(accountDetails);
+    }
 
     login = async (email: string, password: string) => {
         const { data } = await this.appService.loginAsync(email, password);

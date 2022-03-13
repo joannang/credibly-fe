@@ -34,7 +34,7 @@ const restPost = ({ endpoint, data = {}, credentials = null }: PostRequest) => {
         };
     }
 
-    return axios.post(endpoint, formatData(data), options);
+    return axios.post(endpoint, data, options);
 };
 
 export default restPost;
