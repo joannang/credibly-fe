@@ -76,6 +76,21 @@ class AppService {
         });
     }
 
+    loginAsync(email: string, password: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const data = {email, password};
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/auth/login`,
+                    data
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
     /**
      * EXAMPLES TO CALL SMART CONTRACT METHODS
      */

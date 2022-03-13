@@ -14,24 +14,28 @@ interface AppStore {
 
 export type UserType = {
     _id?: number;
-    userName: string;
-    userPassword: string;
-    userWalletAddress: string;
+    email: string;
+    password: string;
+    walletAddress: string;
+    accountType: number;
+    token: string;
 };
 
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
-    currentUser: UserType = {
-        userName: '',
-        userPassword: '',
-        userWalletAddress: '',
+    currentUser: Partial<UserType> = {
+        email: '',
+        walletAddress: '',
+        accountType: undefined,
+        token: ''
     };
 
     constructor(uiState: UiState) {
         makeObservable(this, {
             isAuthenticated: observable,
             setIsAuthenticated: action,
+            setCurrentUser: action
         });
         this.uiState = uiState;
     }
@@ -52,10 +56,21 @@ class AppStore {
         }
     };
 
+    login = async (email: string, password: string) => {
+        const { data } = await this.appService.loginAsync(email, password);
+        sessionStorage.setItem('authenticated', 'true');
+        return data;
+    };
+
     // @action
     setIsAuthenticated = (auth: string) => {
         this.isAuthenticated = auth;
     };
+
+    setCurrentUser = (user: Partial<UserType>) => {
+        const { email, walletAddress, accountType, token } = user;
+        this.currentUser = { email, walletAddress, accountType, token };
+    }
 
     // Example of calling appService buyFoodAsync method
     buyFood = async (food: any, price: number) => {
