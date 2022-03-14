@@ -14,6 +14,7 @@ interface AppStore {
 
 export type UserType = {
     _id?: number;
+    name: string;
     email: string;
     password: string;
     walletAddress: string;
@@ -22,11 +23,17 @@ export type UserType = {
 };
 
 export type RegisterAccountType = {
+    name: string;
     email: string;
     uen?: string;
     password: string;
     walletAddress: string;
     accountType: number;
+}
+
+export type RegisterUploadType = {
+    userId: number;
+    documents: File[];
 }
 
 class AppStore {
@@ -65,7 +72,12 @@ class AppStore {
     // };
 
     register = async (accountDetails: RegisterAccountType) => {
-        await this.appService.registerAsync(accountDetails);
+        const { data } = await this.appService.registerAsync(accountDetails);
+        return data;
+    }
+
+    registerUpload = async (registerUpload: RegisterUploadType) => {
+        await this.appService.registerUploadAsync(registerUpload);
     }
 
     login = async (email: string, password: string) => {
@@ -80,8 +92,8 @@ class AppStore {
     };
 
     setCurrentUser = (user: Partial<UserType>) => {
-        const { email, walletAddress, accountType, token } = user;
-        this.currentUser = { email, walletAddress, accountType, token };
+        const { name, email, walletAddress, accountType, token } = user;
+        this.currentUser = { name, email, walletAddress, accountType, token };
     }
 
     // Example of calling appService buyFoodAsync method

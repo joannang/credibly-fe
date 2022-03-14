@@ -6,7 +6,7 @@ import {
 } from '@ethersproject/providers';
 import { ENDPOINT } from '../settings';
 import restPost from '../lib/restPost';
-import { RegisterAccountType, UserType } from './AppStore';
+import { RegisterAccountType, RegisterUploadType } from './AppStore';
 import { MARKET_ADDRESS } from '../settings';
 import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
 
@@ -82,6 +82,23 @@ class AppService {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/register`,
                     data: accountDetails
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    registerUploadAsync(registerUpload: RegisterUploadType): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/document/registration/upload/${registerUpload.userId}`,
+                    data: {
+                        document: registerUpload.documents
+                    },
+                    formData: true
                 });
                 resolve(response.data);
             } catch (err) {

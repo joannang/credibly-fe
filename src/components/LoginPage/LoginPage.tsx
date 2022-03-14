@@ -66,9 +66,9 @@ const LoginPage: React.FC = () => {
 
         try {
             const data = await appStore.login(values.email, values.password);
-            const { email, walletAddress, accountType, token } = data;
+            const { name, email, walletAddress, accountType, token } = data;
             appStore.setIsAuthenticated('true');
-            appStore.setCurrentUser({ email, walletAddress, accountType, token });
+            appStore.setCurrentUser({ name, email, walletAddress, accountType, token });
             window.location.href = '/home';
         } catch (err) {
             uiState.setError(err.error);
@@ -98,6 +98,9 @@ const LoginPage: React.FC = () => {
                         <Radio.Button value="awardee">Awardee</Radio.Button>
                     </Radio.Group>
                 </Form.Item>
+                <Form.Item name="name" label={`${accountType === 'organisation' ? 'Organisation' : ''} Name`} rules={[{ required: true }]}>
+                    <Input />
+                </Form.Item>
                 {accountType === 'organisation' &&
                     <Form.Item name="uen" label="UEN" rules={[{ required: true }]}>
                         <Input />
@@ -113,9 +116,9 @@ const LoginPage: React.FC = () => {
                     <Input.Password />
                 </Form.Item>
                 {accountType === 'organisation' &&
-                    <Form.Item name="documents" label="Supported Documents" valuePropName="fileList" getValueFromEvent={fileUpload} rules={[{ required: true }]}
+                    <Form.Item name="documents" label="Supporting Documents" valuePropName="fileList" getValueFromEvent={fileUpload} rules={[{ required: true }]}
                     >
-                        <Upload>
+                        <Upload multiple accept='application/pdf'>
                             <Button icon={<UploadOutlined />}>Click to upload</Button>
                         </Upload>
                     </Form.Item>
@@ -135,13 +138,23 @@ const LoginPage: React.FC = () => {
 
         try {
             const registerRequest = {
+                name: values.name,
                 email: values.email,
                 password: values.password,
                 uen: !!values.uen ? values.uen : null,
                 walletAddress: values.walletAddress,
                 accountType: isOrganisationRegistration ? 1 : 2
+            };
+            const userId = await appStore.register(registerRequest);
+
+            if (isOrganisationRegistration) {
+                const uploadRequest = {
+                    userId,
+                    documents: values.documents.map((doc: any) => doc.originFileObj)
+                };
+                await appStore.registerUpload(uploadRequest);
             }
-            await appStore.register(registerRequest);
+
             uiState.setSuccess(isOrganisationRegistration ?
                 'Registration successful! Please wait for the Credibly Admin to activate your account' :
                 'Registration successful! You may now login to Credibly!'

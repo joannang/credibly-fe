@@ -11,6 +11,7 @@ import axios from 'axios';
 type PostRequest = {
     endpoint: string;
     data?: any;
+    formData?: boolean;
     credentials?: {
         accessToken: string;
         apiKey?: string;
@@ -20,12 +21,16 @@ type PostRequest = {
 const formatData = (data) => {
     const formData = new FormData();
     for (const key in data) {
-        formData.append(key, data[key]);
+        if (key === 'document' || key === 'image') {
+            data[key].forEach((doc: File) => formData.append(key, doc));
+        } else {
+            formData.append(key, data[key]);
+        }
     }
     return formData;
 };
 
-const restPost = ({ endpoint, data = {}, credentials = null }: PostRequest) => {
+const restPost = ({ endpoint, data = {}, credentials = null, formData = false }: PostRequest) => {
     let options = {};
     if (credentials) {
         options['headers'] = {
@@ -34,7 +39,13 @@ const restPost = ({ endpoint, data = {}, credentials = null }: PostRequest) => {
         };
     }
 
-    return axios.post(endpoint, data, options);
+    if (formData) {
+        options['headers'] = {
+            'Content-Type': 'multipart/form-data'
+        }
+    }
+
+    return axios.post(endpoint, formData ? formatData(data) : data, options);
 };
 
 export default restPost;
