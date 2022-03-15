@@ -9,6 +9,7 @@ import restPost from '../lib/restPost';
 import { RegisterAccountType, RegisterUploadType } from './AppStore';
 import { MARKET_ADDRESS } from '../settings';
 import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
+import restGet from '../lib/restGet';
 
 declare global {
     interface Window {
@@ -114,6 +115,50 @@ class AppService {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/login`,
                     data
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getPendingApprovals(accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/user/pendingApprovals`,
+                    credentials: { accessToken }
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getRegistrationDocument(id: number, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/document`,
+                    _id: `${id}`,
+                    credentials: { accessToken }
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    approveAccounts(approverId: number, userIds: number[], accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/user/approve`,
+                    data: { approverId, userIds },
+                    credentials: { accessToken }
                 });
                 resolve(response.data);
             } catch (err) {

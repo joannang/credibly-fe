@@ -1,4 +1,4 @@
-import { observable, makeObservable, action } from 'mobx';
+import { observable, makeObservable, action, runInAction } from 'mobx';
 import AppService from './AppService';
 import UiState from './UiState';
 import { ContractTransaction } from 'ethers';
@@ -12,13 +12,19 @@ interface AppStore {
     uiState: UiState;
 }
 
+export enum AccountType {
+    ADMIN = 0,
+    ORGANISATION = 1,
+    AWARDEE = 2
+}
+
 export type UserType = {
-    _id?: number;
+    id: number;
     name: string;
     email: string;
     password: string;
     walletAddress: string;
-    accountType: number;
+    accountType: AccountType;
     token: string;
 };
 
@@ -28,7 +34,7 @@ export type RegisterAccountType = {
     uen?: string;
     password: string;
     walletAddress: string;
-    accountType: number;
+    accountType: AccountType;
 }
 
 export type RegisterUploadType = {
@@ -36,21 +42,33 @@ export type RegisterUploadType = {
     documents: File[];
 }
 
+export interface DocumentDto {
+    id: number;
+    name: string;
+}
+
+export type ApprovalType = {
+    key: number;
+    name: string;
+    email: string;
+    uen: string;
+    documents: DocumentDto[];
+}
+
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
-    currentUser: Partial<UserType> = {
-        email: '',
-        walletAddress: '',
-        accountType: undefined,
-        token: ''
-    };
+    currentUser: Partial<UserType> = JSON.parse(sessionStorage.getItem('user'));
+    pendingApprovalList: ApprovalType[] = []
 
     constructor(uiState: UiState) {
         makeObservable(this, {
             isAuthenticated: observable,
+            currentUser: observable,
+            pendingApprovalList: observable,
             setIsAuthenticated: action,
-            setCurrentUser: action
+            setCurrentUser: action,
+            setPendingApprovalsList: action
         });
         this.uiState = uiState;
     }
@@ -82,9 +100,24 @@ class AppStore {
 
     login = async (email: string, password: string) => {
         const { data } = await this.appService.loginAsync(email, password);
+        this.currentUser = { ...data };
+        this.isAuthenticated = 'true';
         sessionStorage.setItem('authenticated', 'true');
+        sessionStorage.setItem(
+            'user',
+            JSON.stringify(this.currentUser)
+        );
         return data;
     };
+    
+    getRegistrationDocument = async (id: number) => {
+        const { data } = await this.appService.getRegistrationDocument(id, this.currentUser.token);
+        return data;
+    };
+
+    approveAccounts = async (approverId: number, userIds: number[]) => {
+        await this.appService.approveAccounts(approverId, userIds, this.currentUser.token);
+    }
 
     // @action
     setIsAuthenticated = (auth: string) => {
@@ -95,6 +128,15 @@ class AppStore {
         const { name, email, walletAddress, accountType, token } = user;
         this.currentUser = { name, email, walletAddress, accountType, token };
     }
+
+    setPendingApprovalsList = async () => {
+        try {
+            const { data } = await this.appService.getPendingApprovals(this.currentUser.token);
+            runInAction(() => (this.pendingApprovalList = [...data]));
+        } catch (err) {
+            this.uiState.setError(err.error)
+        }
+    };
 
     // Example of calling appService buyFoodAsync method
     buyFood = async (food: any, price: number) => {

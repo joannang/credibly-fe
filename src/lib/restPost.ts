@@ -34,7 +34,7 @@ const restPost = ({ endpoint, data = {}, credentials = null, formData = false }:
     let options = {};
     if (credentials) {
         options['headers'] = {
-            // Authorization: `Bearer ${credentials.accessToken}`,
+            'x-access-token': credentials.accessToken,
             // Authenticator: AUTH_TYPE,
         };
     }

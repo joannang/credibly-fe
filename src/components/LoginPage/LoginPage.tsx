@@ -65,11 +65,8 @@ const LoginPage: React.FC = () => {
         setLoading(true);
 
         try {
-            const data = await appStore.login(values.email, values.password);
-            const { name, email, walletAddress, accountType, token } = data;
-            appStore.setIsAuthenticated('true');
-            appStore.setCurrentUser({ name, email, walletAddress, accountType, token });
-            window.location.href = '/home';
+            await appStore.login(values.email, values.password);
+            window.location.href = '/dashboard';
         } catch (err) {
             uiState.setError(err.error);
         } finally {
