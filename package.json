@@ -4,7 +4,7 @@
     "description": "nomnom app -- a nft application",
     "main": "index.js",
     "scripts": {
-        "dev": "next -p 8080",
+        "dev": "next -p 3000",
         "test": "jest --runInBand --forceExit",
         "build": "next build",
         "start": "NODE_ENV=production node server.js",

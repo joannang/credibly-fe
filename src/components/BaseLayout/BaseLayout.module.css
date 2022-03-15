@@ -1,0 +1,30 @@
+.ant-layout-body {
+    min-height: 100vh;
+}
+
+.layoutContent {
+    padding: 16px;
+}
+
+.layoutContentHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 16px;
+}
+
+.header {
+    display: flex;
+    height: 100%;
+    align-items: center;
+
+    color: #ffffff;
+    font-size: 18px;
+}
+
+.profileContainer {
+    flex: 1 1 auto;
+    align-self: flex-end;
+    text-align: right;
+}
