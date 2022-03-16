@@ -1,4 +1,4 @@
-import { observable, makeObservable, action } from 'mobx';
+import { observable, makeObservable, action, runInAction } from 'mobx';
 import AppService from './AppService';
 import UiState from './UiState';
 import { ContractTransaction } from 'ethers';
@@ -19,6 +19,11 @@ export type UserType = {
     userWalletAddress: string;
 };
 
+export type CertificateTemplateType = {
+    certificateName: string;
+    image: string;
+};
+
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
@@ -27,11 +32,15 @@ class AppStore {
         userPassword: '',
         userWalletAddress: '',
     };
+    certificateTemplates: CertificateTemplateType[] = [];
 
     constructor(uiState: UiState) {
         makeObservable(this, {
             isAuthenticated: observable,
+            certificateTemplates: observable,
+
             setIsAuthenticated: action,
+            setCertificateTemplates: action,
         });
         this.uiState = uiState;
     }
@@ -51,6 +60,34 @@ class AppStore {
             this.uiState.setError(err.message);
         }
     };
+
+    uploadCertificateTemplate = async (certificateTemplateName: string, image: File, organisationId: number) => {
+        const { data } = await this.appService.uploadCertificateTemplateAsync(certificateTemplateName, image, organisationId);
+        return data;
+    }
+
+    // @action
+    setCertificateTemplates = async (organisationId: number) => {
+        try {
+            const { data } = await this.appService.getCertificateTemplatesAsync(organisationId);
+
+            runInAction(() => (this.certificateTemplates = [...data]));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    getCertificateTemplates() {
+        return this.certificateTemplates;
+    }
+
+    deleteCertificateTemplate = async (certificateName: string, organisationId: number) => {
+        try {
+            await this.appService.deleteCertificateTemplateAsync(certificateName, organisationId);
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     // @action
     setIsAuthenticated = (auth: string) => {

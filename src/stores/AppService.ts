@@ -5,6 +5,7 @@ import {
     JsonRpcSigner,
 } from '@ethersproject/providers';
 import { ENDPOINT } from '../settings';
+import restGet from '../lib/restGet';
 import restPost from '../lib/restPost';
 import { UserType } from './AppStore';
 import { MARKET_ADDRESS } from '../settings';
@@ -72,6 +73,55 @@ class AppService {
                 resolve(response.data);
             } catch (err) {
                 reject(err.message);
+            }
+        });
+    }
+
+    uploadCertificateTemplateAsync(certificateTemplateName: string, image: File, organisationId: number): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/certificateTemplate/create`,
+                    data: {
+                        certificateName: certificateTemplateName,
+                        image: image,
+                        organisationId: organisationId
+                    },
+                    formData: true
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getCertificateTemplatesAsync(organisationId: number): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/certificateTemplate/organisation/${organisationId}`,
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    deleteCertificateTemplateAsync(certificateName: string, organisationId: number): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/certificateTemplate/delete`,
+                    data: {
+                        certificateName: certificateName,
+                        organisationId: organisationId
+                    },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
             }
         });
     }
