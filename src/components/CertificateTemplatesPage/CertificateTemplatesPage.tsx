@@ -40,8 +40,8 @@ const CertificateTemplatesPage: React.FC = () => {
             }
         } finally {
             setLoading(false);
+            setCertificateTemplates();
         }
-
     };
 
     const deleteCertificateTemplate = async (certificateName: string) => {
@@ -54,13 +54,15 @@ const CertificateTemplatesPage: React.FC = () => {
             if (err) {
                 message.error(err.error);
             }
+        } finally {
+            // TOFIX
+            setCertificateTemplates(); // There is some lag during deletion. Not sure if that is why this is not working here, unlike in onFinish
         }
-
     };
 
     React.useEffect(() => {
         setCertificateTemplates();
-    }, [onFinish, deleteCertificateTemplate])
+    }, [])
 
     const setCertificateTemplates = async () => {
         await appStore.setCertificateTemplates(organisationId);
@@ -116,9 +118,11 @@ const CertificateTemplatesPage: React.FC = () => {
                 <h1>Certificate Templates</h1>
 
                 <div className={styles.site_layout_content}>
-                    <h1>Current template</h1>
-                    {certificateTemplates.length == 0 && <div style={{ marginBottom: '30px' }}>No certificate templates found</div>}
-                    {certificateTemplates.length != 0 && <Table columns={tableColumns} dataSource={certificateTemplates} />}
+                    <h1>Current Certificate Templates</h1>
+                    <div style={{ marginBottom: '30px' }}>
+                        {certificateTemplates.length != 0 && <Table columns={tableColumns} dataSource={certificateTemplates} />}
+                        {certificateTemplates.length == 0 && <div>No certificate templates found</div>}
+                    </div>
 
                     <h1>Upload New Certificate Template</h1>
                     <Form
