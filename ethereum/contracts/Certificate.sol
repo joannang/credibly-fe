@@ -8,21 +8,25 @@ import '@openzeppelin/contracts/utils/Counters.sol';
 contract Certificate is ERC721URIStorage, ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private tokenIDTracker;
+    string certificateID;
 
-    constructor() ERC721('Certificate', 'Certificate') {
+    // constructor() ERC721('Credibly', 'Credibly') {
+    // }
+    constructor(string memory name, string memory symbol, string memory _certificateID) ERC721(name, symbol) {
+        certificateID = _certificateID;
     }
 
-    function award(address owner, string memory certificateUrl) public returns (uint256) {
+    function create(address admin, string memory certificateUrl) public returns (uint256) {
         uint256 tokenID = tokenIDTracker.current();
         tokenIDTracker.increment();
-        _mint(owner, tokenID);
+        _mint(admin, tokenID);
         _setTokenURI(tokenID, certificateUrl);
         return tokenID;
     }
 
-    function transferOwnership(address owner, address receiver, uint256 tokenID) public { 
-        require( _isApprovedOrOwner(owner, tokenID), 'Caller is not owner of this certificate');
-        _transfer(owner, receiver, tokenID);
+    function transferOwnership(address admin, address awardee, uint256 tokenID) public { 
+        require( _isApprovedOrOwner(admin, tokenID), 'Caller is not owner of this certificate');
+        _transfer(admin, awardee, tokenID);
     }
 
     // overriding functions
