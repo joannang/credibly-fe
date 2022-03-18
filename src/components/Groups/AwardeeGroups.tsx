@@ -1,15 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, message, Table } from 'antd';
+import { Button, Form, Input, message, Modal, Radio, Space, Table } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useStores } from '../../stores/StoreProvider';
+import CreateGroupModal from './CreateGroupModal';
 import styles from './Groups.module.css';
 
 const AwardeeGroups: React.FC = () => {
-    const { appStore, uiState } = useStores();
+    const { appStore } = useStores();
 
     const [loading, setLoading] = React.useState<boolean>(false);
     const [selectedRowKeys, setSelectedRowKeys] = React.useState<number[]>([]);
+    const [isModalVisible, setIsModalVisible] = React.useState(false);
+    const [addForm] = Form.useForm();
+    const [templateSelected, setTemplateSelected] = React.useState(1);
 
     React.useEffect(() => {
         setLoading(true);
@@ -37,9 +41,42 @@ const AwardeeGroups: React.FC = () => {
     const organisationId = 1; // hardcoded value for now
 
     const groups = appStore.getAwardeeGroups();
+    // const certificateTemplates = appStore.getCertificateTemplates();
+    // get credentials here
 
-    const handleCreateGroup = async () => {
-        console.log('create button clicked');
+    const handleModal = async () => {
+        setIsModalVisible(true);
+    };
+
+    const handleOk = async () => {
+        setLoading(true);
+        try {
+            // to fix
+            await appStore.createAwardeeGroup(
+                organisationId,
+                'Sample Group Name',
+                []
+            );
+            message.success('Success!');
+        } catch (err) {
+            // uiState.setError(err.error);
+            console.log(err);
+            if (err) {
+                message.error(err.error);
+            }
+        } finally {
+            setLoading(false);
+            setIsModalVisible(false);
+        }
+    };
+
+    const handleCancel = () => {
+        addForm.resetFields();
+        setIsModalVisible(false);
+    };
+
+    const handleTemplateSelected = (e: any) => {
+        setTemplateSelected(e.target.value);
     };
 
     const handleRemoveGroup = async (groupIds: number[]) => {
@@ -77,11 +114,20 @@ const AwardeeGroups: React.FC = () => {
                 <div className={styles.createButton}>
                     <Button
                         type="primary"
-                        onClick={() => handleCreateGroup()}
+                        onClick={() => handleModal()}
                         loading={loading}
                     >
                         Create
                     </Button>
+                    <CreateGroupModal
+                        isModalVisible={isModalVisible}
+                        loading={loading}
+                        addForm={addForm}
+                        templateSelected={templateSelected}
+                        handleCancel={handleCancel}
+                        handleOk={handleOk}
+                        handleTemplateSelected={handleTemplateSelected}
+                    />
                 </div>
                 <span style={{ marginLeft: 8 }}>
                     {selectedRowKeys.length > 1
