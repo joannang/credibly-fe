@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+
+.title {
+    font-family: 'Playfair Display';
+}
+
+.cardsContainer {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 25px;
+}
+
+.rowContainer {
+    width: 95%;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content:left;
+    padding: 15px 0 15px 2.9%;
+}
+
+.cover {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: orange;
+}
+
+@media only screen and (min-width: 900px) {
+    /* desktop */
+    .card {
+        margin: 10px 10px 10px 10px;
+    }
+
+    .img {
+        height: 25em;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    /* mobile */
+    .card {
+        margin: 10px 20px 10px 20px;
+    }
+
+    .img {
+        height: 18em;
+    }
+}
+
+.meta {
+    padding-bottom: 7px;
+}

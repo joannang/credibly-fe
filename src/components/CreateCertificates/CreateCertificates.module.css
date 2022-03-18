@@ -1,0 +1,38 @@
+.container {
+    justify-content: center;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.button {
+    justify-content: left;
+}
+
+.create {
+    justify-content: flex-end;
+    background-color: #BAB86C;
+    color: white;
+}
+
+.create:hover {
+    background-color: #7c7a49;
+    color: white;
+    border-color: #7c7a49;
+}
+
+.delete {
+    background-color: rgb(185, 86, 86);
+    color: white;
+}
+
+.delete:hover {
+    background-color: rgb(182, 56, 56);
+    color: white;
+    border-color: rgb(182, 56, 56);
+}
+
+.buttonContainer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}

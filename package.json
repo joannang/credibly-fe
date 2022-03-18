@@ -4,7 +4,7 @@
     "description": "nomnom app -- a nft application",
     "main": "index.js",
     "scripts": {
-        "dev": "next -p 8080",
+        "dev": "next -p 8081",
         "test": "jest --runInBand --forceExit",
         "build": "next build",
         "start": "NODE_ENV=production node server.js",
@@ -23,6 +23,7 @@
         "beautiful-react-hooks": "^1.0.2",
         "ethers": "^5.4.4",
         "fs-extra": "latest",
+        "ipfs": "^0.62.1",
         "mobx": "latest",
         "mobx-react": "latest",
         "next": "latest",
