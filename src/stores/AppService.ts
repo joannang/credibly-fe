@@ -6,9 +6,10 @@ import {
 } from '@ethersproject/providers';
 import { ENDPOINT } from '../settings';
 import restPost from '../lib/restPost';
-import { UserType, AwardeeType } from './AppStore';
+import { RegisterAccountType, RegisterUploadType, AwardeeType } from './AppStore';
 import { MARKET_ADDRESS } from '../settings';
 import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
+import restGet from '../lib/restGet';
 
 declare global {
     interface Window {
@@ -106,22 +107,112 @@ class AppService {
     /**
      * REST Example below
      */
-    signUpAsync(user: UserType): any {
+    // signUpAsync(user: UserType): any {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             const data = {
+    //                 userName: user.userName,
+    //                 userPassword: user.userPassword,
+    //                 userWalletAddress: user.userWalletAddress,
+    //             };
+
+    //             const response = await restPost({
+    //                 endpoint: ENDPOINT + '/signup',
+    //                 data: data,
+    //             });
+    //             resolve(response.data);
+    //         } catch (err) {
+    //             reject(err.message);
+    //         }
+    //     });
+    // }
+
+    registerAsync(accountDetails: RegisterAccountType): any {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = {
-                    userName: user.userName,
-                    userPassword: user.userPassword,
-                    userWalletAddress: user.userWalletAddress,
-                };
-
                 const response = await restPost({
-                    endpoint: ENDPOINT + '/signup',
-                    data: data,
+                    endpoint: `${ENDPOINT}/auth/register`,
+                    data: accountDetails
                 });
                 resolve(response.data);
             } catch (err) {
-                reject(err.message);
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    registerUploadAsync(registerUpload: RegisterUploadType): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/document/registration/upload/${registerUpload.userId}`,
+                    data: {
+                        document: registerUpload.documents
+                    },
+                    formData: true
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    loginAsync(email: string, password: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const data = { email, password };
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/auth/login`,
+                    data
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getPendingApprovals(accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/user/pendingApprovals`,
+                    credentials: { accessToken }
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getRegistrationDocument(id: number, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/document`,
+                    _id: `${id}`,
+                    credentials: { accessToken }
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    approveAccounts(approverId: number, userIds: number[], accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/user/approve`,
+                    data: { approverId, userIds },
+                    credentials: { accessToken }
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
             }
         });
     }

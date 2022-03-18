@@ -22,7 +22,7 @@ const restGet = ({ endpoint, _id = '', credentials }: GetRequest) => {
     let options = {};
     if (credentials) {
         options['headers'] = {
-            Authorization: `Bearer ${credentials.accessToken}`,
+            'x-access-token': credentials.accessToken,
             // 'x-api-key': credentials.apiKey,
         };
     }
