@@ -15,7 +15,7 @@ interface AppStore {
 export enum AccountType {
     ADMIN = 0,
     ORGANISATION = 1,
-    AWARDEE = 2
+    AWARDEE = 2,
 }
 
 export type UserType = {
@@ -35,12 +35,12 @@ export type RegisterAccountType = {
     password: string;
     walletAddress: string;
     accountType: AccountType;
-}
+};
 
 export type RegisterUploadType = {
     userId: number;
     documents: File[];
-}
+};
 
 export interface DocumentDto {
     id: number;
@@ -53,22 +53,31 @@ export type ApprovalType = {
     email: string;
     uen: string;
     documents: DocumentDto[];
-}
+};
+
+export type AwardeeGroupType = {
+    id: number;
+    organisationId: number;
+    groupName: string;
+};
 
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
     currentUser: Partial<UserType> = JSON.parse(sessionStorage.getItem('user'));
-    pendingApprovalList: ApprovalType[] = []
+    pendingApprovalList: ApprovalType[] = [];
+    awardeeGroups: AwardeeGroupType[] = [];
 
     constructor(uiState: UiState) {
         makeObservable(this, {
             isAuthenticated: observable,
             currentUser: observable,
             pendingApprovalList: observable,
+            awardeeGroups: observable,
             setIsAuthenticated: action,
             setCurrentUser: action,
-            setPendingApprovalsList: action
+            setPendingApprovalsList: action,
+            setAwardeeGroups: action,
         });
         this.uiState = uiState;
     }
@@ -92,32 +101,64 @@ class AppStore {
     register = async (accountDetails: RegisterAccountType) => {
         const { data } = await this.appService.registerAsync(accountDetails);
         return data;
-    }
+    };
 
     registerUpload = async (registerUpload: RegisterUploadType) => {
         await this.appService.registerUploadAsync(registerUpload);
-    }
+    };
 
     login = async (email: string, password: string) => {
         const { data } = await this.appService.loginAsync(email, password);
         this.currentUser = { ...data };
         this.isAuthenticated = 'true';
         sessionStorage.setItem('authenticated', 'true');
-        sessionStorage.setItem(
-            'user',
-            JSON.stringify(this.currentUser)
-        );
+        sessionStorage.setItem('user', JSON.stringify(this.currentUser));
         return data;
     };
-    
+
     getRegistrationDocument = async (id: number) => {
-        const { data } = await this.appService.getRegistrationDocument(id, this.currentUser.token);
+        const { data } = await this.appService.getRegistrationDocument(
+            id,
+            this.currentUser.token
+        );
         return data;
     };
 
     approveAccounts = async (approverId: number, userIds: number[]) => {
-        await this.appService.approveAccounts(approverId, userIds, this.currentUser.token);
+        await this.appService.approveAccounts(
+            approverId,
+            userIds,
+            this.currentUser.token
+        );
+    };
+
+    createAwardeeGroup = async (
+        organisationId: number,
+        groupName: string,
+        awardeeIds?: number[]
+    ) => {
+        const { data } = await this.appService.createAwardeeGroupAsync(
+            organisationId,
+            groupName,
+            awardeeIds
+        );
+        return data;
+    };
+
+    getAwardeeGroups() {
+        return this.awardeeGroups;
     }
+
+    removeAwardeeGroup = async (organisationId: number, groupIds: number[]) => {
+        try {
+            await this.appService.removeAwardeeGroupAsync(
+                organisationId,
+                groupIds
+            );
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     // @action
     setIsAuthenticated = (auth: string) => {
@@ -127,14 +168,28 @@ class AppStore {
     setCurrentUser = (user: Partial<UserType>) => {
         const { name, email, walletAddress, accountType, token } = user;
         this.currentUser = { name, email, walletAddress, accountType, token };
-    }
+    };
 
     setPendingApprovalsList = async () => {
         try {
-            const { data } = await this.appService.getPendingApprovals(this.currentUser.token);
+            const { data } = await this.appService.getPendingApprovals(
+                this.currentUser.token
+            );
             runInAction(() => (this.pendingApprovalList = [...data]));
         } catch (err) {
-            this.uiState.setError(err.error)
+            // this.uiState.setError(err.error);
+        }
+    };
+
+    setAwardeeGroups = async (organisationId: number) => {
+        try {
+            const { data } = await this.appService.getAwardeeGroupsAsync(
+                organisationId
+            );
+
+            runInAction(() => (this.awardeeGroups = [...data]));
+        } catch (err) {
+            console.log(err);
         }
     };
 

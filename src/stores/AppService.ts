@@ -82,7 +82,7 @@ class AppService {
             try {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/register`,
-                    data: accountDetails
+                    data: accountDetails,
                 });
                 resolve(response.data);
             } catch (err) {
@@ -97,9 +97,9 @@ class AppService {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/document/registration/upload/${registerUpload.userId}`,
                     data: {
-                        document: registerUpload.documents
+                        document: registerUpload.documents,
                     },
-                    formData: true
+                    formData: true,
                 });
                 resolve(response.data);
             } catch (err) {
@@ -114,7 +114,7 @@ class AppService {
                 const data = { email, password };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/login`,
-                    data
+                    data,
                 });
                 resolve(response.data);
             } catch (err) {
@@ -128,7 +128,7 @@ class AppService {
             try {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/user/pendingApprovals`,
-                    credentials: { accessToken }
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -143,7 +143,7 @@ class AppService {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/document`,
                     _id: `${id}`,
-                    credentials: { accessToken }
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -152,13 +152,92 @@ class AppService {
         });
     }
 
-    approveAccounts(approverId: number, userIds: number[], accessToken: string): any {
+    approveAccounts(
+        approverId: number,
+        userIds: number[],
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/user/approve`,
                     data: { approverId, userIds },
-                    credentials: { accessToken }
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getAwardeeGroupAsync(
+        organisationId: number,
+        groupName: string,
+        awardeeIds?: number[]
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/certificateTemplate/create`,
+                    data: {
+                        groupName: groupName,
+                        awardeeIds: awardeeIds,
+                        organisationId: organisationId,
+                    },
+                    formData: true,
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    createAwardeeGroupAsync(
+        organisationId: number,
+        groupName: string,
+        awardeeIds?: number[]
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/awardeeGroup/create`,
+                    data: {
+                        organisationId: organisationId,
+                        groupName: groupName,
+                        awardeeIds: awardeeIds,
+                    },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getAwardeeGroupsAsync(organisationId: number): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/awardeeGroup/organisation/${organisationId}`,
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    removeAwardeeGroupAsync(organisationId: number, groupIds: number[]): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/awardeeGroup/removeGroups`,
+                    data: {
+                        groupIds: groupIds,
+                        organisationId: organisationId,
+                    },
                 });
                 resolve(response.data);
             } catch (err) {

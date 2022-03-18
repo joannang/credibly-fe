@@ -1,30 +1,24 @@
 import * as React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import { Avatar, Layout } from 'antd';
 import { useStores } from '../../../stores/StoreProvider';
 import styles from '../BaseLayout.module.css';
-import { MenuOutlined, MessageOutlined } from '@ant-design/icons';
+import { HeaderTabs } from './HeaderTabs';
+import { observer } from 'mobx-react';
 
 type HeaderProps = {};
 
-export const Header: React.FC<HeaderProps> = ({}) => {
-    const { uiState, appStore } = useStores();
+const Header: React.FC<HeaderProps> = ({}) => {
+    const { appStore } = useStores();
 
     return (
         <Layout.Header>
-            <div className={styles.header}>
-                <Link href={'/dashboard'} passHref>
-                    <a>
-                        Credibly
-                        {/* <Image
-                            src="/images/c-logo-1.png"
-                            alt="Credibly"
-                            height={40}
-                            width={40}
-                        /> */}
+            <div className={styles.headerContainer}>
+                <div>
+                    <a href={'/dashboard'}>
+                        <img src="/images/c-logo-1.png" alt="Credibly" />
                     </a>
-                </Link>
+                </div>
+                <HeaderTabs />
                 <div className={styles.profileContainer}>
                     <Avatar
                         alt="Profile Image"
@@ -44,3 +38,5 @@ export const Header: React.FC<HeaderProps> = ({}) => {
         </Layout.Header>
     );
 };
+
+export default observer(Header);

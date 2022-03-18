@@ -1,11 +1,9 @@
 import * as React from 'react';
 import Head from 'next/head';
 import { observer } from 'mobx-react';
-import { useStores } from '../../stores/StoreProvider';
 import { Layout } from 'antd';
-import { Header } from './Header/Header';
-
 import styles from './BaseLayout.module.css';
+import Header from './Header';
 
 const { Content } = Layout;
 
@@ -21,7 +19,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
     pageTitle,
     header,
 }) => {
-    const { uiState, appStore } = useStores();
     return (
         <>
             <Head>

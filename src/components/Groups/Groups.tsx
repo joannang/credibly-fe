@@ -5,9 +5,9 @@ import { AccountType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
 import BaseLayout from '../BaseLayout';
 import { NotFoundPage } from '../Errors/404';
-import PendingAccounts from './PendingAccounts';
+import AwardeeGroups from './AwardeeGroups';
 
-const DashboardPage: React.FC = () => {
+const GroupsPage: React.FC = () => {
     const { appStore } = useStores();
 
     return (
@@ -18,8 +18,9 @@ const DashboardPage: React.FC = () => {
                     {appStore?.currentUser?.name || ' User'}!
                 </h1>
                 <p />
-                {appStore.currentUser.accountType === AccountType.ADMIN ? (
-                    <PendingAccounts />
+                {appStore.currentUser.accountType ===
+                AccountType.ORGANISATION ? (
+                    <AwardeeGroups />
                 ) : (
                     <NotFoundPage />
                 )}
@@ -28,4 +29,4 @@ const DashboardPage: React.FC = () => {
     );
 };
 
-export default checkAuthenticated(observer(DashboardPage));
+export default checkAuthenticated(observer(GroupsPage));

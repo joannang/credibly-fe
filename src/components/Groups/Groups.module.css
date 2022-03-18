@@ -1,0 +1,11 @@
+.buttonContainer {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin-bottom: 16px;
+}
+
+.createButton {
+    flex: 1 1 auto;
+    align-self: flex-end;
+    text-align: right;
+}
