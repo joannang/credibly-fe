@@ -19,6 +19,12 @@ export type UserType = {
     userWalletAddress: string;
 };
 
+export type AwardeeType = {
+    id?: number; 
+    name: string;
+    email: string;
+}
+
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
@@ -34,6 +40,15 @@ class AppStore {
             setIsAuthenticated: action,
         });
         this.uiState = uiState;
+    }
+
+    createAwardees = async(organisationId: number, awardees: AwardeeType[]) => {
+        try {
+            const response = await this.appService.createAwardeesAsync(organisationId, awardees, this.currentUser.token);
+            return response;
+        } catch (err) {
+            this.uiState.setError(err.message);
+        }
     }
 
     signUp = async (user: UserType) => {

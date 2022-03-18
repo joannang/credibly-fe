@@ -6,7 +6,7 @@ import {
 } from '@ethersproject/providers';
 import { ENDPOINT } from '../settings';
 import restPost from '../lib/restPost';
-import { UserType } from './AppStore';
+import { UserType, AwardeeType } from './AppStore';
 import { MARKET_ADDRESS } from '../settings';
 import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
 
@@ -51,6 +51,56 @@ class AppService {
             Market.abi,
             this.provider
         );
+    }
+
+    /**
+     * need to (1) post the list of awardees into the awardee table first and store the ids from the return
+     * then (2) post the awardees to the group with org id, group id, and list of the awardee ids
+     */
+    createAwardeesAsync(organisationId: number, awardees: AwardeeType[], accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const data = {
+                    organisationId: organisationId,
+                    awardees: awardees,
+                };
+
+                const response = await restPost({
+                    endpoint: ENDPOINT + '/awardee/create',
+                    data: data,
+                    credentials: { accessToken }
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.message);
+            }
+        });
+    }
+
+    addAwardeesToGroupAsync(
+        organisationId: number,
+        groupId: number,
+        awardeeIds: number[],
+        accessToken: string
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const data = {
+                    organisationId: organisationId,
+                    groupId: groupId,
+                    awardeeIds: awardeeIds,
+                };
+
+                const response = await restPost({
+                    endpoint: ENDPOINT + '/awardeeGroup/add',
+                    data: data,
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.message);
+            }
+        });
     }
 
     /**
