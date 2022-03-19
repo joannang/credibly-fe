@@ -31,12 +31,16 @@ const formatData = (data) => {
 };
 
 const restPost = ({ endpoint, data = {}, credentials = null, formData = false }: PostRequest) => {
-    let options = {};
+    let options = { 'headers': {} };
+
+    // credentials = {  // Hard coded for now
+    //     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamVmZkBnbWFpbC5jb20iLCJpYXQiOjE2NDc0MzM2MTEsImV4cCI6MTY0NzQ0MDgxMX0.lJssHsqI_fAo85CRpQNFrySPaGTjz9j-H6Nn0RNelLk'
+    // }
     if (credentials) {
-        options['headers'] = {
-            'x-access-token': credentials.accessToken,
-            // Authenticator: AUTH_TYPE,
-        };
+        options['headers']['x-access-token'] = credentials.accessToken;
+    }
+    if (formData) {
+        options['headers']['Content-Type'] = 'multipart/form-data';
     }
 
     if (formData) {

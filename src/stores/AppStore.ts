@@ -60,12 +60,17 @@ export type ApprovalType = {
     uen: string;
     documents: DocumentDto[];
 }
+export type CertificateTemplateType = {
+    certificateName: string;
+    image: string;
+};
 
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
     currentUser: Partial<UserType> = JSON.parse(sessionStorage.getItem('user'));
     pendingApprovalList: ApprovalType[] = []
+    certificateTemplates: CertificateTemplateType[] = [];
 
     constructor(uiState: UiState) {
         makeObservable(this, {
@@ -74,7 +79,9 @@ class AppStore {
             pendingApprovalList: observable,
             setIsAuthenticated: action,
             setCurrentUser: action,
-            setPendingApprovalsList: action
+            setPendingApprovalsList: action,
+            certificateTemplates: observable,
+            setCertificateTemplates: action,
         });
         this.uiState = uiState;
     }
@@ -131,6 +138,34 @@ class AppStore {
 
     approveAccounts = async (approverId: number, userIds: number[]) => {
         await this.appService.approveAccounts(approverId, userIds, this.currentUser.token);
+    }
+
+    uploadCertificateTemplate = async (certificateTemplateName: string, image: File, organisationId: number) => {
+        const { data } = await this.appService.uploadCertificateTemplateAsync(certificateTemplateName, image, organisationId);
+        return data;
+    }
+
+    // @action
+    setCertificateTemplates = async (organisationId: number) => {
+        try {
+            const { data } = await this.appService.getCertificateTemplatesAsync(organisationId);
+
+            runInAction(() => (this.certificateTemplates = [...data]));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    getCertificateTemplates() {
+        return this.certificateTemplates;
+    }
+
+    deleteCertificateTemplate = async (certificateName: string, organisationId: number) => {
+        try {
+            await this.appService.deleteCertificateTemplateAsync(certificateName, organisationId);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     // @action
