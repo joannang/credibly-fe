@@ -12,20 +12,21 @@ const AwardeeGroups: React.FC = () => {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [selectedRowKeys, setSelectedRowKeys] = React.useState<number[]>([]);
     const [isModalVisible, setIsModalVisible] = React.useState(false);
-    const [addForm] = Form.useForm();
-    const [templateSelected, setTemplateSelected] = React.useState(1);
+    const [groupName, setGroupName] = React.useState('');
+    const [certificateTemplateId, setTemplateSelected] = React.useState(1);
 
-    React.useEffect(() => {
-        setLoading(true);
-        appStore.setAwardeeGroups(organisationId);
-        setLoading(false);
-    }, []);
+    const organisationId = 1; // hardcoded value for now
 
     const columns = [
         {
             title: 'Group Name',
             dataIndex: 'groupName',
-            key: 'groupName',
+            width: 300,
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Certificate Template',
+            dataIndex: 'certificateTemplateId',
             width: 300,
             render: (text) => <a>{text}</a>,
         },
@@ -33,14 +34,12 @@ const AwardeeGroups: React.FC = () => {
 
     const rowSelection = {
         selectedRowKeys,
-        onChange: (selectedRowKeys: number[]) => {
-            setSelectedRowKeys(selectedRowKeys);
+        onChange: (rowKeys: number[]) => {
+            console.log(rowKeys);
+            setSelectedRowKeys(rowKeys);
         },
     };
 
-    const organisationId = 1; // hardcoded value for now
-
-    const groups = appStore.getAwardeeGroups();
     // const certificateTemplates = appStore.getCertificateTemplates();
     // get credentials here
 
@@ -48,14 +47,29 @@ const AwardeeGroups: React.FC = () => {
         setIsModalVisible(true);
     };
 
-    const handleOk = async () => {
+    const handleGroupName = (e: any) => {
+        setGroupName(e.target.value);
+    };
+
+    const handleTemplateSelected = (e: any) => {
+        setTemplateSelected(e.target.value);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+        setGroupName('');
+        setTemplateSelected(1);
+    };
+
+    const handleCreateForm = async () => {
         setLoading(true);
+
         try {
             // to fix
             await appStore.createAwardeeGroup(
                 organisationId,
-                'Sample Group Name',
-                []
+                groupName,
+                certificateTemplateId
             );
             message.success('Success!');
         } catch (err) {
@@ -65,25 +79,22 @@ const AwardeeGroups: React.FC = () => {
                 message.error(err.error);
             }
         } finally {
+            await appStore.setAwardeeGroups(organisationId);
             setLoading(false);
             setIsModalVisible(false);
         }
     };
 
-    const handleCancel = () => {
-        addForm.resetFields();
-        setIsModalVisible(false);
-    };
-
-    const handleTemplateSelected = (e: any) => {
-        setTemplateSelected(e.target.value);
-    };
-
-    const handleRemoveGroup = async (groupIds: number[]) => {
+    const handleRemoveGroups = async () => {
         setLoading(true);
 
         try {
+            const groupIds = [].concat(...[selectedRowKeys]);
+
             await appStore.removeAwardeeGroup(organisationId, groupIds);
+
+            setSelectedRowKeys([]);
+
             message.success('Success!');
         } catch (err) {
             // uiState.setError(err.error);
@@ -92,9 +103,19 @@ const AwardeeGroups: React.FC = () => {
                 message.error(err.error);
             }
         } finally {
+            await appStore.setAwardeeGroups(organisationId);
             setLoading(false);
         }
     };
+
+    React.useEffect(() => {
+        setLoading(true);
+        async function resetAwardeeGroups() {
+            await appStore.setAwardeeGroups(organisationId);
+        }
+        resetAwardeeGroups();
+        setLoading(false);
+    }, []);
 
     return (
         <div>
@@ -104,7 +125,7 @@ const AwardeeGroups: React.FC = () => {
                     <Button
                         type="primary"
                         disabled={selectedRowKeys.length === 0}
-                        onClick={() => handleRemoveGroup(selectedRowKeys)}
+                        onClick={() => handleRemoveGroups()}
                         loading={loading}
                     >
                         Remove
@@ -122,14 +143,16 @@ const AwardeeGroups: React.FC = () => {
                     <CreateGroupModal
                         isModalVisible={isModalVisible}
                         loading={loading}
-                        addForm={addForm}
-                        templateSelected={templateSelected}
-                        handleCancel={handleCancel}
-                        handleOk={handleOk}
+                        groupName={groupName}
+                        handleGroupName={handleGroupName}
+                        certificateTemplateId={certificateTemplateId}
                         handleTemplateSelected={handleTemplateSelected}
+                        handleCreateForm={handleCreateForm}
+                        handleCancel={handleCancel}
+                        setTemplateSelected={setTemplateSelected}
                     />
                 </div>
-                <span style={{ marginLeft: 8 }}>
+                <span style={{ marginTop: 8 }}>
                     {selectedRowKeys.length > 1
                         ? `${selectedRowKeys.length} groups selected`
                         : selectedRowKeys.length == 1
@@ -138,16 +161,16 @@ const AwardeeGroups: React.FC = () => {
                 </span>
             </div>
             <div>
-                {groups.length == 0 && (
+                {appStore.awardeeGroups.length == 0 && (
                     <div style={{ marginBottom: '30px' }}>No groups found!</div>
                 )}
-                {groups.length != 0 && (
+                {appStore.awardeeGroups.length != 0 && (
                     <Table
-                        rowSelection={{
-                            ...rowSelection,
-                        }}
+                        rowKey="id"
+                        rowSelection={rowSelection}
                         columns={columns}
-                        dataSource={groups}
+                        dataSource={appStore.awardeeGroups}
+                        pagination={{ pageSize: 3 }}
                     />
                 )}
             </div>

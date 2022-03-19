@@ -14,8 +14,8 @@ const GroupsPage: React.FC = () => {
         <BaseLayout>
             <div style={{ padding: '0 16px 16px 16px' }}>
                 <h1>
-                    Welcome to Credibly,
-                    {appStore?.currentUser?.name || ' User'}!
+                    Welcome to Credibly,&nbsp;
+                    {appStore?.currentUser?.name.toUpperCase() || 'User'}!
                 </h1>
                 <p />
                 {appStore.currentUser.accountType ===

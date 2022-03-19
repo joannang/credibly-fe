@@ -135,25 +135,23 @@ class AppStore {
     createAwardeeGroup = async (
         organisationId: number,
         groupName: string,
-        awardeeIds?: number[]
+        certificateTemplateId: number
     ) => {
         const { data } = await this.appService.createAwardeeGroupAsync(
             organisationId,
             groupName,
-            awardeeIds
+            certificateTemplateId,
+            this.currentUser.token
         );
         return data;
     };
-
-    getAwardeeGroups() {
-        return this.awardeeGroups;
-    }
 
     removeAwardeeGroup = async (organisationId: number, groupIds: number[]) => {
         try {
             await this.appService.removeAwardeeGroupAsync(
                 organisationId,
-                groupIds
+                groupIds,
+                this.currentUser.token
             );
         } catch (err) {
             console.log(err);
@@ -184,7 +182,8 @@ class AppStore {
     setAwardeeGroups = async (organisationId: number) => {
         try {
             const { data } = await this.appService.getAwardeeGroupsAsync(
-                organisationId
+                organisationId,
+                this.currentUser.token
             );
 
             runInAction(() => (this.awardeeGroups = [...data]));

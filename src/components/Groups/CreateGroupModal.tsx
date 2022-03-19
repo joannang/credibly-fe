@@ -1,4 +1,4 @@
-import { Form, FormInstance, Input, Modal, Radio, Space } from 'antd';
+import { Button, Form, FormInstance, Input, Modal, Radio, Space } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
@@ -7,25 +7,31 @@ export type CreateGroupModalProps = {
 
     loading: boolean;
 
-    addForm: FormInstance<any>;
+    groupName: string;
 
-    templateSelected: number;
+    handleGroupName: (e) => void;
+
+    certificateTemplateId: number;
+
+    handleTemplateSelected: (e) => void;
+
+    handleCreateForm: () => void;
 
     handleCancel: () => void;
 
-    handleOk: () => void;
-
-    handleTemplateSelected: (event) => void;
+    setTemplateSelected: (e) => void;
 };
 
 const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     isModalVisible,
     loading,
-    addForm,
-    templateSelected,
-    handleCancel,
-    handleOk,
+    groupName,
+    handleGroupName,
+    certificateTemplateId,
     handleTemplateSelected,
+    handleCreateForm,
+    handleCancel,
+    // setTemplateSelected,
 }) => {
     return (
         <Modal
@@ -33,15 +39,24 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             visible={isModalVisible}
             okText="Create"
             width={616}
-            onOk={handleOk}
-            onCancel={handleCancel}
             confirmLoading={loading}
+            onCancel={handleCancel}
+            footer={[
+                <Button key="cancel" onClick={handleCancel}>
+                    Cancel
+                </Button>,
+                <Button form="createForm" key="submit" htmlType="submit">
+                    Create
+                </Button>,
+            ]}
         >
             <Form
-                form={addForm}
+                id="createForm"
                 layout="horizontal"
                 labelAlign="left"
                 labelCol={{ span: 6 }}
+                initialValues={{ certificateTemplateId: 1 }}
+                onFinish={() => handleCreateForm()}
             >
                 <Form.Item
                     label="Group Name"
@@ -52,16 +67,18 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                             message: 'Please input a group name!',
                         },
                     ]}
-                    validateFirst
-                    hasFeedback
                 >
                     <div style={{ width: '240px' }}>
-                        <Input placeholder="Group Name" />
+                        <Input
+                            placeholder="Group Name"
+                            value={groupName}
+                            onChange={(e) => handleGroupName(e)}
+                        />
                     </div>
                 </Form.Item>
                 <Form.Item
                     label="Certificate Template"
-                    name="certificateTemplate"
+                    name="certificateTemplateId"
                     rules={[
                         {
                             required: true,
@@ -69,14 +86,11 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                                 'Please select a certificate template for this group!',
                         },
                     ]}
-                    validateFirst
-                    hasFeedback
-                    // getValueFromEvent={handleTemplateSelected}
                 >
                     <div style={{ width: '480px' }}>
                         <Radio.Group
-                            onChange={handleTemplateSelected}
-                            value={templateSelected}
+                            onChange={(e) => handleTemplateSelected(e)}
+                            value={certificateTemplateId}
                         >
                             <Space direction="vertical">
                                 {/* {certificateTemplates.map((i) => (
@@ -84,10 +98,9 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                                     Option A
                                 </Radio>
                             ))} */}
-                                <Radio value={1000}>
-                                    Upload New Template
-                                    {/* {certificateTemplates.length === 1000 ? ***upload function here*** : null} */}
-                                </Radio>
+                                <Radio value={1}>Template 1</Radio>
+                                <Radio value={2}>Template 2</Radio>
+                                <Radio value={3}>Template 3</Radio>
                             </Space>
                         </Radio.Group>
                     </div>

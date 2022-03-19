@@ -31,7 +31,8 @@ const Header: React.FC<HeaderProps> = ({}) => {
                         shape="circle"
                         size={24}
                     >
-                        {appStore.currentUser?.name?.charAt(0) || 'L'}
+                        {appStore.currentUser?.name?.charAt(0).toUpperCase() ||
+                            'U'}
                     </Avatar>
                 </div>
             </div>

@@ -197,7 +197,8 @@ class AppService {
     createAwardeeGroupAsync(
         organisationId: number,
         groupName: string,
-        awardeeIds?: number[]
+        certificateTemplateId: number,
+        accessToken: string
     ): any {
         return new Promise(async (resolve, reject) => {
             try {
@@ -206,8 +207,9 @@ class AppService {
                     data: {
                         organisationId: organisationId,
                         groupName: groupName,
-                        awardeeIds: awardeeIds,
+                        certificateTemplateId: certificateTemplateId,
                     },
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -216,11 +218,12 @@ class AppService {
         });
     }
 
-    getAwardeeGroupsAsync(organisationId: number): any {
+    getAwardeeGroupsAsync(organisationId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/awardeeGroup/organisation/${organisationId}`,
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -229,7 +232,11 @@ class AppService {
         });
     }
 
-    removeAwardeeGroupAsync(organisationId: number, groupIds: number[]): any {
+    removeAwardeeGroupAsync(
+        organisationId: number,
+        groupIds: number[],
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
@@ -238,6 +245,7 @@ class AppService {
                         groupIds: groupIds,
                         organisationId: organisationId,
                     },
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
