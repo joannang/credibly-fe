@@ -114,7 +114,7 @@ class AppService {
                         certificateName: certificateTemplateName,
                         image: image,
                         organisationId: organisationId,
-                        // credentials: { accessToken },
+                        credentials: { accessToken },
                     },
                     formData: true
                     
