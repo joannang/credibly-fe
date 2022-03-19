@@ -2,33 +2,21 @@
 pragma solidity ^0.8.0;
 
 import './Organisation.sol';
-// import './Awardee.sol';
+import './Awardee.sol';
 
 contract System {
     // uen => Organisation Obj
     mapping (string => Organisation) public organisations;
     // email => uen[] (list of organisations worked at)
-    mapping (string => string[]) public employeeOrganisations;
+    mapping (string => string[]) public employeesOrganisations;
     // email => Awardee Obj
     mapping (string => Awardee) public awardees;
-
-    struct Awardee {
-        string email;
-        address walletAddress;
-        Certificate[] certificates;
-        address[] access;
-        bool privacy;
-    }
-
-    struct Certificate {
-        address contractAddress;
-
-    }
 
 
     constructor() {
     }
 
+    // register organisation
     function registerOrganisation(
         string memory name,
         string memory uen,
@@ -38,29 +26,37 @@ contract System {
         organisations[uen] = organisation;
     }
 
+    // register employee to organisation
     function registerEmployee(
         string memory uen,
-        string memory name,
-        string memory email,
-        string position,
-        uint256 startDate
+        // string memory name,
+        string memory email
+        // string memory position,
+        // uint256 startDate
     ) public {
         Organisation organisation = organisations[uen];
-        organisation.addEmployee(email, name, position, startDate);
-        employeeOrganisations[email].push(uen);
+        // organisation.addEmployee(email, name, position, startDate);
+        employeesOrganisations[email].push(uen);
     }
 
+    // register awardee
+    // transfer all exisitng nfts to awardee
+    // register awardee to organisation
     function registerAwardee(
         string memory email,
         address awardee
     ) public {
         // create new awardee obj
-        awardees[email] = new Awardee(email, walletAddress);
-        // transfer all certificates to awardee
-        uint256 numEmployeeOrganisations = employeeOrganisations[email].length;
+        awardees[email] = new Awardee(email, awardee);
+        string[] memory employeeOrganisations = employeesOrganisations[email];
+        // find all organisations awardee belong to 
+        uint256 numEmployeeOrganisations = employeesOrganisations[email].length;
         for (uint256 i = 0; i < numEmployeeOrganisations; i++) {
             string memory uen = employeeOrganisations[i];
             Organisation organisation = organisations[uen];
+            // add awardees to organisation
+            organisation.addAwardee(email, awardee);
+            // transfer all certs
             organisation.transferAllCertificates(email, awardee);
         }
         // return organisation.employeesCertificates();

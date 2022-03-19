@@ -6,12 +6,38 @@ import './Certificate.sol';
 contract Awardee {
     string public email;
     address public walletAddress;
-    Certificate[] public certificates;
+    CertificateToken[] public certificates;
     address[] public accessRights;
     bool public privacy;
 
-    function getCertificates() {
+    struct CertificateToken{
+        Certificate certificate;
+        uint256 tokenID;
     }
+
+    constructor(string memory email, address walletAddress) {
+        email = email;
+        walletAddress = walletAddress;
+    }
+
+    function addCertificate(
+        address certificateAddress,
+        uint256 tokenID
+    ) public {
+        CertificateToken memory certificateToken = CertificateToken({
+            certificate: Certificate(certificateAddress),
+            tokenID: tokenID
+        });
+        certificates.push(certificateToken);
+    }
+
+    function getCertificates() public returns (CertificateToken[] memory){
+        return certificates;
+    }
+
+    // function getWalletAddress() view returns (address) {
+    //     return walletAddress;
+    // }
 
 
 }

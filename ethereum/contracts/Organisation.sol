@@ -10,19 +10,19 @@ contract Organisation {
     string public uen;
     address public admin;
 
-    mapping (string => Employee) public employees;
+    // mapping (string => Employee) public employees;
     mapping (string => Certificate) public certificates;
     mapping (string => CertificateToken[]) public employeesCertificates;
-    mapping (string => Awardee[]) public awardees;
+    mapping (string => Awardee) public awardees;
 
-    struct Employee {
-        string email;
-        string name;
-        string position;
-        uint256 startDate;
-        uint256 endDate;
-        // CertificateToken[] ownedCertificates; // UnimplementedFeatureError
-    }
+    // struct Employee {
+    //     string email;
+    //     string name;
+    //     string position;
+    //     uint256 startDate;
+    //     uint256 endDate;
+    //     // CertificateToken[] ownedCertificates; // UnimplementedFeatureError
+    // }
 
     struct CertificateToken{
         Certificate certificate;
@@ -38,18 +38,25 @@ contract Organisation {
         admin = _admin;
     }
 
-    function addEmployee(
+    // function addEmployee(
+    //     string memory email,
+    //     string memory name,
+    //     string memory position,
+    //     uint256 startDate
+    // ) public {
+    //     Employee memory employee;
+    //     employee.email = email;
+    //     employee.name = name;
+    //     employee.position = position;
+    //     employee.startDate = startDate;
+    //     employees[email] = employee;
+    // }
+
+    function addAwardee(
         string memory email,
-        string memory name,
-        string memory position,
-        uint256 startDate
+        address awardee
     ) public {
-        Employee memory employee;
-        employee.email = email;
-        employee.name = name;
-        employee.position = position;
-        employee.startDate = startDate;
-        employees[email] = employee;
+        awardees[email] = Awardee(awardee);
     }
 
     function addCertificate(
@@ -78,30 +85,28 @@ contract Organisation {
         // map certificate to employee
         employeesCertificates[email].push(certificateToken);
         // transfer cert to awardee if awardee has account
-        if (awardees[email] != address(0)) {
-            certificate.transferOwnership(msg.sender, awardee, tokenID);
-            
+        if (awardees[email].walletAddress() != address(0)) {
+            certificate.transferOwnership(msg.sender, awardees[email].walletAddress(), tokenID);
         }
-
+        // track using awardee contract
+        Awardee awardee = awardees[email];
+        awardee.addCertificate(address(certificate), tokenID);
     }
 
     function transferAllCertificates(
         string memory email,
-        address awardee
-    // ) public returns (address[], uint256[]) {
-    // ) public returns (certificateToken[]) {
+        address awardeeAddress
     ) public {
-        CertificateToken[] ownedCertificates = employeesCertificates[email];
+        CertificateToken[] memory ownedCertificates = employeesCertificates[email];
         uint256 numCerts = ownedCertificates.length;
-        address[] memory certificateAddresses = new address[](numCerts);
-        uint256[] memory tokenIDs = new uint256[](numCerts);
         for (uint256 i = 0; i < numCerts; i++) {
-            CertificateToken certificateToken = ownedCertificates[i];
+            CertificateToken memory certificateToken = ownedCertificates[i];
             Certificate certificate = certificateToken.certificate;
             uint256 tokenID = certificateToken.tokenID;
-            certificate.transferOwnership(msg.sender, awardee, tokenID);
-            certificateAddresses.push(address(certificate));
-            tokenIDs.push(tokenID);
+            certificate.transferOwnership(msg.sender, awardeeAddress, tokenID);
+            // track using awardee contract
+            Awardee awardee = awardees[email];
+            awardee.addCertificate(address(certificate), tokenID);
         }
         // return ownedCertificates;
     }
