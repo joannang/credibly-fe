@@ -182,7 +182,7 @@ class AppStore {
     }
 
     uploadCertificateTemplate = async (certificateTemplateName: string, image: File, organisationId: number) => {
-        const { data } = await this.appService.uploadCertificateTemplateAsync(certificateTemplateName, image, organisationId);
+        const { data } = await this.appService.uploadCertificateTemplateAsync(certificateTemplateName, image, organisationId, this.currentUser.token);
         return data;
     }
 

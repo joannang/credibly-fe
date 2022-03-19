@@ -105,7 +105,7 @@ class AppService {
         });
     }
 
-    uploadCertificateTemplateAsync(certificateTemplateName: string, image: File, organisationId: number): any {
+    uploadCertificateTemplateAsync(certificateTemplateName: string, image: File, organisationId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
@@ -113,13 +113,17 @@ class AppService {
                     data: {
                         certificateName: certificateTemplateName,
                         image: image,
-                        organisationId: organisationId
+                        organisationId: organisationId,
+                        // credentials: { accessToken },
                     },
                     formData: true
+                    
                 });
+                console.log(response.data)
                 resolve(response.data);
             } catch (err) {
-                reject(err.response.data.error);
+                console.log(err)
+                reject(err.response);
             }
         });
     }

@@ -75,7 +75,7 @@ const PublishCertificates: React.FC = () => {
                         <Descriptions.Item>Unpublished Credentials</Descriptions.Item>
                     </Descriptions>
                 </PageHeader>
-                {awardees.length !== 0 ? (
+                {awardees && awardees.length !== 0 ? (
                     <Table
                         rowSelection={rowSelection}
                         dataSource={awardees}

@@ -20,9 +20,9 @@ type GetRequest = {
 
 const restGet = ({ endpoint, _id = '', credentials }: GetRequest) => {
     let options = {};
-    credentials = {  // Hard coded for now
-        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamVmZkBnbWFpbC5jb20iLCJpYXQiOjE2NDc0Mjk5ODksImV4cCI6MTY0NzQzNzE4OX0.0C7bf7CSRkaprm5UJoqqZZzGIgOO4H4JxMlSuo1Z-ZQ'
-    }
+    // credentials = {  // Hard coded for now
+    //     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamVmZkBnbWFpbC5jb20iLCJpYXQiOjE2NDc0Mjk5ODksImV4cCI6MTY0NzQzNzE4OX0.0C7bf7CSRkaprm5UJoqqZZzGIgOO4H4JxMlSuo1Z-ZQ'
+    // }
     if (credentials) {
         options['headers'] = {
             'x-access-token': credentials.accessToken
