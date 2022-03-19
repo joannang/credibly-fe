@@ -31,7 +31,7 @@ contract Awardee {
         certificates.push(certificateToken);
     }
 
-    function getCertificates() public returns (CertificateToken[] memory){
+    function getCertificates() public view returns (CertificateToken[] memory){
         return certificates;
     }
 

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
+
 pragma solidity ^0.8.0;
 
+// import "hardhat/console.sol";
 import './Certificate.sol';
 import './Awardee.sol';
 
@@ -54,9 +56,9 @@ contract Organisation {
 
     function addAwardee(
         string memory email,
-        address awardee
+        address awardeeContractAddress // NOT WALLET ADDRESS 
     ) public {
-        awardees[email] = Awardee(awardee);
+        awardees[email] = Awardee(awardeeContractAddress);
     }
 
     function addCertificate(
@@ -85,13 +87,22 @@ contract Organisation {
         // map certificate to employee
         employeesCertificates[email].push(certificateToken);
         // transfer cert to awardee if awardee has account
-        if (awardees[email].walletAddress() != address(0)) {
+        if (awardees[email].walletAddress() != address(0)) { // here
             certificate.transferOwnership(msg.sender, awardees[email].walletAddress(), tokenID);
+            // track using awardee contract
+            Awardee awardee = awardees[email];
+            awardee.addCertificate(address(certificate), tokenID);
+            // updateAwardeeCertificate(email, address(certificate), tokenID); // does not work
         }
-        // track using awardee contract
-        Awardee awardee = awardees[email];
-        awardee.addCertificate(address(certificate), tokenID);
     }
+
+    // function updateAwardeeCertificate(
+    //     string memory email,
+    //     address certificateAddress,
+    //     uint256 tokenID
+    // ) public {
+    //     awardees[email].addCertificate(certificateAddress, tokenID);
+    // }
 
     function transferAllCertificates(
         string memory email,
