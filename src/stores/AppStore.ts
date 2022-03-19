@@ -55,6 +55,20 @@ export type ApprovalType = {
     documents: DocumentDto[];
 }
 
+export type Awardee = {
+    name: string;
+    email: string;
+}
+
+export type CertificateDetails = {
+    awardeeName: string;
+    orgName: string;
+    dateOfIssue: string;
+    certificateName: string;
+    description: string;
+    imageUrl: string;
+    certificateId: string;
+}
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
@@ -109,7 +123,7 @@ class AppStore {
         );
         return data;
     };
-    
+
     getRegistrationDocument = async (id: number) => {
         const { data } = await this.appService.getRegistrationDocument(id, this.currentUser.token);
         return data;
@@ -137,7 +151,36 @@ class AppStore {
             this.uiState.setError(err.error)
         }
     };
+    retrieveAwardee = async (email: string) => {
+        try {
+            const { data } = await this.appService.retrieveAwardee(email);
 
+            return data as Awardee;
+        } catch (err) {
+            if (err) {
+                this.uiState.setError(err.error)
+            }
+        }
+    }
+
+    // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
+
+    retrieveCertificateInfo = async (certificateId: string) => {
+        try {
+            const data = await this.appService.retrieveCertificateInfo(certificateId);
+            return data as CertificateDetails;
+        } catch (err) {
+            this.uiState.setError(err.error)
+        }
+    };
+    retrieveProfileDetails = async (email: string) => {
+        try {
+            const data = await this.appService.retrieveProfileDetails(email);
+            return data as CertificateDetails[];
+        } catch (err) {
+            this.uiState.setError(err.error)
+        }
+    }
     // Example of calling appService buyFoodAsync method
     buyFood = async (food: any, price: number) => {
         try {
