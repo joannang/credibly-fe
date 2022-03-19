@@ -14,6 +14,7 @@ import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
 declare global {
     interface Window {
         ethereum: any;
+        ipfs?: any;
     }
 }
 
@@ -105,6 +106,26 @@ class AppService {
         });
     }
 
+    generateCertificatesAsync(certName: string, orgId: number, awardeeNames: string[], accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const data = {
+                    certificateName: certName,
+                    organisationId: orgId,
+                    awardeeNames: awardeeNames,
+                }
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/certificateTemplate/generateCertificates`,
+                    data: data,
+                    credentials: { accessToken },
+                })
+                resolve(response.data);
+            } catch (err) {
+                reject(err.message);
+            }
+        })
+    }
+
     uploadCertificateTemplateAsync(certificateTemplateName: string, image: File, organisationId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {
@@ -114,15 +135,12 @@ class AppService {
                         certificateName: certificateTemplateName,
                         image: image,
                         organisationId: organisationId,
-                        credentials: { accessToken },
                     },
-                    formData: true
-                    
+                    formData: true,
+                    credentials: { accessToken },
                 });
-                console.log(response.data)
                 resolve(response.data);
             } catch (err) {
-                console.log(err)
                 reject(err.response);
             }
         });

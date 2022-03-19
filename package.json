@@ -23,7 +23,8 @@
         "beautiful-react-hooks": "^1.0.2",
         "ethers": "^5.4.4",
         "fs-extra": "latest",
-        "ipfs": "^0.62.1",
+        "ipfs-core": "^0.14.1",
+        "ipfs-http-client": "^56.0.1",
         "mobx": "latest",
         "mobx-react": "latest",
         "next": "latest",
@@ -49,14 +50,9 @@
         "identity-obj-proxy": "latest",
         "jest": "^27.0.6",
         "jest-junit": "latest",
-        "pre-commit": "latest",
         "prettier": "latest",
         "ts-jest": "latest"
     },
-    "pre-commit": [
-        "precommit-msg",
-        "prettier-format"
-    ],
     "jest-junit": {
         "outputDirectory": "output/coverage",
         "outputName": "jest-junit.xml"

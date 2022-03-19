@@ -135,6 +135,20 @@ class AppStore {
         }
     };
 
+    generateCertificates = async (certName: string, orgId: number, awardeeNames: string[]) => {
+        try {
+            const response = await this.appService.generateCertificatesAsync(
+                certName,
+                orgId,
+                awardeeNames,
+                this.currentUser.token
+            );
+            return response.data;
+        } catch (err) {
+            this.uiState.setError(err.messsage);
+        }
+    }
+
     // signUp = async (user: UserType) => {
     //     try {
     //         const response = await this.appService.signUpAsync(user); // isOk & message
