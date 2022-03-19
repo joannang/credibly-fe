@@ -4,6 +4,7 @@ import { Form, Input, Button, Tabs, Radio, Upload } from 'antd';
 import { observer } from 'mobx-react';
 import { useStores } from '../../stores/StoreProvider';
 import styles from './LoginPage.module.css';
+import { AccountType } from '../../stores/AppStore';
 
 const { TabPane } = Tabs;
 
@@ -86,7 +87,7 @@ const LoginPage: React.FC = () => {
 
         try {
             await appStore.login(values.email, values.password);
-            if (accountType === 'organisation') {
+            if (appStore.currentUser.accountType === AccountType.ORGANISATION) {
                 window.location.href = '/groups';
             } else {
                 window.location.href = '/dashboard';
