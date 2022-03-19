@@ -1,9 +1,9 @@
 import * as React from 'react';
-import CreateCertificates from '../src/components/CreateCertificates/CreateCredentials'; 
+import PublishCertificates from '../src/components/CreateCertificates/PublishCertificates'; 
 import redirect from '../src/lib/redirect';
 import { useStores } from '../src/stores/StoreProvider';
 
-const CreateCertsPage: React.FC = () => {
+const PublishCertsPage: React.FC = () => {
     const { appStore } = useStores();
 
     // const withCheckLoginProps = {
@@ -12,7 +12,7 @@ const CreateCertsPage: React.FC = () => {
     // };
 
     // return <DashboardPage {...withCheckLoginProps} />;
-    return <CreateCertificates/>
+    return <PublishCertificates/>
 };
 
-export default CreateCertsPage;
+export default PublishCertsPage;

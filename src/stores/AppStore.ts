@@ -15,7 +15,7 @@ interface AppStore {
 export enum AccountType {
     ADMIN = 0,
     ORGANISATION = 1,
-    AWARDEE = 2
+    AWARDEE = 2,
 }
 
 export type UserType = {
@@ -29,10 +29,12 @@ export type UserType = {
 };
 
 export type AwardeeType = {
-    id?: number; 
+    id?: number;
+    key?: number;
     name: string;
     email: string;
-}
+    date?: string;
+};
 
 export type RegisterAccountType = {
     name: string;
@@ -86,14 +88,53 @@ class AppStore {
         this.uiState = uiState;
     }
 
-    createAwardees = async(organisationId: number, awardees: AwardeeType[]) => {
+    createAwardees = async (
+        organisationId: number,
+        awardees: AwardeeType[]
+    ) => {
         try {
-            const response = await this.appService.createAwardeesAsync(organisationId, awardees, this.currentUser.token);
-            return response;
+            const response = await this.appService.createAwardeesAsync(
+                organisationId,
+                awardees,
+                this.currentUser.token
+            );
+            console.log(response);
+            return response.data;
         } catch (err) {
             this.uiState.setError(err.message);
         }
-    }
+    };
+
+    addAwardeesToGroup = async (
+        organisationId: number,
+        groupId: number,
+        awardeeIds: number[]
+    ) => {
+        try {
+            const response = await this.appService.addAwardeesToGroupAsync(
+                organisationId,
+                groupId,
+                awardeeIds,
+                this.currentUser.token
+            );
+            return response.data;
+        } catch (err) {
+            this.uiState.setError(err.message);
+        }
+    };
+
+    getAwardeesFromGroup = async (groupId: number) => {
+        try {
+            const response = await this.appService.getAwardeesFromGroupAsync(
+                groupId,
+                this.currentUser.token
+            );
+            return response.data;
+        } catch (err) {
+            this.uiState.setError(err.message);
+        }
+    };
+
     // signUp = async (user: UserType) => {
     //     try {
     //         const response = await this.appService.signUpAsync(user); // isOk & message

@@ -1,24 +1,19 @@
 import { DeleteFilled, MinusCircleFilled } from '@ant-design/icons';
-import { Button, Card, Col, DatePicker, Input, PageHeader, Row } from 'antd';
+import { Button, Card, Col, Input, notification, PageHeader, Row } from 'antd';
 import { observer } from 'mobx-react';
-import moment from 'moment';
 import * as React from 'react';
 import { useState } from 'react';
+import redirect from '../../lib/redirect';
+import { AwardeeType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
-import styles from './CreateCertificates.module.css';
-
-type AwardeeType = {
-    name?: string;
-    email?: string;
-    date?: string;
-};
+import styles from './CreateCredentials.module.css';
 
 /**
  * Page to create credentials either manually or via spreadsheet
  */
 const CreateCertificates: React.FC = () => {
     const { appStore } = useStores();
-    const [currIndex, setCurrIndex] = useState(0);
+    const [loading, setLoading] = useState(null);
 
     const [awardees, setAwardees] = useState<AwardeeType[]>([]); // list of awardees
 
@@ -49,7 +44,46 @@ const CreateCertificates: React.FC = () => {
         awardees[index].date = e.target.value;
     };
 
-    const createCerts = () => {};
+    // TODO: post to blockchain
+    const createCerts = async () => {
+        const valid = awardees.every((x) => x.date && x.email && x.name);
+
+        if (awardees.length == 0) {
+            return;
+        } else if (!valid) {
+            setTimeout(() => {
+                notification.error({
+                    message: 'Please fill in all fields',
+                });
+            }, 1000);
+            return;
+        }
+
+        const orgId = JSON.parse(sessionStorage.getItem('user')).id;
+        const groupId = 1; // TODO: add logic when implemented
+
+        try {
+            // create awardees
+            const response = await appStore.createAwardees(orgId, awardees);
+            const awardeeIds = response.map((x) => x.id);
+
+            // post awardees to group using awardee ids
+            await appStore.addAwardeesToGroup(orgId, groupId, awardeeIds);
+
+            notification.success({
+                message: 'Successfully added credentials',
+            });
+
+            redirect('/publishcerts');
+        } catch (err) {
+            setTimeout(() => {
+                notification.error({
+                    message: 'Something went wrong, please try again',
+                });
+            }, 1000);
+            return;
+        }
+    };
 
     const AwardeeList = () => {
         const items = awardees.map((awardee, index) => {
@@ -113,12 +147,19 @@ const CreateCertificates: React.FC = () => {
                 <AwardeeList />
                 <div className={styles.buttonContainer}>
                     <Button className={styles.button} onClick={addRecipient}>
-                        Add Another Recipient
+                        Add {awardees.length == 0 ? 'A' : 'Another'} Recipient
                     </Button>
                     {awardees.length !== 0 && (
-                        <Button className={styles.create} onClick={createCerts}>
-                            Create Credentials
-                        </Button>
+                        <span style={{justifyContent: "flex-end"}}>
+                            <Button onClick={() => setAwardees([])}>Reset</Button>
+                            &nbsp;
+                            <Button
+                                className={styles.create}
+                                onClick={createCerts}
+                            >
+                                Create Credentials
+                            </Button>
+                        </span>
                     )}
                 </div>
             </div>

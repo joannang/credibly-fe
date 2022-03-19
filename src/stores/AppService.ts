@@ -54,23 +54,24 @@ class AppService {
         );
     }
 
-    /**
-     * need to (1) post the list of awardees into the awardee table first and store the ids from the return
-     * then (2) post the awardees to the group with org id, group id, and list of the awardee ids
-     */
-    createAwardeesAsync(organisationId: number, awardees: AwardeeType[], accessToken: string): any {
+    createAwardeesAsync(
+        organisationId: number,
+        awardees: AwardeeType[],
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const data = {
                     organisationId: organisationId,
                     awardees: awardees,
                 };
-
+                console.log(data);
                 const response = await restPost({
                     endpoint: ENDPOINT + '/awardee/create',
                     data: data,
-                    credentials: { accessToken }
+                    credentials: { accessToken },
                 });
+                console.log(response.data);
                 resolve(response.data);
             } catch (err) {
                 reject(err.message);
@@ -150,6 +151,19 @@ class AppService {
             } catch (err) {
                 reject(err.response.data.error);
             }
+        })
+    };
+    getAwardeesFromGroupAsync(groupId: number, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: ENDPOINT + `/awardeeGroup/${groupId}`,
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.message);
+            }
         });
     }
 
@@ -181,7 +195,7 @@ class AppService {
             try {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/register`,
-                    data: accountDetails
+                    data: accountDetails,
                 });
                 resolve(response.data);
             } catch (err) {
@@ -196,9 +210,9 @@ class AppService {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/document/registration/upload/${registerUpload.userId}`,
                     data: {
-                        document: registerUpload.documents
+                        document: registerUpload.documents,
                     },
-                    formData: true
+                    formData: true,
                 });
                 resolve(response.data);
             } catch (err) {
@@ -213,7 +227,7 @@ class AppService {
                 const data = { email, password };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/login`,
-                    data
+                    data,
                 });
                 resolve(response.data);
             } catch (err) {
@@ -227,7 +241,7 @@ class AppService {
             try {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/user/pendingApprovals`,
-                    credentials: { accessToken }
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -242,7 +256,7 @@ class AppService {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/document`,
                     _id: `${id}`,
-                    credentials: { accessToken }
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -251,13 +265,17 @@ class AppService {
         });
     }
 
-    approveAccounts(approverId: number, userIds: number[], accessToken: string): any {
+    approveAccounts(
+        approverId: number,
+        userIds: number[],
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/user/approve`,
                     data: { approverId, userIds },
-                    credentials: { accessToken }
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
