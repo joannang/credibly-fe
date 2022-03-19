@@ -6,7 +6,7 @@ import './Certificate.sol';
 contract Awardee {
     string public email;
     address public walletAddress;
-    Certicate[] public certificates;
+    Certificate[] public certificates;
     address[] public accessRights;
     bool public privacy;
 

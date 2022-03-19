@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import './Organisation.sol';
-import './Awardee.sol';
+// import './Awardee.sol';
 
 contract System {
     // uen => Organisation Obj
@@ -11,6 +11,20 @@ contract System {
     mapping (string => string[]) public employeeOrganisations;
     // email => Awardee Obj
     mapping (string => Awardee) public awardees;
+
+    struct Awardee {
+        string email;
+        address walletAddress;
+        Certificate[] certificates;
+        address[] access;
+        bool privacy;
+    }
+
+    struct Certificate {
+        address contractAddress;
+
+    }
+
 
     constructor() {
     }
@@ -38,7 +52,7 @@ contract System {
 
     function registerAwardee(
         string memory email,
-        address walletAddress
+        address awardee
     ) public {
         // create new awardee obj
         awardees[email] = new Awardee(email, walletAddress);
@@ -47,11 +61,9 @@ contract System {
         for (uint256 i = 0; i < numEmployeeOrganisations; i++) {
             string memory uen = employeeOrganisations[i];
             Organisation organisation = organisations[uen];
-            organisation.transferAllCertificates
+            organisation.transferAllCertificates(email, awardee);
         }
-
-        
-
+        // return organisation.employeesCertificates();
     }
 
 

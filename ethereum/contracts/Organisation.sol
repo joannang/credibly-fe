@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import './Certificate.sol';
+import './Awardee.sol';
 
 contract Organisation {
 
@@ -11,7 +12,8 @@ contract Organisation {
 
     mapping (string => Employee) public employees;
     mapping (string => Certificate) public certificates;
-    mapping (string => CertificateToken[]) public ownedCertificates;
+    mapping (string => CertificateToken[]) public employeesCertificates;
+    mapping (string => Awardee[]) public awardees;
 
     struct Employee {
         string email;
@@ -47,14 +49,6 @@ contract Organisation {
         employee.name = name;
         employee.position = position;
         employee.startDate = startDate;
-        // Employee memory employee = Employee({
-        //     email: email,
-        //     name: name,
-        //     position: position,
-        //     startDate: startDate,
-        //     endDate: 0,
-        //     ownedCertificates: new CertificateToken[](0)
-        // });
         employees[email] = employee;
     }
 
@@ -63,6 +57,7 @@ contract Organisation {
         string memory symbol, // hardcode
         string memory certificateID
     ) public {
+        // require admin
         Certificate certificate = new Certificate(name, symbol, certificateID);
         certificates[certificateID] = certificate;
     }
@@ -72,30 +67,47 @@ contract Organisation {
         string memory certificateID,
         string memory url
     ) public {
+        // require admin
         Certificate certificate = certificates[certificateID];
         // create certificate
-        uint256 tokenID = certificate.create(admin, url);
+        uint256 tokenID = certificate.create(msg.sender, url);
         CertificateToken memory certificateToken = CertificateToken({
             certificate: certificate,
             tokenID: tokenID
         });
         // map certificate to employee
-        ownedCertificates[email].push(certificateToken);
+        employeesCertificates[email].push(certificateToken);
+        // transfer cert to awardee if awardee has account
+        if (awardees[email] != address(0)) {
+            certificate.transferOwnership(msg.sender, awardee, tokenID);
+            
+        }
+
     }
 
     function transferAllCertificates(
-        address awardee,
-        string memory email
+        string memory email,
+        address awardee
+    // ) public returns (address[], uint256[]) {
+    // ) public returns (certificateToken[]) {
     ) public {
-
-
-        // approve transfer from  // how??? // HR system as the owner instead of admin??
-        // maybe require admin to add employee and add cert
-        // HR system as the owner to create cert to
-
-        // for ownederts in employee, cert.transferownership
+        CertificateToken[] ownedCertificates = employeesCertificates[email];
+        uint256 numCerts = ownedCertificates.length;
+        address[] memory certificateAddresses = new address[](numCerts);
+        uint256[] memory tokenIDs = new uint256[](numCerts);
+        for (uint256 i = 0; i < numCerts; i++) {
+            CertificateToken certificateToken = ownedCertificates[i];
+            Certificate certificate = certificateToken.certificate;
+            uint256 tokenID = certificateToken.tokenID;
+            certificate.transferOwnership(msg.sender, awardee, tokenID);
+            certificateAddresses.push(address(certificate));
+            tokenIDs.push(tokenID);
+        }
+        // return ownedCertificates;
     }
 
-    function getEmployeeCertificates(){}
+    // function getEmployeeCertificates(
+    //     string memory email
+    // ) public returns (address[], uint256[]){}
 
 }
