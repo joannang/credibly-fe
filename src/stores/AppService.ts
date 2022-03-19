@@ -10,7 +10,6 @@ import restPost from '../lib/restPost';
 import { RegisterAccountType, RegisterUploadType, AwardeeType } from './AppStore';
 import { MARKET_ADDRESS } from '../settings';
 import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
-import restGet from '../lib/restGet';
 
 declare global {
     interface Window {
