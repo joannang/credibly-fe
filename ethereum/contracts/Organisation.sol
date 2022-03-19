@@ -60,7 +60,7 @@ contract Organisation {
 
     function addCertificate(
         string memory name,
-        string memory symbol,
+        string memory symbol, // hardcode
         string memory certificateID
     ) public {
         Certificate certificate = new Certificate(name, symbol, certificateID);
@@ -83,15 +83,19 @@ contract Organisation {
         ownedCertificates[email].push(certificateToken);
     }
 
-    function transferCertificate(
+    function transferAllCertificates(
         address awardee,
         string memory email
     ) public {
+
+
         // approve transfer from  // how??? // HR system as the owner instead of admin??
         // maybe require admin to add employee and add cert
         // HR system as the owner to create cert to
 
         // for ownederts in employee, cert.transferownership
     }
+
+    function getEmployeeCertificates(){}
 
 }
