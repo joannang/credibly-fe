@@ -9,3 +9,8 @@
     align-self: flex-end;
     text-align: right;
 }
+
+.modal {
+    display: block;
+    margin: auto;
+}

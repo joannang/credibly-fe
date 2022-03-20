@@ -1,8 +1,85 @@
+import { TransactionOutlined, UserOutlined } from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
+import { AccountType } from '../../stores/AppStore';
+import { useStores } from '../../stores/StoreProvider';
+import BaseLayout from '../BaseLayout';
+import { NotFoundPage } from '../Errors/404';
+import styles from './Settings.module.css';
 
 const SettingsPage: React.FC = () => {
-    return <div>hello</div>;
+    const { appStore } = useStores();
+    const { Sider } = Layout;
+
+    const [generalSelected, setGeneralSelected] = React.useState(true);
+    const [transferSelected, setTransferSelected] = React.useState(false);
+
+    const handleGeneralSelected = () => {
+        if (!generalSelected) {
+            setGeneralSelected(true);
+            setTransferSelected(false);
+        }
+    };
+
+    const handleTransferSelected = () => {
+        if (!transferSelected) {
+            setTransferSelected(true);
+            setGeneralSelected(false);
+        }
+    };
+
+    return (
+        <BaseLayout
+            sider={
+                <Sider width={'15%'} className={styles.sider}>
+                    <Menu
+                        mode="inline"
+                        defaultSelectedKeys={['1']}
+                        defaultOpenKeys={['sub1']}
+                        className={'siderMenu'}
+                        style={{ height: '100%', borderRight: 0 }}
+                    >
+                        <Menu.Item
+                            icon={<UserOutlined />}
+                            key="1"
+                            onClick={() => handleGeneralSelected()}
+                        >
+                            General
+                        </Menu.Item>
+
+                        <Menu.Item
+                            icon={<TransactionOutlined />}
+                            key="2"
+                            onClick={() => handleTransferSelected()}
+                        >
+                            Transfer Request
+                        </Menu.Item>
+                    </Menu>
+                </Sider>
+            }
+        >
+            <div style={{ padding: '0 16px 16px 16px' }}>
+                <h1>
+                    Welcome to Credibly,&nbsp;
+                    {appStore?.currentUser?.name.toUpperCase() || 'User'}!
+                </h1>
+                <p />
+                {appStore.currentUser.accountType === AccountType.AWARDEE &&
+                generalSelected ? (
+                    <div>awardee privacy settings component</div>
+                ) : appStore.currentUser.accountType === AccountType.AWARDEE &&
+                  transferSelected ? (
+                    <div>transfer request component</div>
+                ) : (
+                    <NotFoundPage />
+                )}
+            </div>
+            {/* <Layout> */}
+
+            {/* </Layout> */}
+        </BaseLayout>
+    );
 };
 
 export default observer(SettingsPage);

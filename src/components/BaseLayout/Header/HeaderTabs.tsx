@@ -31,8 +31,8 @@ export const HeaderTabs = () => {
             {appStore.currentUser.accountType === AccountType.AWARDEE && (
                 <div className={styles.headerTabs}>
                     <div>
-                        <Link href={'/dashboard'} passHref>
-                            Home
+                        <Link href={'/home'} passHref>
+                            Profile
                         </Link>
                     </div>
                     <div>

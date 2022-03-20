@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Image } from 'antd';
 import * as React from 'react';
 import { AccountType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
@@ -14,6 +14,7 @@ export const NotFoundPage: React.FC = () => {
             }}
         >
             Oops, you might be lost!
+            <Image src="https://img.freepik.com/free-vector/website-construction-illustration_86047-169.jpg?w=996" />
             <p />
             {appStore.currentUser.accountType === AccountType.ADMIN ? (
                 <Button type="primary" href="/dashboard">
@@ -25,7 +26,9 @@ export const NotFoundPage: React.FC = () => {
                     Go Home
                 </Button>
             ) : (
-                '' //awardee home page here
+                <Button type="primary" href="/privacySettings">
+                    Go Home
+                </Button>
             )}
         </div>
     );

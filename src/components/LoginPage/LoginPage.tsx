@@ -89,8 +89,10 @@ const LoginPage: React.FC = () => {
             await appStore.login(values.email, values.password);
             if (appStore.currentUser.accountType === AccountType.ORGANISATION) {
                 window.location.href = '/groups';
-            } else {
+            } else if (appStore.currentUser.accountType === AccountType.ADMIN) {
                 window.location.href = '/dashboard';
+            } else {
+                window.location.href = '/privacySettings';
             }
         } catch (err) {
             uiState.setError(err.error);

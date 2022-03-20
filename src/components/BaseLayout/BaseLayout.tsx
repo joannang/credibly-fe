@@ -10,14 +10,14 @@ const { Content } = Layout;
 export type BaseLayoutProps = {
     title?: string;
     pageTitle?: string;
-    header?: React.ReactNode;
+    sider?: React.ReactNode;
 };
 
 const BaseLayout: React.FC<BaseLayoutProps> = ({
     children,
     title = 'Credibly',
     pageTitle,
-    header,
+    sider,
 }) => {
     return (
         <>
@@ -26,9 +26,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
             </Head>
             <Layout>
                 <Header />
-                <Layout className={!header ? styles.layoutContent : null}>
-                    {header}
-                    {!header ? (
+                <Layout className={!sider ? styles.layoutContent : null}>
+                    {sider}
+                    {!sider ? (
                         <div className={styles.layoutContentHeader}>
                             {pageTitle != null && pageTitle.trim() != '' && (
                                 <div>{pageTitle}</div>
@@ -37,7 +37,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
                     ) : null}
                     {children ? (
                         <Content
-                            className={header ? styles.layoutContent : null}
+                            className={sider ? styles.layoutContent : null}
                         >
                             {children}
                         </Content>

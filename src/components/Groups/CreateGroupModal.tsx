@@ -1,6 +1,16 @@
-import { Button, Form, FormInstance, Input, Modal, Radio, Space } from 'antd';
+import {
+    Button,
+    Form,
+    FormInstance,
+    Image,
+    Input,
+    Modal,
+    Radio,
+    Space,
+} from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
+import styles from './Groups.module.css';
 
 export type CreateGroupModalProps = {
     isModalVisible: boolean;
@@ -31,14 +41,13 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     handleTemplateSelected,
     handleCreateForm,
     handleCancel,
-    // setTemplateSelected,
 }) => {
     return (
         <Modal
             title="Create Awardee Group"
             visible={isModalVisible}
             okText="Create"
-            width={616}
+            width={'650px'}
             confirmLoading={loading}
             onCancel={handleCancel}
             footer={[
@@ -49,6 +58,7 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                     Create
                 </Button>,
             ]}
+            className={styles.modal}
         >
             <Form
                 id="createForm"
@@ -87,7 +97,12 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                         },
                     ]}
                 >
-                    <div style={{ width: '480px' }}>
+                    <div
+                    // style={{
+                    //     height: '35vh',
+                    //     overflowY: 'scroll',
+                    // }}
+                    >
                         <Radio.Group
                             onChange={(e) => handleTemplateSelected(e)}
                             value={certificateTemplateId}
@@ -98,9 +113,30 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                                     Option A
                                 </Radio>
                             ))} */}
-                                <Radio value={1}>Template 1</Radio>
-                                <Radio value={2}>Template 2</Radio>
-                                <Radio value={3}>Template 3</Radio>
+                                <Radio value={1}>
+                                    <Image
+                                        height="20vh"
+                                        width="auto"
+                                        preview={false}
+                                        src="https://previews.123rf.com/images/auroradesignco/auroradesignco2009/auroradesignco200900041/156020129-.jpg"
+                                    />
+                                </Radio>
+                                <Radio value={2}>
+                                    <Image
+                                        height="20vh"
+                                        width="auto"
+                                        preview={false}
+                                        src="https://simplecert.net/wp-content/uploads/2020/08/SimpleCert-Stock-certificate.jpg"
+                                    />
+                                </Radio>
+                                <Radio value={3}>
+                                    <Image
+                                        height="20vh"
+                                        width="auto"
+                                        preview={false}
+                                        src="https://semoscloud.com/wp-content/uploads/2020/03/sales-quota-achievement-employee-of-the-month-template-1024x791.png"
+                                    />
+                                </Radio>
                             </Space>
                         </Radio.Group>
                     </div>

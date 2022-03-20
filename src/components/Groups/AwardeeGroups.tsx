@@ -65,12 +65,15 @@ const AwardeeGroups: React.FC = () => {
         setLoading(true);
 
         try {
-            // to fix
             await appStore.createAwardeeGroup(
                 organisationId,
                 groupName,
                 certificateTemplateId
             );
+
+            setGroupName('');
+            setTemplateSelected(1);
+
             message.success('Success!');
         } catch (err) {
             // uiState.setError(err.error);
@@ -93,8 +96,6 @@ const AwardeeGroups: React.FC = () => {
 
             await appStore.removeAwardeeGroup(organisationId, groupIds);
 
-            setSelectedRowKeys([]);
-
             message.success('Success!');
         } catch (err) {
             // uiState.setError(err.error);
@@ -103,6 +104,7 @@ const AwardeeGroups: React.FC = () => {
                 message.error(err.error);
             }
         } finally {
+            setSelectedRowKeys([]);
             await appStore.setAwardeeGroups(organisationId);
             setLoading(false);
         }
