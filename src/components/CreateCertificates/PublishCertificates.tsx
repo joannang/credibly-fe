@@ -85,11 +85,15 @@ const PublishCertificates: React.FC = () => {
             console.log(response);
             for (let i = 0; i < response.length; i++) {
                 const encodedImg = response[i].encodedCertificate;
-                console.log(encodedImg);
                 // const res = decodeBase64Image(encodedImg);
                 // console.log(res);
 
                 const { path } = await client.add(Buffer.from(encodedImg));
+
+                const bcResp: any = await appStore.createCertificateNFT(path);
+                console.log(bcResp);
+
+                // const retrieveResp = await appStore.retrieveCertificateNFT(value);
 
                 const chunks = [];
                 for await (const chunk of client.cat(path)) {

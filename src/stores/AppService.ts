@@ -8,8 +8,8 @@ import { ENDPOINT } from '../settings';
 import restGet from '../lib/restGet';
 import restPost from '../lib/restPost';
 import { RegisterAccountType, RegisterUploadType, AwardeeType } from './AppStore';
-import { MARKET_ADDRESS } from '../settings';
-import Market from '../../ethereum/artifacts/contracts/Market.sol/Market.json';
+import { CERTIFICATE_ADDRESS } from '../settings';
+import Certificate from '../../ethereum/build/contracts/Certificate.json';
 
 declare global {
     interface Window {
@@ -21,7 +21,7 @@ declare global {
 interface AppService {
     provider: JsonRpcProvider | Web3Provider; // ethers provider
     signer: JsonRpcSigner;
-    factory: Contract; // factory contract instance
+    certificateContract: Contract; // factory contract instance
     supplierContract: Contract;
 }
 
@@ -48,9 +48,9 @@ class AppService {
         }
 
         // contracts
-        this.factory = new ethers.Contract(
-            MARKET_ADDRESS,
-            Market.abi,
+        this.certificateContract = new ethers.Contract(
+            CERTIFICATE_ADDRESS,
+            Certificate.abi,
             this.provider
         );
     }
@@ -309,19 +309,32 @@ class AppService {
     /**
      * EXAMPLES TO CALL SMART CONTRACT METHODS
      */
-    async getLastTokenId() {
-        return this.factory.connect(this.signer).lastTokenID();
-    }
+    // async getLastTokenId() {
+    //     return this.factory.connect(this.signer).lastTokenID();
+    // }
 
-    async buyFoodAsync(
-        foodId: string,
-        price: number
-    ): Promise<ContractTransaction> {
-        price = Math.floor((price * 1038114374) / 3300);
-        return this.factory.connect(this.signer).buyFood(foodId, {
-            value: ethers.utils.parseUnits(price.toString(), 'gwei'),
+    // async buyFoodAsync(
+    //     foodId: string,
+    //     price: number
+    // ): Promise<ContractTransaction> {
+    //     price = Math.floor((price * 1038114374) / 3300);
+    //     return this.factory.connect(this.signer).buyFood(foodId, {
+    //         value: ethers.utils.parseUnits(price.toString(), 'gwei'),
+    //         gasLimit: 2500000,
+    //     });
+    // }
+
+    async createCertificateNFT(
+        adminWalletAddress: string,
+        ipfsHash: string,
+    ) {
+        return this.certificateContract.connect(this.signer).create(adminWalletAddress, ipfsHash, {
             gasLimit: 2500000,
         });
+    }
+
+    async retrieveCertificateNFT(tokenId: number) {
+        return this.certificateContract.connect(this.signer).tokenURI(tokenId);
     }
 }
 

@@ -242,27 +242,53 @@ class AppStore {
         }
     };
 
-    // Example of calling appService buyFoodAsync method
-    buyFood = async (food: any, price: number) => {
+    createCertificateNFT = async(ipfsHash: string) => {
         try {
-            this.uiState.setIsLoading(true);
-            // Interacts with the borrow media method in the contract
-            const tx: ContractTransaction = await this.appService.buyFoodAsync(
-                food._id,
-                price
-            );
-            await tx.wait();
-            this.uiState.setIsLoading(false);
-            this.uiState.setSuccess('Successfully bought ' + food.foodName);
+            console.log(this.currentUser.walletAddress)
+            const tokenId = ( await this.appService.createCertificateNFT(
+                // this.currentUser.walletAddress,  // TODO: i think currently the wallet address field is not wallet address?
+                "0x06954880866b10a73689197A72165aC585ec6E9E",
+                ipfsHash
+            ));
+            console.log(typeof tokenId);
+            return tokenId;
         } catch (err) {
-            const errorMsg = this.appService.signer
-                ? `Failed to buy food, please try again!`
-                : 'Please connect to your MetaMask account to buy food!';
-            console.log(err);
-            this.uiState.setIsLoading(false);
-            this.uiState.setError(errorMsg);
+            console.log(err.message)
         }
-    };
+    }
+
+    retrieveCertificateNFT = async(tokenId: number) => {
+        try {
+            const response = await this.appService.retrieveCertificateNFT(
+                tokenId
+            );
+            console.log(response);
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    // Example of calling appService buyFoodAsync method
+    // buyFood = async (food: any, price: number) => {
+    //     try {
+    //         this.uiState.setIsLoading(true);
+    //         // Interacts with the borrow media method in the contract
+    //         const tx: ContractTransaction = await this.appService.buyFoodAsync(
+    //             food._id,
+    //             price
+    //         );
+    //         await tx.wait();
+    //         this.uiState.setIsLoading(false);
+    //         this.uiState.setSuccess('Successfully bought ' + food.foodName);
+    //     } catch (err) {
+    //         const errorMsg = this.appService.signer
+    //             ? `Failed to buy food, please try again!`
+    //             : 'Please connect to your MetaMask account to buy food!';
+    //         console.log(err);
+    //         this.uiState.setIsLoading(false);
+    //         this.uiState.setError(errorMsg);
+    //     }
+    // };
 }
 
 export default AppStore;
