@@ -87,7 +87,7 @@ contract Organisation {
         // map certificate to employee
         employeesCertificates[email].push(certificateToken);
         // transfer cert to awardee if awardee has account
-        if (awardees[email].walletAddress() != address(0)) { // here
+        if (address(awardees[email]) != address(0)) { // here
             certificate.transferOwnership(msg.sender, awardees[email].walletAddress(), tokenID);
             // track using awardee contract
             Awardee awardee = awardees[email];
