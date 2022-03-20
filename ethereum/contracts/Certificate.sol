@@ -7,26 +7,33 @@ import '@openzeppelin/contracts/utils/Counters.sol';
 
 contract Certificate is ERC721URIStorage, ERC721Enumerable {
     using Counters for Counters.Counter;
-    Counters.Counter private tokenIDTracker;
-    string certificateID;
+    Counters.Counter private tokenIdTracker;
+    string certificateId;
+    string description;
+    string organisation;
 
-    // constructor() ERC721('Credibly', 'Credibly') {
-    // }
-    constructor(string memory name, string memory symbol, string memory _certificateID) ERC721(name, symbol) {
-        certificateID = _certificateID;
+
+    constructor(string memory name, string memory _certificateId, string memory _description, string memory _organisation) ERC721(name, 'Credibly') {
+        certificateId = _certificateId;
+        description = _description;
+        organisation = _organisation;
     }
 
-    function create(address admin, string memory certificateUrl) public returns (uint256) {
-        uint256 tokenID = tokenIDTracker.current();
-        tokenIDTracker.increment();
-        _mint(admin, tokenID);
-        _setTokenURI(tokenID, certificateUrl);
-        return tokenID;
+    function create(address admin, string memory ipfs) public returns (uint256) {
+        uint256 tokenId = tokenIdTracker.current();
+        tokenIdTracker.increment();
+        _mint(admin, tokenId);
+        _setTokenURI(tokenId, ipfs);
+        return tokenId;
     }
 
-    function transferOwnership(address admin, address awardee, uint256 tokenID) public { 
-        require( _isApprovedOrOwner(admin, tokenID), 'Caller is not owner of this certificate');
-        _transfer(admin, awardee, tokenID);
+    function transferOwnership(address admin, address awardee, uint256 tokenId) public {
+        require( _isApprovedOrOwner(admin, tokenId), 'Caller is not owner of this certificate');
+        _transfer(admin, awardee, tokenId);
+    }
+
+    function getData(uint256 tokenId) view public returns(string memory, string memory, string memory) {
+        return (tokenURI(tokenId), description, organisation);
     }
 
     // overriding functions

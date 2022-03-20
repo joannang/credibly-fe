@@ -78,7 +78,7 @@ contract System {
     //     string memory certificateID
     // ) public {
     //     Organisation organisation = organisations[uen];
-    //     organisation.addCertificate(name, name, certificateID);
+    //     organisation.addCertificate(name, certificateID);
     // }
 
     // function awardCertificate(
