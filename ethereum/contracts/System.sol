@@ -62,7 +62,7 @@ contract System {
         // return organisation.employeesCertificates();
     }
 
-    // get all employee certs via email
+    // get all employee certs via email // useless function?
 
     function getOrganisation(string memory uen) public returns (Organisation) {
         return organisations[uen];
