@@ -12,6 +12,11 @@ export const HeaderTabs = () => {
             {appStore.currentUser.accountType === AccountType.ORGANISATION && (
                 <div className={styles.headerTabs}>
                     <div>
+                        <Link href={'/createCertificate'} passHref>
+                            Create Certificate
+                        </Link>
+                    </div>
+                    <div>
                         <Link href={'/groups'} passHref>
                             Groups
                         </Link>

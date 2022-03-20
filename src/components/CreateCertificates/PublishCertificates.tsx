@@ -6,10 +6,12 @@ import { AwardeeType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
 import styles from './CreateCredentials.module.css';
 import { create } from 'ipfs-http-client';
+import BaseLayout from '../BaseLayout';
 
-const projectId = "26bbuL0MXuph9BdyJbp4ZefpS34";
-const projectSecret = "2263bf12ad5bbe8ac4a1106387fe5737";
-const auth = 'Basic ' + Buffer.from(projectId + ":" + projectSecret).toString('base64');
+const projectId = '26bbuL0MXuph9BdyJbp4ZefpS34';
+const projectSecret = '2263bf12ad5bbe8ac4a1106387fe5737';
+const auth =
+    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
 
 const client = create({
     host: 'ipfs.infura.io',
@@ -102,7 +104,6 @@ const PublishCertificates: React.FC = () => {
                 console.log(Buffer.concat(chunks).toString());
             }
             // todo: after successful publish, mark those creds as published?
-
         } catch (err) {
             console.log(err.message);
         }
@@ -111,54 +112,56 @@ const PublishCertificates: React.FC = () => {
 
     function decodeBase64Image(dataString) {
         var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
-          response: any = {};
-      
+            response: any = {};
+
         if (matches.length !== 3) {
-          return new Error('Invalid input string');
+            return new Error('Invalid input string');
         }
-      
+
         response.type = matches[1];
         response.data = Buffer.from(matches[2], 'base64');
-      
+
         return response;
-      }
+    }
 
     return (
-        <div>
-            <div className={styles.container}>
-                <PageHeader
-                    title="Create Credentials"
-                    subTitle="Step 2 of 2"
-                    extra={[
-                        <Button
-                            key="1"
-                            disabled={
-                                selectedRowKeys.length == 0 ? true : false
-                            }
-                            onClick={publishCreds}
-                        >
-                            Publish Credentials
-                        </Button>,
-                    ]}
-                >
-                    <Descriptions size="small">
-                        <Descriptions.Item>
-                            Unpublished Credentials
-                        </Descriptions.Item>
-                    </Descriptions>
-                </PageHeader>
-                {awardees && awardees.length !== 0 ? (
-                    <Table
-                        rowSelection={rowSelection}
-                        dataSource={awardees}
-                        columns={columns}
-                    />
-                ) : (
-                    <Empty description="All available credentials have been published" />
-                )}
+        <BaseLayout>
+            <div>
+                <div className={styles.container}>
+                    <PageHeader
+                        title="Create Credentials"
+                        subTitle="Step 2 of 2"
+                        extra={[
+                            <Button
+                                key="1"
+                                disabled={
+                                    selectedRowKeys.length == 0 ? true : false
+                                }
+                                onClick={publishCreds}
+                            >
+                                Publish Credentials
+                            </Button>,
+                        ]}
+                    >
+                        <Descriptions size="small">
+                            <Descriptions.Item>
+                                Unpublished Credentials
+                            </Descriptions.Item>
+                        </Descriptions>
+                    </PageHeader>
+                    {awardees && awardees.length !== 0 ? (
+                        <Table
+                            rowSelection={rowSelection}
+                            dataSource={awardees}
+                            columns={columns}
+                        />
+                    ) : (
+                        <Empty description="All available credentials have been published" />
+                    )}
+                </div>
+                <img src={''} />
             </div>
-            <img src={""}/>
-        </div>
+        </BaseLayout>
     );
 };
 
