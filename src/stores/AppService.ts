@@ -388,7 +388,19 @@ class AppService {
             }
         });
     }
-
+    retrieveAwardee(email: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/awardee`,
+                    _id: email
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
     /**
      * EXAMPLES TO CALL SMART CONTRACT METHODS
      */
@@ -418,6 +430,68 @@ class AppService {
 
     async retrieveCertificateNFT(tokenId: number) {
         return this.certificateContract.connect(this.signer).tokenURI(tokenId);
+    }
+    
+    retrieveCertificateInfo(certificateId: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve({
+                    "awardeeName": "Mark Tan Jun Xuan",
+                    "orgName": "National University of Singapore",
+                    "certificateName": "North Korean Fine Citizen Award",
+                    "dateOfIssue": "22/02/2022",
+                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
+                });
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        })
+    }
+    retrieveProfileDetails(certificateId: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve([{
+                    "awardeeName": "Mark Tan Jun Xuan",
+                    "orgName": "National University of Singapore",
+                    "certificateName": "IS Management Knkowledge Area (Distinction)",
+                    "dateOfIssue": "22/02/2022",
+                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
+                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
+                }, {
+                    "awardeeName": "Mark Tan Jun Xuan",
+                    "orgName": "National University of Singapore",
+                    "certificateName": "ICT Solutioning Knowledge Area (Distinction)",
+                    "dateOfIssue": "22/02/2022",
+                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
+                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
+                }, {
+                    "awardeeName": "Mark Tan Jun Xuan",
+                    "orgName": "National University of Singapore",
+                    "certificateName": "Dean's List",
+                    "dateOfIssue": "22/02/2022",
+                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
+                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
+                }, {
+                    "awardeeName": "Mark Tan Jun Xuan",
+                    "orgName": "National University of Singapore",
+                    "certificateName": "Orbital Apollo 11",
+                    "dateOfIssue": "22/02/2022",
+                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
+                    , "imageUrl": ""
+                }, {
+                    "awardeeName": "Mark Tan Jun Xuan",
+                    "orgName": "National University of Singapore",
+                    "certificateName": "North Korean Fine Citizen Award",
+                    "dateOfIssue": "22/02/2022",
+                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
+                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
+                },
+
+                ]);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        })
     }
 }
 

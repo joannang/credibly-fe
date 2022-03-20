@@ -73,6 +73,20 @@ export type AwardeeGroupType = {
     groupName: string;
 };
 
+export type Awardee = {
+    name: string;
+    email: string;
+}
+
+export type CertificateDetails = {
+    awardeeName: string;
+    orgName: string;
+    dateOfIssue: string;
+    certificateName: string;
+    description: string;
+    imageUrl: string;
+    certificateId: string;
+}
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
@@ -282,6 +296,37 @@ class AppStore {
             // this.uiState.setError(err.error);
         }
     };
+    retrieveAwardee = async (email: string) => {
+        try {
+            const { data } = await this.appService.retrieveAwardee(email);
+
+            return data as Awardee;
+        } catch (err) {
+            if (err) {
+                this.uiState.setError(err.error)
+            }
+        }
+    }
+
+    
+    // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
+
+    retrieveCertificateInfo = async (certificateId: string) => {
+        try {
+            const data = await this.appService.retrieveCertificateInfo(certificateId);
+            return data as CertificateDetails;
+        } catch (err) {
+            this.uiState.setError(err.error)
+        }
+    };
+    retrieveProfileDetails = async (email: string) => {
+        try {
+            const data = await this.appService.retrieveProfileDetails(email);
+            return data as CertificateDetails[];
+        } catch (err) {
+            this.uiState.setError(err.error)
+        }
+    }
 
     setAwardeeGroups = async (organisationId: number) => {
         try {
@@ -321,28 +366,6 @@ class AppStore {
             console.log(err.message);
         }
     }
-
-    // Example of calling appService buyFoodAsync method
-    // buyFood = async (food: any, price: number) => {
-    //     try {
-    //         this.uiState.setIsLoading(true);
-    //         // Interacts with the borrow media method in the contract
-    //         const tx: ContractTransaction = await this.appService.buyFoodAsync(
-    //             food._id,
-    //             price
-    //         );
-    //         await tx.wait();
-    //         this.uiState.setIsLoading(false);
-    //         this.uiState.setSuccess('Successfully bought ' + food.foodName);
-    //     } catch (err) {
-    //         const errorMsg = this.appService.signer
-    //             ? `Failed to buy food, please try again!`
-    //             : 'Please connect to your MetaMask account to buy food!';
-    //         console.log(err);
-    //         this.uiState.setIsLoading(false);
-    //         this.uiState.setError(errorMsg);
-    //     }
-    // };
 }
 
 export default AppStore;
