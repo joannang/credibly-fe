@@ -13,8 +13,10 @@ export const NotFoundPage: React.FC = () => {
                 textAlign: 'center',
             }}
         >
-            Oops, you might be lost!
-            <Image src="https://img.freepik.com/free-vector/website-construction-illustration_86047-169.jpg?w=996" />
+            <Image
+                width={'80vh'}
+                src="https://img.freepik.com/free-vector/website-construction-illustration_86047-169.jpg?w=996"
+            />
             <p />
             {appStore.currentUser.accountType === AccountType.ADMIN ? (
                 <Button type="primary" href="/dashboard">
