@@ -2,6 +2,7 @@ import { Button, Card, Col, Row, Typography } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useStores } from '../../stores/StoreProvider';
+import BaseLayout from '../BaseLayout';
 import styles from './ManageWorkExperiences.module.css';
 
 const ManageWorkExperiences: React.FC = () => {
@@ -40,12 +41,9 @@ const ManageWorkExperiences: React.FC = () => {
 
     const WorkCard = ({ experience }) => (
         <Card hoverable key={experience.id + Math.random()}>
-            <Card.Meta
-                className={styles.meta}
-                title={experience.name}
-            />
+            <Card.Meta className={styles.meta} title={experience.name} />
             {experience.company + ' • ' + experience.position}
-            <br/>
+            <br />
             <Text type="secondary">
                 {experience.startDate} - {experience.endDate}
             </Text>
@@ -68,14 +66,16 @@ const ManageWorkExperiences: React.FC = () => {
     };
 
     return (
-        <div>
-            <div className={styles.buttonContainer}>
-                <Button>Add new work experience</Button>
+        <BaseLayout>
+            <div style={{ padding: '0 16px 16px 16px' }}>
+                <div className={styles.buttonContainer}>
+                    <Button>Add new work experience</Button>
+                </div>
+                <div className={styles.cardsContainer}>
+                    <CardList />
+                </div>
             </div>
-            <div className={styles.cardsContainer}>
-                <CardList />
-            </div>
-        </div>
+        </BaseLayout>
     );
 };
 
