@@ -63,11 +63,11 @@ contract Organisation {
 
     function addCertificate(
         string memory name,
-        string memory symbol, // hardcode
+        // string memory symbol, // hardcode
         string memory certificateID
     ) public {
         // require admin
-        Certificate certificate = new Certificate(name, symbol, certificateID);
+        Certificate certificate = new Certificate(name, "CREDIBLY", certificateID);
         certificates[certificateID] = certificate;
     }
 
@@ -122,8 +122,10 @@ contract Organisation {
         // return ownedCertificates;
     }
 
-    // function getEmployeeCertificates(
-    //     string memory email
-    // ) public returns (address[], uint256[]){}
+    function getEmployeeCertificates(
+        string memory email
+    ) public returns (CertificateToken[] memory){
+        return employeesCertificates[email];
+    }
 
 }

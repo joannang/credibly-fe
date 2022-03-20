@@ -49,7 +49,7 @@ contract System {
         // create new awardee obj
         awardees[email] = new Awardee(email, awardee);
         string[] memory employeeOrganisations = employeesOrganisations[email];
-        // find all organisations awardee belong to 
+        // find all organisations awardee belong to
         uint256 numEmployeeOrganisations = employeesOrganisations[email].length;
         for (uint256 i = 0; i < numEmployeeOrganisations; i++) {
             string memory uen = employeeOrganisations[i];
@@ -61,6 +61,41 @@ contract System {
         }
         // return organisation.employeesCertificates();
     }
+
+    // get all employee certs via email
+
+    function getOrganisation(string memory uen) public returns (Organisation) {
+        return organisations[uen];
+    }
+
+    function getAwardee(string memory email) public returns (Awardee) {
+        return awardees[email];
+    }
+
+    // function newCertificate(
+    //     string memory uen,
+    //     string memory name,
+    //     string memory certificateID
+    // ) public {
+    //     Organisation organisation = organisations[uen];
+    //     organisation.addCertificate(name, name, certificateID);
+    // }
+
+    // function awardCertificate(
+    //     string memory uen,
+    //     string memory email,
+    //     string memory certificateID,
+    //     string memory url
+    // ) public {
+    //     Organisation organisation = organisations[uen];
+    //     organisation.awardCertificate(email, certificateID, url);
+    // }
+
+    // function getCertificate(
+    //     string memory email
+    // )
+
+    // test contract using system.sol only
 
 
 }
