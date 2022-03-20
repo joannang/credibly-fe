@@ -15,6 +15,7 @@ export const NotFoundPage: React.FC = () => {
         >
             <Image
                 width={'80vh'}
+                preview={false}
                 src="https://img.freepik.com/free-vector/website-construction-illustration_86047-169.jpg?w=996"
             />
             <p />
