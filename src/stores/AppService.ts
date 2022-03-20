@@ -306,6 +306,89 @@ class AppService {
         });
     }
 
+    getAwardeeGroupAsync(
+        organisationId: number,
+        groupName: string,
+        awardeeIds?: number[]
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/certificateTemplate/create`,
+                    data: {
+                        groupName: groupName,
+                        awardeeIds: awardeeIds,
+                        organisationId: organisationId,
+                    },
+                    formData: true,
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    createAwardeeGroupAsync(
+        organisationId: number,
+        groupName: string,
+        certificateTemplateId: number,
+        accessToken: string
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/awardeeGroup/create`,
+                    data: {
+                        organisationId: organisationId,
+                        groupName: groupName,
+                        certificateTemplateId: certificateTemplateId,
+                    },
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getAwardeeGroupsAsync(organisationId: number, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/awardeeGroup/organisation/${organisationId}`,
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    removeAwardeeGroupAsync(
+        organisationId: number,
+        groupIds: number[],
+        accessToken: string
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/awardeeGroup/removeGroups`,
+                    data: {
+                        groupIds: groupIds,
+                        organisationId: organisationId,
+                    },
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
     /**
      * EXAMPLES TO CALL SMART CONTRACT METHODS
      */

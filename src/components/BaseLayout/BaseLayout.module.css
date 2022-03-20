@@ -1,0 +1,46 @@
+.ant-layout-body {
+    min-height: 100vh;
+}
+
+.layoutContent {
+    padding: 16px;
+    height: calc(100vh - 64px);
+}
+
+.layoutContentHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.headerContainer {
+    display: grid;
+    grid-template-columns: 4% 45% 50%;
+    height: 100%;
+    align-items: center;
+}
+
+.headerContainer a {
+    color: #ffffff !important;
+}
+
+.headerContainer img {
+    display: flex;
+    width: 36px;
+    height: auto;
+    align-items: center;
+}
+
+.headerTabs {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    justify-items: center;
+    font-weight: 100;
+}
+
+.profileContainer {
+    flex: 1 1 auto;
+    align-self: flex-end;
+    text-align: right;
+}
