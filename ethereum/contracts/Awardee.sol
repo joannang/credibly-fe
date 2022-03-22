@@ -11,22 +11,22 @@ contract Awardee {
     address[] public accessRights;
     bool public privacy;
 
-    struct CertificateToken{
-        Certificate certificate;
-        uint256 tokenID;
-    }
-
     // struct workExperienceToken{
     //     WorkExperiences workExperience;
     //     uint256 tokenID;
     // }
+
+    struct CertificateToken{
+        Certificate certificate;
+        uint256 tokenID;
+    }
 
     constructor(string memory email) {
         email = email;
     }
 
     function setWalletAddress(
-        string memory walletAddress
+        address walletAddress
     ) public {
         // (require) wallet address to be address(0)
         walletAddress = walletAddress;

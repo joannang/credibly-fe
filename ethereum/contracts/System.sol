@@ -29,7 +29,7 @@ contract System {
     // register awardee
     function registerAwardee(
         string memory email
-    ) public returns (address) {
+    ) public returns (Awardee) {
         if (address(awardees[email]) != address(0)) {
             Awardee awardee = new Awardee(email);
             awardees[email] = awardee;
@@ -51,19 +51,19 @@ contract System {
     }
 
     function linkAwardee(
-        string email
+        string memory email
     ) public {
         Awardee awardee = registerAwardee(email);
         awardee.setWalletAddress(msg.sender);
 
         // find all organisations awardee belong to, transfer NFT ownership
-        string[] memory awardeeOrganisations = awardeeOrganisations[email];
-        uint256 numOrganisations = awardeeOrganisations[email].length;
-        for (uint256 i = 0; i < numOrganisations; i++) {
-            string memory uen = awardeeOrganisations[i];
-            Organisation organisation = organisations[uen];
-            organisation.transferAllCertificates(email);
-        }
+        // string[] memory awardeeOrganisations = awardeesOrganisations[email];
+        // uint256 numOrganisations = awardeeOrganisations.length;
+        // for (uint256 i = 0; i < numOrganisations; i++) {
+        //     string memory uen = awardeeOrganisations[i];
+        //     // Organisation organisation = organisations[uen];
+        //     // organisation.transferAllCertificates(email);
+        // }
     }
 
     // get all employee certs via email // in awardee contract

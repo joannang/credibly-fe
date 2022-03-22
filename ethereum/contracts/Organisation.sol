@@ -12,7 +12,7 @@ contract Organisation {
     string public uen;
     address public admin;
 
-    mapping (string => WorkExperience[]) public employeeWorkExperiences;
+    mapping (string => WorkExperience[]) public awardeesWorkExperiences;
     mapping (string => Certificate) public certificateContracts;
     mapping (string => Awardee) public awardees;
 
@@ -50,7 +50,7 @@ contract Organisation {
         workExperience.name = name;
         workExperience.position = position;
         workExperience.startDate = startDate;
-        workExperiences[email] = workExperience;
+        awardeesWorkExperiences[email].push(workExperience);
     }
 
     function addCertificate(
@@ -76,7 +76,6 @@ contract Organisation {
         // create certificate
         uint256 tokenId = certificate.create(awardeeContractAddress, url);
         awardee.addCertificate(awardeeContractAddress, tokenId);
-        }
     }
 
     // function transferAllCertificates(
