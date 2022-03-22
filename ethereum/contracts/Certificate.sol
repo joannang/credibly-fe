@@ -5,7 +5,7 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 
-contract Certificate is ERC721URIStorage, ERC721Enumerable {
+contract Token is ERC721URIStorage, ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private tokenIdTracker;
     string certificateId;
@@ -27,10 +27,10 @@ contract Certificate is ERC721URIStorage, ERC721Enumerable {
         return tokenId;
     }
 
-    function transferOwnership(address admin, address awardee, uint256 tokenId) public {
-        require( _isApprovedOrOwner(admin, tokenId), 'Caller is not owner of this certificate');
-        _transfer(admin, awardee, tokenId);
-    }
+    // function transferOwnership(address admin, address awardee, uint256 tokenId) public {
+    //     require( _isApprovedOrOwner(admin, tokenId), 'Caller is not owner of this certificate');
+    //     _transfer(admin, awardee, tokenId);
+    // }
 
     function getData(uint256 tokenId) view public returns(string memory, string memory, string memory) {
         return (tokenURI(tokenId), description, organisation);

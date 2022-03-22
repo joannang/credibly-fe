@@ -8,7 +8,7 @@ contract System {
     // uen => Organisation Obj
     mapping (string => Organisation) public organisations;
     // email => uen[] (list of organisations worked at)
-    mapping (string => string[]) public employeesOrganisations;
+    mapping (string => string[]) public awardeesOrganisations;
     // email => Awardee Obj
     mapping (string => Awardee) public awardees;
 
@@ -26,43 +26,47 @@ contract System {
         organisations[uen] = organisation;
     }
 
-    // register employee to organisation
-    function registerEmployee(
-        string memory uen,
-        // string memory name,
-        string memory email
-        // string memory position,
-        // uint256 startDate
-    ) public {
-        Organisation organisation = organisations[uen];
-        // organisation.addEmployee(email, name, position, startDate);
-        employeesOrganisations[email].push(uen);
-    }
-
     // register awardee
-    // transfer all exisitng nfts to awardee
-    // register awardee to organisation
     function registerAwardee(
-        string memory email,
-        address awardee
-    ) public {
-        // create new awardee obj
-        awardees[email] = new Awardee(email, awardee);
-        string[] memory employeeOrganisations = employeesOrganisations[email];
-        // find all organisations awardee belong to
-        uint256 numEmployeeOrganisations = employeesOrganisations[email].length;
-        for (uint256 i = 0; i < numEmployeeOrganisations; i++) {
-            string memory uen = employeeOrganisations[i];
-            Organisation organisation = organisations[uen];
-            // add awardees to organisation
-            organisation.addAwardee(email, awardee);
-            // transfer all certs
-            organisation.transferAllCertificates(email, awardee);
+        string memory email
+    ) public returns (address) {
+        if (address(awardees[email]) != address(0)) {
+            Awardee awardee = new Awardee(email);
+            awardees[email] = awardee;
         }
-        // return organisation.employeesCertificates();
+        return awardees[email];
     }
 
-    // get all employee certs via email // useless function?
+    // add awardee to organisation
+    function addAwardeeToOrganisation(
+        string memory uen,
+        string memory email
+    ) public {
+        // (require) organisation to be created alr
+        // create awardee if awardee have not been created
+        Awardee awardee = registerAwardee(email);
+        Organisation organisation = organisations[uen];
+        organisation.addAwardee(email, address(awardee));
+        awardeesOrganisations[email].push(uen);
+    }
+
+    function linkAwardee(
+        string email
+    ) public {
+        Awardee awardee = registerAwardee(email);
+        awardee.setWalletAddress(msg.sender);
+
+        // find all organisations awardee belong to, transfer NFT ownership
+        string[] memory awardeeOrganisations = awardeeOrganisations[email];
+        uint256 numOrganisations = awardeeOrganisations[email].length;
+        for (uint256 i = 0; i < numOrganisations; i++) {
+            string memory uen = awardeeOrganisations[i];
+            Organisation organisation = organisations[uen];
+            organisation.transferAllCertificates(email);
+        }
+    }
+
+    // get all employee certs via email // in awardee contract
 
     function getOrganisation(string memory uen) public returns (Organisation) {
         return organisations[uen];
@@ -71,31 +75,5 @@ contract System {
     function getAwardee(string memory email) public returns (Awardee) {
         return awardees[email];
     }
-
-    // function newCertificate(
-    //     string memory uen,
-    //     string memory name,
-    //     string memory certificateID
-    // ) public {
-    //     Organisation organisation = organisations[uen];
-    //     organisation.addCertificate(name, certificateID);
-    // }
-
-    // function awardCertificate(
-    //     string memory uen,
-    //     string memory email,
-    //     string memory certificateID,
-    //     string memory url
-    // ) public {
-    //     Organisation organisation = organisations[uen];
-    //     organisation.awardCertificate(email, certificateID, url);
-    // }
-
-    // function getCertificate(
-    //     string memory email
-    // )
-
-    // test contract using system.sol only
-
 
 }

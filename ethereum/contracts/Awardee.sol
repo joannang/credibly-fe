@@ -7,6 +7,7 @@ contract Awardee {
     string public email;
     address public walletAddress;
     CertificateToken[] public certificates;
+    // WorkExperienceToken[] public workExperiences;
     address[] public accessRights;
     bool public privacy;
 
@@ -15,8 +16,19 @@ contract Awardee {
         uint256 tokenID;
     }
 
-    constructor(string memory email, address walletAddress) {
+    // struct workExperienceToken{
+    //     WorkExperiences workExperience;
+    //     uint256 tokenID;
+    // }
+
+    constructor(string memory email) {
         email = email;
+    }
+
+    function setWalletAddress(
+        string memory walletAddress
+    ) public {
+        // (require) wallet address to be address(0)
         walletAddress = walletAddress;
     }
 
@@ -34,10 +46,5 @@ contract Awardee {
     function getCertificates() public view returns (CertificateToken[] memory){
         return certificates;
     }
-
-    // function getWalletAddress() view returns (address) {
-    //     return walletAddress;
-    // }
-
 
 }
