@@ -27,11 +27,6 @@ contract Certificate is ERC721URIStorage, ERC721Enumerable {
         return tokenId;
     }
 
-    // function transferOwnership(address admin, address awardee, uint256 tokenId) public {
-    //     require( _isApprovedOrOwner(admin, tokenId), 'Caller is not owner of this certificate');
-    //     _transfer(admin, awardee, tokenId);
-    // }
-
     function getData(uint256 tokenId) view public returns(string memory, string memory, string memory) {
         return (tokenURI(tokenId), description, organisation);
     }

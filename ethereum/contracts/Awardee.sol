@@ -5,6 +5,7 @@ import './Certificate.sol';
 
 contract Awardee {
     string public email;
+    string public name;
     address public walletAddress;
     CertificateToken[] public certificates;
     // WorkExperienceToken[] public workExperiences;
@@ -21,15 +22,16 @@ contract Awardee {
         uint256 tokenID;
     }
 
-    constructor(string memory email) {
-        email = email;
+    constructor(string memory _email, string memory _name) {
+        email = _email;
+        name = _name;
     }
 
     function setWalletAddress(
-        address walletAddress
+        address _walletAddress
     ) public {
         // (require) wallet address to be address(0)
-        walletAddress = walletAddress;
+        walletAddress = _walletAddress;
     }
 
     function addCertificate(

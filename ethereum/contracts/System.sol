@@ -28,10 +28,11 @@ contract System {
 
     // register awardee
     function registerAwardee(
-        string memory email
+        string memory email,
+        string memory name
     ) public returns (Awardee) {
-        if (address(awardees[email]) != address(0)) {
-            Awardee awardee = new Awardee(email);
+        if (address(awardees[email]) == address(0)) {
+            Awardee awardee = new Awardee(email, name);
             awardees[email] = awardee;
         }
         return awardees[email];
@@ -40,39 +41,32 @@ contract System {
     // add awardee to organisation
     function addAwardeeToOrganisation(
         string memory uen,
-        string memory email
+        string memory email,
+        string memory name
     ) public {
         // (require) organisation to be created alr
         // create awardee if awardee have not been created
-        Awardee awardee = registerAwardee(email);
+        Awardee awardee = registerAwardee(email, name);
         Organisation organisation = organisations[uen];
         organisation.addAwardee(email, address(awardee));
         awardeesOrganisations[email].push(uen);
     }
 
     function linkAwardee(
-        string memory email
+        string memory email,
+        string memory name
     ) public {
-        Awardee awardee = registerAwardee(email);
+        Awardee awardee = registerAwardee(email, name);
         awardee.setWalletAddress(msg.sender);
-
-        // find all organisations awardee belong to, transfer NFT ownership
-        // string[] memory awardeeOrganisations = awardeesOrganisations[email];
-        // uint256 numOrganisations = awardeeOrganisations.length;
-        // for (uint256 i = 0; i < numOrganisations; i++) {
-        //     string memory uen = awardeeOrganisations[i];
-        //     // Organisation organisation = organisations[uen];
-        //     // organisation.transferAllCertificates(email);
-        // }
     }
 
     // get all employee certs via email // in awardee contract
 
-    function getOrganisation(string memory uen) public returns (Organisation) {
+    function getOrganisation(string memory uen) public view returns (Organisation) {
         return organisations[uen];
     }
 
-    function getAwardee(string memory email) public returns (Awardee) {
+    function getAwardee(string memory email) public view returns (Awardee) {
         return awardees[email];
     }
 

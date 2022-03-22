@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-// import "hardhat/console.sol";
+// import 'hardhat/console.sol';
 import './Certificate.sol';
 import './Awardee.sol';
 
@@ -18,7 +18,6 @@ contract Organisation {
 
     struct WorkExperience {
         string email;
-        string name;
         string position;
         uint256 startDate;
         uint256 endDate;
@@ -41,13 +40,11 @@ contract Organisation {
 
     function addWorkExperience(
         string memory email,
-        string memory name,
         string memory position,
         uint256 startDate
     ) public {
         WorkExperience memory workExperience;
         workExperience.email = email;
-        workExperience.name = name;
         workExperience.position = position;
         workExperience.startDate = startDate;
         awardeesWorkExperiences[email].push(workExperience);
@@ -77,22 +74,4 @@ contract Organisation {
         uint256 tokenId = certificate.create(awardeeContractAddress, url);
         awardee.addCertificate(awardeeContractAddress, tokenId);
     }
-
-    // function transferAllCertificates(
-    //     string memory email
-    // ) public {
-    //     Awardee awardee = awardees[email];
-    //     CertificateToken[] memory certificateTokens = employeeCertificates[email];
-    //     uint256 numCerts = certificateTokens.length;
-    //     for (uint256 i = 0; i < numCerts; i++) {
-    //         CertificateToken memory certificateToken = certificateTokens[i];
-    //         Certificate certificate = certificateToken.certificate;
-
-
-    //         uint256 tokenId = certificateToken.tokenId;
-    //         certificate.transferOwnership(msg.sender, awardeeAddress, tokenId);
-    //         // track using awardee contract
-    //         awardee.addCertificate(address(certificate), tokenId);
-    //     }
-    // }
 }
