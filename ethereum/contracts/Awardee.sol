@@ -10,12 +10,24 @@ contract Awardee {
     address public walletAddress;
     CertificateToken[] public certificates;
     WorkExperience[] public workExperiences;
-    address[] public accessRights;
-    bool public privacy;
+    mapping (address => bool) public accessRights;
+    bool public linkedWalletAddress;
 
     struct CertificateToken{
         Certificate certificate;
         uint256 tokenID;
+    }
+
+    modifier privacySettings {
+        if (linkedWalletAddress) {
+            require (msg.sender == walletAddress || accessRights[msg.sender] == true, "Unauthorised user.");
+            _;
+        }
+    }
+
+    modifier onlyOwner {
+        require(msg.sender == walletAddress, "Unauthorised user.");
+        _;
     }
 
     constructor(string memory _email, string memory _name) {
@@ -23,11 +35,20 @@ contract Awardee {
         name = _name;
     }
 
+    function addAccessRights(address user) public onlyOwner {
+        accessRights[user] = true;
+    }
+
+    function removeAccessRights(address user) public onlyOwner {
+        accessRights[user] = false;
+    }
+
     function setWalletAddress(
         address _walletAddress
     ) public {
-        // (require) wallet address to be address(0)
+        require(linkedWalletAddress == false);
         walletAddress = _walletAddress;
+        linkedWalletAddress = true;
     }
 
     function addCertificate(
@@ -41,7 +62,7 @@ contract Awardee {
         certificates.push(certificateToken);
     }
 
-    function getCertificates() public view returns (CertificateToken[] memory){
+    function getCertificates() public view privacySettings returns (CertificateToken[] memory){
         return certificates;
     }
 
@@ -49,6 +70,10 @@ contract Awardee {
         address workExperienceAddress
     ) public {
         workExperiences.push(WorkExperience(workExperienceAddress));
+    }
+
+    function getWorkExperiences() public view privacySettings returns (WorkExperience[] memory){
+        return workExperiences;
     }
 
 }
