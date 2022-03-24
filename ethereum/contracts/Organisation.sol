@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 // import 'hardhat/console.sol';
 import './Certificate.sol';
 import './Awardee.sol';
+import './WorkExperience.sol';
 
 contract Organisation {
 
@@ -15,15 +16,6 @@ contract Organisation {
     mapping (string => WorkExperience[]) public awardeesWorkExperiences;
     mapping (string => Certificate) public certificateContracts;
     mapping (string => Awardee) public awardees;
-
-    struct WorkExperience {
-        string email;
-        string position;
-        uint256 startDate;
-        uint256 endDate;
-        bool ended;
-        // CertificateToken[] ownedCertificates; // UnimplementedFeatureError
-    }
 
     constructor(string memory _name, string memory _uen, address _admin) {
         name = _name;
@@ -41,13 +33,14 @@ contract Organisation {
     function addWorkExperience(
         string memory email,
         string memory position,
+        string memory description,
         uint256 startDate
     ) public {
-        WorkExperience memory workExperience;
-        workExperience.email = email;
-        workExperience.position = position;
-        workExperience.startDate = startDate;
+        // require admin
+        WorkExperience workExperience = new WorkExperience(name, description, position, startDate);
         awardeesWorkExperiences[email].push(workExperience);
+        Awardee awardee = awardees[email];
+        awardee.addWorkExperience(address(workExperience));
     }
 
     function addCertificate(
@@ -69,9 +62,8 @@ contract Organisation {
         // require awardee to exist
         Certificate certificate = certificateContracts[certificateId];
         Awardee awardee = awardees[email];
-        address awardeeContractAddress = address(awardee);
         // create certificate
-        uint256 tokenId = certificate.create(awardeeContractAddress, url);
-        awardee.addCertificate(awardeeContractAddress, tokenId);
+        uint256 tokenId = certificate.create(address(awardee), url);
+        awardee.addCertificate(address(certificate), tokenId);
     }
 }

@@ -2,20 +2,16 @@
 pragma solidity ^0.8.0;
 
 import './Certificate.sol';
+import './WorkExperience.sol';
 
 contract Awardee {
     string public email;
     string public name;
     address public walletAddress;
     CertificateToken[] public certificates;
-    // WorkExperienceToken[] public workExperiences;
+    WorkExperience[] public workExperiences;
     address[] public accessRights;
     bool public privacy;
-
-    // struct workExperienceToken{
-    //     WorkExperiences workExperience;
-    //     uint256 tokenID;
-    // }
 
     struct CertificateToken{
         Certificate certificate;
@@ -47,6 +43,12 @@ contract Awardee {
 
     function getCertificates() public view returns (CertificateToken[] memory){
         return certificates;
+    }
+
+    function addWorkExperience(
+        address workExperienceAddress
+    ) public {
+        workExperiences.push(WorkExperience(workExperienceAddress));
     }
 
 }

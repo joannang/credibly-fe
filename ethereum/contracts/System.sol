@@ -8,7 +8,7 @@ contract System {
     // uen => Organisation Obj
     mapping (string => Organisation) public organisations;
     // email => uen[] (list of organisations worked at)
-    mapping (string => string[]) public awardeesOrganisations;
+    // mapping (string => string[]) public awardeesOrganisations;
     // email => Awardee Obj
     mapping (string => Awardee) public awardees;
 
@@ -49,7 +49,7 @@ contract System {
         Awardee awardee = registerAwardee(email, name);
         Organisation organisation = organisations[uen];
         organisation.addAwardee(email, address(awardee));
-        awardeesOrganisations[email].push(uen);
+        // awardeesOrganisations[email].push(uen);
     }
 
     function linkAwardee(
@@ -62,6 +62,7 @@ contract System {
 
     // get all employee certs via email // in awardee contract
 
+    // may not need these functions
     function getOrganisation(string memory uen) public view returns (Organisation) {
         return organisations[uen];
     }
