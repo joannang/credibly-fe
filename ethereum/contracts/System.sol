@@ -7,14 +7,10 @@ import './Awardee.sol';
 contract System {
     // uen => Organisation Obj
     mapping (string => Organisation) public organisations;
-    // email => uen[] (list of organisations worked at)
-    // mapping (string => string[]) public awardeesOrganisations;
     // email => Awardee Obj
     mapping (string => Awardee) public awardees;
 
-
-    constructor() {
-    }
+    constructor() {}
 
     // register organisation
     function registerOrganisation(
@@ -44,12 +40,10 @@ contract System {
         string memory email,
         string memory name
     ) public {
-        // (require) organisation to be created alr
-        // create awardee if awardee have not been created
+        require(address(organisations[uen]) == address(0), "Organisation already exists in system.");
         Awardee awardee = registerAwardee(email, name);
         Organisation organisation = organisations[uen];
         organisation.addAwardee(email, address(awardee));
-        // awardeesOrganisations[email].push(uen);
     }
 
     function linkAwardee(
@@ -60,9 +54,6 @@ contract System {
         awardee.setWalletAddress(msg.sender);
     }
 
-    // get all employee certs via email // in awardee contract
-
-    // may not need these functions
     function getOrganisation(string memory uen) public view returns (Organisation) {
         return organisations[uen];
     }
