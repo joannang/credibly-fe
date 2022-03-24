@@ -16,8 +16,8 @@
 
 .buttonContainer {
     display: flex;
-    justify-content:left;
-    padding: 15px 0 15px 2.9%;
+    justify-content: left;
+    padding: 0 0 15px 2.9%;
 }
 
 .cover {

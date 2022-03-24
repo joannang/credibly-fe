@@ -6,6 +6,7 @@ import { useState } from 'react';
 import redirect from '../../lib/redirect';
 import { AwardeeType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
+import BaseLayout from '../BaseLayout';
 import styles from './CreateCredentials.module.css';
 
 /**
@@ -133,37 +134,45 @@ const CreateCertificates: React.FC = () => {
     };
 
     return (
-        <div>
-            <div className={styles.container}>
-                <PageHeader
-                    title="Create Credentials"
-                    subTitle="Step 1 of 2"
-                    extra={[
-                        <Button key="1">
-                            Create Credentials via Spreadsheet
-                        </Button>,
-                    ]}
-                />
-                <AwardeeList />
-                <div className={styles.buttonContainer}>
-                    <Button className={styles.button} onClick={addRecipient}>
-                        Add {awardees.length == 0 ? 'A' : 'Another'} Recipient
-                    </Button>
-                    {awardees.length !== 0 && (
-                        <span style={{justifyContent: "flex-end"}}>
-                            <Button onClick={() => setAwardees([])}>Reset</Button>
-                            &nbsp;
-                            <Button
-                                className={styles.create}
-                                onClick={createCerts}
-                            >
-                                Create Credentials
-                            </Button>
-                        </span>
-                    )}
+        <BaseLayout>
+            <div>
+                <div className={styles.container}>
+                    <PageHeader
+                        title="Create Credentials"
+                        subTitle="Step 1 of 2"
+                        extra={[
+                            <Button key="1">
+                                Create Credentials via Spreadsheet
+                            </Button>,
+                        ]}
+                    />
+                    <AwardeeList />
+                    <div className={styles.buttonContainer}>
+                        <Button
+                            className={styles.button}
+                            onClick={addRecipient}
+                        >
+                            Add {awardees.length == 0 ? 'A' : 'Another'}{' '}
+                            Recipient
+                        </Button>
+                        {awardees.length !== 0 && (
+                            <span style={{ justifyContent: 'flex-end' }}>
+                                <Button onClick={() => setAwardees([])}>
+                                    Reset
+                                </Button>
+                                &nbsp;
+                                <Button
+                                    className={styles.create}
+                                    onClick={createCerts}
+                                >
+                                    Create Credentials
+                                </Button>
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </BaseLayout>
     );
 };
 

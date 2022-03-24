@@ -34,7 +34,7 @@
 
 .headerTabs {
     display: grid;
-    grid-template-columns: 33% 33% 33%;
+    grid-template-columns: 25% 25% 25% 25%;
     justify-items: center;
     font-weight: 100;
 }
