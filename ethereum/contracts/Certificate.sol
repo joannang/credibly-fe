@@ -8,6 +8,7 @@ import '@openzeppelin/contracts/utils/Counters.sol';
 contract Certificate is ERC721URIStorage, ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private tokenIdTracker;
+
     string public certificateId;
     string public description;
     string public organisation;

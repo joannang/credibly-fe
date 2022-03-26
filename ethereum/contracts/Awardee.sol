@@ -9,11 +9,10 @@ contract Awardee {
     string public name;
     address public walletAddress;
     CertificateToken[] certificates;
-    Certificate[] certificateContracts;
-    uint256[] certificateTokenIds;
     WorkExperience[] workExperiences;
     mapping (address => bool) public accessRights;
     bool public linkedWalletAddress;
+    bool publicVisibility;
 
     struct CertificateToken{
         Certificate certificate;
@@ -22,7 +21,7 @@ contract Awardee {
 
     modifier privacySettings {
         if (linkedWalletAddress) {
-            require (msg.sender == walletAddress || accessRights[msg.sender] == true, "Unauthorised user.");
+            require (publicVisibility == true || msg.sender == walletAddress || accessRights[msg.sender] == true, "Unauthorised user.");
         }
         _;
     }
@@ -35,6 +34,11 @@ contract Awardee {
     constructor(string memory _email, string memory _name) {
         email = _email;
         name = _name;
+        publicVisibility = true;
+    }
+
+    function setVisibility(bool visible) public onlyOwner {
+        publicVisibility = visible;
     }
 
     function addAccessRights(address user) public onlyOwner {
@@ -64,20 +68,9 @@ contract Awardee {
         certificates.push(certificateToken);
     }
 
-    // function addCertificate(
-    //     address certificateAddress,
-    //     uint256 tokenId
-    // ) public {
-    //     certificateContracts.push(Certificate(certificateAddress));
-    //     certificateTokenIds.push(tokenId);
-    // }
-
     function getCertificates() public view privacySettings returns (CertificateToken[] memory){
         return certificates;
     }
-    // function getCertificates() public view privacySettings returns (Certificate[] memory, uint256[] memory){
-    //     return (certificateContracts, certificateTokenIds);
-    // }
 
     function addWorkExperience(
         address workExperienceAddress

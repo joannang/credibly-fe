@@ -2,13 +2,16 @@
 pragma solidity ^0.8.0;
 
 contract WorkExperience {
+    struct Data {
+        string organisation;
+        string position;
+        string description;
+        uint256 startDate;
+        uint256 endDate;
+        bool end;
+    }
 
-    string public organisation;
-    string public position;
-    string public description;
-    uint256 public startDate;
-    uint256 public endDate;
-    bool public end;
+    Data public data;
 
     constructor(
         string memory _organisation,
@@ -16,29 +19,18 @@ contract WorkExperience {
         string memory _description,
         uint256 _startDate
     ) {
-        organisation = _organisation;
-        position = _position;
-        description = _description;
-        startDate = _startDate;
-    }
-
-    function getWorkExperience() view public returns (
-        string memory,
-        string memory,
-        string memory,
-        uint256,
-        uint256,
-        bool
-    ) {
-        return (organisation, position, description, startDate, endDate, end);
+        data.organisation = _organisation;
+        data.position = _position;
+        data.description = _description;
+        data.startDate = _startDate;
     }
 
     function setEndStatus() public {
-        end = true;
+        data.end = true;
     }
 
     function setEndDate(uint256 _endDate) public {
-        endDate = _endDate;
+        data.endDate = _endDate;
     }
 
 }
