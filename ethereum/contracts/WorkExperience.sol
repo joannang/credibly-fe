@@ -3,12 +3,12 @@ pragma solidity ^0.8.0;
 
 contract WorkExperience {
 
-    string organisation;
-    string position;
-    string description;
-    uint256 startDate;
-    uint256 endDate;
-    bool end;
+    string public organisation;
+    string public position;
+    string public description;
+    uint256 public startDate;
+    uint256 public endDate;
+    bool public end;
 
     constructor(
         string memory _organisation,

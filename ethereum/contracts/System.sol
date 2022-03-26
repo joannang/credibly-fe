@@ -18,6 +18,7 @@ contract System {
         string memory uen,
         address admin
     ) public {
+        require(address(organisations[uen]) == address(0), "Organisation already exists in system.");
         Organisation organisation = new Organisation(name, uen, admin);
         organisations[uen] = organisation;
     }
@@ -40,7 +41,7 @@ contract System {
         string memory email,
         string memory name
     ) public {
-        require(address(organisations[uen]) == address(0), "Organisation already exists in system.");
+        require(address(organisations[uen]) != address(0), "Organisation does not exist system, please register organisation first.");
         Awardee awardee = registerAwardee(email, name);
         Organisation organisation = organisations[uen];
         organisation.addAwardee(email, address(awardee));
@@ -54,12 +55,12 @@ contract System {
         awardee.setWalletAddress(msg.sender);
     }
 
-    function getOrganisation(string memory uen) public view returns (Organisation) {
-        return organisations[uen];
-    }
+    // function getOrganisation(string memory uen) public view returns (Organisation) {
+    //     return organisations[uen];
+    // }
 
-    function getAwardee(string memory email) public view returns (Awardee) {
-        return awardees[email];
-    }
+    // function getAwardee(string memory email) public view returns (Awardee) {
+    //     return awardees[email];
+    // }
 
 }

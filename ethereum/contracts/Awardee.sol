@@ -8,9 +8,9 @@ contract Awardee {
     string public email;
     string public name;
     address public walletAddress;
-    CertificateToken[] public certificates;
-    WorkExperience[] public workExperiences;
-    mapping (address => bool) public accessRights;
+    CertificateToken[] certificates;
+    WorkExperience[] workExperiences;
+    mapping (address => bool) accessRights;
     bool public linkedWalletAddress;
 
     struct CertificateToken{
@@ -62,7 +62,7 @@ contract Awardee {
         certificates.push(certificateToken);
     }
 
-    function getCertificates() public view privacySettings returns (CertificateToken[] memory){
+    function getCertificates() public view privacySettings returns (CertificateToken[] memory){ // cannot return structs
         return certificates;
     }
 
@@ -72,7 +72,7 @@ contract Awardee {
         workExperiences.push(WorkExperience(workExperienceAddress));
     }
 
-    function getWorkExperiences() public view privacySettings returns (WorkExperience[] memory){
+    function getWorkExperiences() public view privacySettings returns (WorkExperience[] memory){ // cannot return structs
         return workExperiences;
     }
 
