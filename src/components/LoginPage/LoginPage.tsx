@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
 
     const router = useRouter()
 
-    const [tabIndex, setTabIndex] = React.useState<string>('1');
+    const [tabIndex, setTabIndex] = React.useState<string>(`${AccountType.ORGANISATION}`);
     const [loading, setLoading] = React.useState<boolean>(false);
 
     const [form] = Form.useForm();
@@ -207,28 +207,31 @@ const LoginPage: React.FC = () => {
 
     const onRegisterFinish = async (values: any) => {
         setLoading(true);
-        const isOrganisationRegistration =
-            values.accountType === 'organisation';
+
+        const { name, email, password, uen, walletAddress, accountType, documents } = values;
+
+        const isOrganisationRegistration = accountType === 'organisation';
 
         try {
             const registerRequest = {
-                name: values.name,
-                email: values.email,
-                password: values.password,
-                uen: !!values.uen ? values.uen : null,
-                walletAddress: values.walletAddress,
-                accountType: isOrganisationRegistration ? 1 : 2,
+                name,
+                email,
+                password,
+                uen: !!uen ? uen : null,
+                walletAddress,
+                accountType: isOrganisationRegistration ? AccountType.ORGANISATION : AccountType.AWARDEE,
             };
             const userId = await appStore.register(registerRequest);
 
             if (isOrganisationRegistration) {
                 const uploadRequest = {
                     userId,
-                    documents: values.documents.map(
+                    documents: documents.map(
                         (doc: any) => doc.originFileObj
                     ),
                 };
                 await appStore.registerUpload(uploadRequest);
+                await appStore.registerOrganisation(name, uen, walletAddress);
             }
 
             notification.success({

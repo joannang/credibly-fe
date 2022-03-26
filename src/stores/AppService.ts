@@ -4,12 +4,13 @@ import {
     Web3Provider,
     JsonRpcSigner,
 } from '@ethersproject/providers';
-import { ENDPOINT } from '../settings';
+import { ENDPOINT, SYSTEM_ADDRESS } from '../settings';
 import restGet from '../lib/restGet';
 import restPost from '../lib/restPost';
 import { RegisterAccountType, RegisterUploadType, AwardeeType } from './AppStore';
 import { CERTIFICATE_ADDRESS } from '../settings';
 import Certificate from '../../ethereum/build/contracts/Certificate.json';
+import System from '../../ethereum/build/contracts/System.json';
 
 declare global {
     interface Window {
@@ -22,6 +23,7 @@ interface AppService {
     provider: JsonRpcProvider | Web3Provider; // ethers provider
     signer: JsonRpcSigner;
     certificateContract: Contract; // factory contract instance
+    systemContract: Contract;
     supplierContract: Contract;
 }
 
@@ -53,6 +55,12 @@ class AppService {
             Certificate.abi,
             this.provider
         );
+
+        this.systemContract = new ethers.Contract(
+            SYSTEM_ADDRESS,
+            System.abi,
+            this.provider
+        )
     }
 
     createAwardeesAsync(
@@ -492,6 +500,16 @@ class AppService {
                 reject(err.response.data.error);
             }
         })
+    }
+
+    async registerOrganisation(
+        name: string,
+        uen: string,
+        adminWalletAddress: string
+    ) {
+        return this.systemContract.connect(this.signer).registerOrganisation(name, uen, adminWalletAddress, {
+            gasLimit: 2500000,
+        });
     }
 }
 
