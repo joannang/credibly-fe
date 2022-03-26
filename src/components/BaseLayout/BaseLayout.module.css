@@ -5,6 +5,7 @@
 .layoutContent {
     padding: 16px;
     height: calc(100vh - 64px);
+    overflow-y: scroll;
 }
 
 .layoutContentHeader {
@@ -15,10 +16,9 @@
 }
 
 .headerContainer {
-    display: grid;
-    grid-template-columns: 4% 45% 50%;
-    height: 100%;
+    overflow: hidden;
     align-items: center;
+    height: 64px;
 }
 
 .headerContainer a {
@@ -26,21 +26,36 @@
 }
 
 .headerContainer img {
-    display: flex;
-    width: 36px;
-    height: auto;
-    align-items: center;
+    float: left;
+    width: auto;
+    height: 64px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    padding-right: 50px;
 }
 
 .headerTabs {
     display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-columns: auto auto auto auto;
+    width: auto;
+    margin: 0px;
+    height: 64px;
     justify-items: center;
     font-weight: 100;
 }
 
+.headerTabs div {
+    max-height: 64px;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-right: 8px;
+    text-align: center;
+}
+
 .profileContainer {
-    flex: 1 1 auto;
-    align-self: flex-end;
-    text-align: right;
+    float: right;
+    max-height: 64px;
+    padding-left: 50px;
 }

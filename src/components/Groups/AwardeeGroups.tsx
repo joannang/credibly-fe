@@ -25,10 +25,10 @@ const AwardeeGroups: React.FC = () => {
         {
             title: 'Certificate Template',
             dataIndex: 'image',
-            width: 80,
+            width: '20%',
             render: (image) => (
                 <Image
-                    height="20vh"
+                    height="100px"
                     width="auto"
                     preview={false}
                     src={`data:image/png;base64,${image}`}
@@ -38,7 +38,7 @@ const AwardeeGroups: React.FC = () => {
         {
             title: 'Group Name',
             dataIndex: 'groupName',
-            width: 300,
+            width: '80%',
             render: (text) => <a>{text}</a>,
         },
     ];
@@ -162,14 +162,35 @@ const AwardeeGroups: React.FC = () => {
             <h1>Groups</h1>
             <div className={styles.buttonContainer}>
                 <div>
-                    <Button
-                        type="primary"
-                        disabled={selectedRowKeys.length === 0}
-                        onClick={() => handleRemoveGroups()}
-                        loading={loading}
-                    >
-                        Remove
-                    </Button>
+                    {selectedRowKeys.length == appStore.awardeeGroups.length &&
+                    selectedRowKeys.length != 0 ? (
+                        <Button
+                            type="primary"
+                            disabled={selectedRowKeys.length === 0}
+                            onClick={() => handleRemoveGroups()}
+                            loading={loading}
+                        >
+                            Remove All
+                        </Button>
+                    ) : selectedRowKeys.length > 1 ? (
+                        <Button
+                            type="primary"
+                            disabled={selectedRowKeys.length === 0}
+                            onClick={() => handleRemoveGroups()}
+                            loading={loading}
+                        >
+                            Remove Selected
+                        </Button>
+                    ) : (
+                        <Button
+                            type="primary"
+                            disabled={selectedRowKeys.length === 0}
+                            onClick={() => handleRemoveGroups()}
+                            loading={loading}
+                        >
+                            Remove
+                        </Button>
+                    )}
                 </div>
 
                 <div className={styles.createButton}>
@@ -204,7 +225,6 @@ const AwardeeGroups: React.FC = () => {
                 {appStore.awardeeGroups.length == 0 && (
                     <div style={{ marginBottom: '30px' }}>No groups found!</div>
                 )}
-                {console.log(appStore.awardeeGroups)}
                 {appStore.awardeeGroups.length != 0 && (
                     <Table
                         rowKey="key"
