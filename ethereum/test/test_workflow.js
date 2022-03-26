@@ -60,17 +60,12 @@ contract('System', function(accounts) {
         // get instance of awardee1
         let Awardee1Address = await SystemInstance.awardees(email);
         let Awardee1Instance = await Awardee.at(Awardee1Address);
-        // check if work expereience is added to awardee
-
-
-        
-        // let Awardee1WorkExperiences = await Awardee1Instance.getWorkExperiences();
-
-        // console.log(Awardee1WorkExperiences);
-        // console.log(Awardee1WorkExperiences[0]);
-        // let WorkExperience1Instance = await WorkExperience.at(Awardee1WorkExperiences[0]);
-        // assert.equal(WorkExperience1Instance.position(), position);
-
+        // check if work experience is added to awardee
+        let Awardee1WorkExperiences = await Awardee1Instance.getWorkExperiences();
+        let Awardee1WorkExperience1 = await Awardee1WorkExperiences[0]
+        let WorkExperience1Instance = await WorkExperience.at(Awardee1WorkExperience1);
+        let WorkExperience1Position = await WorkExperience1Instance.position();
+        assert.equal(WorkExperience1Position, position);
     })
 
     it ('Organisation Creates Certificate', async () => {

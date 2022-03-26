@@ -8,24 +8,21 @@ contract Awardee {
     string public email;
     string public name;
     address public walletAddress;
-    // CertificateToken[] certificates;
-    // WorkExperience[] workExperiences;
-    uint256[] certificateTokenIds;
-    address[] certificateAddresses;
-    address[] workExperienceAddresses;
-    mapping (address => bool) accessRights;
+    CertificateToken[] certificates;
+    WorkExperience[] workExperiences;
+    mapping (address => bool) public accessRights;
     bool public linkedWalletAddress;
 
-    // struct CertificateToken{
-    //     Certificate certificate;
-    //     uint256 tokenID;
-    // }
+    struct CertificateToken{
+        Certificate certificate;
+        uint256 tokenID;
+    }
 
     modifier privacySettings {
         if (linkedWalletAddress) {
             require (msg.sender == walletAddress || accessRights[msg.sender] == true, "Unauthorised user.");
-            _;
         }
+        _;
     }
 
     modifier onlyOwner {
@@ -58,29 +55,26 @@ contract Awardee {
         address certificateAddress,
         uint256 tokenID
     ) public {
-        // CertificateToken memory certificateToken = CertificateToken({
-        //     certificate: Certificate(certificateAddress),
-        //     tokenID: tokenID
-        // });
-        certificateAddress.push(certificateAddress);
-        certificateTokenIds.push(tokenID);
+        CertificateToken memory certificateToken = CertificateToken({
+            certificate: Certificate(certificateAddress),
+            tokenID: tokenID
+        });
+        certificates.push(certificateToken);
     }
 
-    // function getCertificates() public view privacySettings returns (CertificateToken[] memory){ // cannot return structs
-    function getCertificates() public view privacySettings returns (address[], uint256[]) {
-        return (certificateAddresses, certificateTokenIds);
+    function getCertificates() public view privacySettings returns (CertificateToken[] memory){
+        return certificates;
     }
 
     function addWorkExperience(
         address workExperienceAddress
     ) public {
-        // workExperiences.push(WorkExperience(workExperienceAddress));
-        workExperiences.push(workExperienceAddress);
+        workExperiences.push(WorkExperience(workExperienceAddress));
     }
 
-    // function getWorkExperiences() public view privacySettings returns (WorkExperience[] memory){ // cannot return structs
-    function getWorkExperiences() public view privacySettings returns (address[]){
-        return workExperienceAddresses;
+    function getWorkExperiences() public view privacySettings returns (WorkExperience[] memory){
+        return workExperiences;
     }
 
 }
+
