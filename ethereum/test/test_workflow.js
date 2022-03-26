@@ -2,11 +2,11 @@ const _deploy_contracts = require("../migrations/2_deploy_contracts");
 const truffleAssert = require('truffle-assertions');
 var assert = require('assert');
 
-
 var System = artifacts.require("../contracts/System.sol");
 var Organisation = artifacts.require("../contracts/Organisation.sol");
 var WorkExperience = artifacts.require("../contracts/WorkExperience.sol");
 var Awardee = artifacts.require("../contracts/Awardee.sol");
+var Certificate = artifacts.require("../contracts/Certificate.sol");
 
 contract('System', function(accounts) {
 
@@ -19,8 +19,9 @@ contract('System', function(accounts) {
     it ('System Creates Organisation', async () => {
         let uen = 'uen1';
         let organisation = 'organisation1';
+        let admin = accounts[1];
         // register organisation
-        await SystemInstance.registerOrganisation(organisation, uen, accounts[1]);
+        await SystemInstance.registerOrganisation(organisation, uen, admin);
         // check if organisation instance is created
         let Organisation1Address = await SystemInstance.organisations(uen);
         let Organisation1Instance = await Organisation.at(Organisation1Address);
@@ -52,11 +53,12 @@ contract('System', function(accounts) {
         let position = 'position1';
         let description = 'description1';
         let startDate = '01012022';
+        let admin = accounts[1];
         // get instance of organisation1
         let Organisation1Address = await SystemInstance.organisations(uen);
         let Organisation1Instance = await Organisation.at(Organisation1Address);
         // add work experience for awardee using admin account
-        await Organisation1Instance.addWorkExperience(email, position, description, startDate, {from: accounts[1]});
+        await Organisation1Instance.addWorkExperience(email, position, description, startDate, {from: admin});
         // get instance of awardee1
         let Awardee1Address = await SystemInstance.awardees(email);
         let Awardee1Instance = await Awardee.at(Awardee1Address);
@@ -68,10 +70,44 @@ contract('System', function(accounts) {
         assert.equal(WorkExperience1Position, position);
     })
 
-    it ('Organisation Creates Certificate', async () => {
-
+    it ('Organisation Creates Certificate Contract', async () => {
+        let uen = 'uen1'
+        let id = 'id1';
+        let name = 'certificate1';
+        let description = 'description1'
+        let admin = accounts[1];
+        // get instance of organisation1
+        let Organisation1Address = await SystemInstance.organisations(uen);
+        let Organisation1Instance = await Organisation.at(Organisation1Address);
+        // organisation creates certificate contract using admin account
+        await Organisation1Instance.addCertificate(name, id, description, {from: admin});
+        // check if certificate is created
+        let certificate1Address = await Organisation1Instance.certificateContracts(id);
+        let certificate1Instance = await Certificate.at(certificate1Address);
+        let certificate1Id = await certificate1Instance.certificateId();
+        assert.equal(certificate1Id, id);
     })
 
-
+    it ('Organisation Awards Certificate to Awardee', async () => {
+        let uen = 'uen1'
+        let id = 'id1';
+        let email = 'email1';
+        let ipfsHash = 'ipfsHash1';
+        let admin = accounts[1];
+        // get instance of organisation1
+        let Organisation1Address = await SystemInstance.organisations(uen);
+        let Organisation1Instance = await Organisation.at(Organisation1Address);
+        // organisation creates certificate NFT using admin account
+        await Organisation1Instance.awardCertificate(email, id, ipfsHash, {from: admin});
+        // get instance of awardee1
+        let Awardee1Address = await SystemInstance.awardees(email);
+        let Awardee1Instance = await Awardee.at(Awardee1Address);
+        // check if certificate is awarded to awardee
+        let Awardee1Certificates = await Awardee1Instance.getCertificates();
+        let Awardee1Certificate1 = await Awardee1Certificates[0];
+        let Certificate1Instance = await Certificate.at(Awardee1Certificate1.certificate);
+        let Certificate1IpfsHash = await Certificate1Instance.tokenURI(Awardee1Certificate1.tokenId)
+        assert.equal(Certificate1IpfsHash, ipfsHash);
+    })
 
 })

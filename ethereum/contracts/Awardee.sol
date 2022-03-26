@@ -9,13 +9,15 @@ contract Awardee {
     string public name;
     address public walletAddress;
     CertificateToken[] certificates;
+    Certificate[] certificateContracts;
+    uint256[] certificateTokenIds;
     WorkExperience[] workExperiences;
     mapping (address => bool) public accessRights;
     bool public linkedWalletAddress;
 
     struct CertificateToken{
         Certificate certificate;
-        uint256 tokenID;
+        uint256 tokenId;
     }
 
     modifier privacySettings {
@@ -51,20 +53,31 @@ contract Awardee {
         linkedWalletAddress = true;
     }
 
-    function addCertificate(
+     function addCertificate(
         address certificateAddress,
-        uint256 tokenID
+        uint256 tokenId
     ) public {
         CertificateToken memory certificateToken = CertificateToken({
             certificate: Certificate(certificateAddress),
-            tokenID: tokenID
+            tokenId: tokenId
         });
         certificates.push(certificateToken);
     }
 
+    // function addCertificate(
+    //     address certificateAddress,
+    //     uint256 tokenId
+    // ) public {
+    //     certificateContracts.push(Certificate(certificateAddress));
+    //     certificateTokenIds.push(tokenId);
+    // }
+
     function getCertificates() public view privacySettings returns (CertificateToken[] memory){
         return certificates;
     }
+    // function getCertificates() public view privacySettings returns (Certificate[] memory, uint256[] memory){
+    //     return (certificateContracts, certificateTokenIds);
+    // }
 
     function addWorkExperience(
         address workExperienceAddress
