@@ -36,7 +36,7 @@
 
 .headerTabs {
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: auto auto auto auto auto;
     width: auto;
     margin: 0px;
     height: 64px;

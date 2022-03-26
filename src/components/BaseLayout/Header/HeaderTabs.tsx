@@ -31,6 +31,11 @@ export const HeaderTabs = () => {
                             Work Experiences
                         </Link>
                     </div>
+                    <div>
+                        {/* <Link href={'/workExperiences'} passHref> */}
+                        Transfer Requests
+                        {/* </Link> */}
+                    </div>
                 </div>
             )}
             {appStore.currentUser.accountType === AccountType.AWARDEE && (
