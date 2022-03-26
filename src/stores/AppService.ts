@@ -7,7 +7,11 @@ import {
 import { ENDPOINT } from '../settings';
 import restGet from '../lib/restGet';
 import restPost from '../lib/restPost';
-import { RegisterAccountType, RegisterUploadType, AwardeeType } from './AppStore';
+import {
+    RegisterAccountType,
+    RegisterUploadType,
+    AwardeeType,
+} from './AppStore';
 import { CERTIFICATE_ADDRESS } from '../settings';
 import Certificate from '../../ethereum/build/contracts/Certificate.json';
 
@@ -106,27 +110,37 @@ class AppService {
         });
     }
 
-    generateCertificatesAsync(certName: string, orgId: number, awardeeNames: string[], accessToken: string): any {
+    generateCertificatesAsync(
+        certName: string,
+        orgId: number,
+        awardeeNames: string[],
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const data = {
                     certificateName: certName,
                     organisationId: orgId,
                     awardeeNames: awardeeNames,
-                }
+                };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/certificateTemplate/generateCertificates`,
                     data: data,
                     credentials: { accessToken },
-                })
+                });
                 resolve(response.data);
             } catch (err) {
                 reject(err.message);
             }
-        })
+        });
     }
 
-    uploadCertificateTemplateAsync(certificateTemplateName: string, image: File, organisationId: number, accessToken: string): any {
+    uploadCertificateTemplateAsync(
+        certificateTemplateName: string,
+        image: File,
+        organisationId: number,
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
@@ -146,11 +160,15 @@ class AppService {
         });
     }
 
-    getCertificateTemplatesAsync(organisationId: number): any {
+    getCertificateTemplatesAsync(
+        organisationId: number,
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/certificateTemplate/organisation/${organisationId}`,
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -159,22 +177,41 @@ class AppService {
         });
     }
 
-    deleteCertificateTemplateAsync(certificateName: string, organisationId: number): any {
+    getCertificateTemplatesByIdAsync(ids: number[], accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/certificateTemplate/templates`,
+                    data: { ids },
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    deleteCertificateTemplateAsync(
+        certificateName: string,
+        organisationId: number
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/certificateTemplate/delete`,
                     data: {
                         certificateName: certificateName,
-                        organisationId: organisationId
+                        organisationId: organisationId,
                     },
                 });
                 resolve(response.data);
             } catch (err) {
                 reject(err.response.data.error);
             }
-        })
-    };
+        });
+    }
+
     getAwardeesFromGroupAsync(groupId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {
@@ -393,7 +430,7 @@ class AppService {
             try {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/awardee`,
-                    _id: email
+                    _id: email,
                 });
                 resolve(response.data);
             } catch (err) {
@@ -419,79 +456,94 @@ class AppService {
     //     });
     // }
 
-    async createCertificateNFT(
-        adminWalletAddress: string,
-        ipfsHash: string,
-    ) {
-        return this.certificateContract.connect(this.signer).create(adminWalletAddress, ipfsHash, {
-            gasLimit: 2500000,
-        });
+    async createCertificateNFT(adminWalletAddress: string, ipfsHash: string) {
+        return this.certificateContract
+            .connect(this.signer)
+            .create(adminWalletAddress, ipfsHash, {
+                gasLimit: 2500000,
+            });
     }
 
     async retrieveCertificateNFT(tokenId: number) {
         return this.certificateContract.connect(this.signer).tokenURI(tokenId);
     }
-    
+
     retrieveCertificateInfo(certificateId: string): any {
         return new Promise(async (resolve, reject) => {
             try {
                 resolve({
-                    "awardeeName": "Mark Tan Jun Xuan",
-                    "orgName": "National University of Singapore",
-                    "certificateName": "North Korean Fine Citizen Award",
-                    "dateOfIssue": "22/02/2022",
-                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
+                    awardeeName: 'Mark Tan Jun Xuan',
+                    orgName: 'National University of Singapore',
+                    certificateName: 'North Korean Fine Citizen Award',
+                    dateOfIssue: '22/02/2022',
+                    description:
+                        "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
                 });
             } catch (err) {
                 reject(err.response.data.error);
             }
-        })
+        });
     }
     retrieveProfileDetails(certificateId: string): any {
         return new Promise(async (resolve, reject) => {
             try {
-                resolve([{
-                    "awardeeName": "Mark Tan Jun Xuan",
-                    "orgName": "National University of Singapore",
-                    "certificateName": "IS Management Knkowledge Area (Distinction)",
-                    "dateOfIssue": "22/02/2022",
-                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
-                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
-                }, {
-                    "awardeeName": "Mark Tan Jun Xuan",
-                    "orgName": "National University of Singapore",
-                    "certificateName": "ICT Solutioning Knowledge Area (Distinction)",
-                    "dateOfIssue": "22/02/2022",
-                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
-                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
-                }, {
-                    "awardeeName": "Mark Tan Jun Xuan",
-                    "orgName": "National University of Singapore",
-                    "certificateName": "Dean's List",
-                    "dateOfIssue": "22/02/2022",
-                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
-                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
-                }, {
-                    "awardeeName": "Mark Tan Jun Xuan",
-                    "orgName": "National University of Singapore",
-                    "certificateName": "Orbital Apollo 11",
-                    "dateOfIssue": "22/02/2022",
-                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
-                    , "imageUrl": ""
-                }, {
-                    "awardeeName": "Mark Tan Jun Xuan",
-                    "orgName": "National University of Singapore",
-                    "certificateName": "North Korean Fine Citizen Award",
-                    "dateOfIssue": "22/02/2022",
-                    "description": "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above."
-                    , "imageUrl": "https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
-                },
-
+                resolve([
+                    {
+                        awardeeName: 'Mark Tan Jun Xuan',
+                        orgName: 'National University of Singapore',
+                        certificateName:
+                            'IS Management Knkowledge Area (Distinction)',
+                        dateOfIssue: '22/02/2022',
+                        description:
+                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
+                        imageUrl:
+                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
+                    },
+                    {
+                        awardeeName: 'Mark Tan Jun Xuan',
+                        orgName: 'National University of Singapore',
+                        certificateName:
+                            'ICT Solutioning Knowledge Area (Distinction)',
+                        dateOfIssue: '22/02/2022',
+                        description:
+                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
+                        imageUrl:
+                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
+                    },
+                    {
+                        awardeeName: 'Mark Tan Jun Xuan',
+                        orgName: 'National University of Singapore',
+                        certificateName: "Dean's List",
+                        dateOfIssue: '22/02/2022',
+                        description:
+                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
+                        imageUrl:
+                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
+                    },
+                    {
+                        awardeeName: 'Mark Tan Jun Xuan',
+                        orgName: 'National University of Singapore',
+                        certificateName: 'Orbital Apollo 11',
+                        dateOfIssue: '22/02/2022',
+                        description:
+                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
+                        imageUrl: '',
+                    },
+                    {
+                        awardeeName: 'Mark Tan Jun Xuan',
+                        orgName: 'National University of Singapore',
+                        certificateName: 'North Korean Fine Citizen Award',
+                        dateOfIssue: '22/02/2022',
+                        description:
+                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
+                        imageUrl:
+                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
+                    },
                 ]);
             } catch (err) {
                 reject(err.response.data.error);
             }
-        })
+        });
     }
 }
 
