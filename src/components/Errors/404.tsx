@@ -19,11 +19,11 @@ export const NotFoundPage: React.FC = () => {
                 src="https://img.freepik.com/free-vector/website-construction-illustration_86047-169.jpg?w=996"
             />
             <p />
-            {appStore.currentUser.accountType === AccountType.ADMIN ? (
+            {appStore.currentUser?.accountType === AccountType.ADMIN ? (
                 <Button type="primary" href="/dashboard">
                     Go Home
                 </Button>
-            ) : appStore.currentUser.accountType ===
+            ) : appStore.currentUser?.accountType ===
               AccountType.ORGANISATION ? (
                 <Button type="primary" href="/groups">
                     Go Home

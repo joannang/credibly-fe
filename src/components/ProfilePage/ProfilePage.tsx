@@ -65,113 +65,123 @@ const ProfilePage: React.FC<ProfileProps> = (props: ProfileProps) => {
             'https://image.freepik.com/free-vector/certificate-template-vertical_1284-4551.jpg';
     };
 
-    return !loading && awardee ? (
+    return (
         <BaseLayout>
-            <Col>
-                <Row style={{ margin: '5% 8% 0' }}>
-                    <Avatar
-                        alt="1234"
-                        style={{
-                            backgroundColor: randomHSL(),
-                            color: '#193D61',
-                            cursor: 'pointer',
-                        }}
-                        shape="circle"
-                        size={50}
-                    >
-                        {awardee?.name
-                            .split(' ')
-                            .slice(0, 2)
-                            .map((n) => n[0])
-                            .join('')}
-                    </Avatar>
-                    <Col style={{ margin: '0px 0px 0px 10px', padding: '0px' }}>
-                        <p
+            {!loading && awardee ?
+                <Col>
+                    <Row style={{ margin: '5% 8% 0' }}>
+                        <Avatar
+                            alt="1234"
                             style={{
-                                fontSize: '200%',
-                                margin: '0',
+                                backgroundColor: randomHSL(),
+                                color: '#193D61',
+                                cursor: 'pointer',
                             }}
+                            shape="circle"
+                            size={50}
                         >
-                            {awardee?.name}
-                        </p>
-                        <p
-                            style={{
-                                fontSize: '110%',
-                                fontWeight: 400,
-                                color: '#737373',
-                            }}
-                        >
-                            {`${certificates.length} Credentials`}
-                        </p>
-                    </Col>
-                </Row>
-                <Divider style={{ backgroundColor: '#ececec' }}></Divider>
-                <List
-                    style={{ margin: '0 8% 0 8%' }}
-                    grid={{ gutter: 16, column: 4 }}
-                    dataSource={certificates}
-                    renderItem={(item) => (
-                        <List.Item>
-                            <Card
-                                onClick={() =>
-                                    router.push(
-                                        `/certificate/${item.certificateId}`
-                                    )
-                                }
-                                className={styles.box}
-                                hoverable
-                                cover={
-                                    <img
-                                        onError={handleImageError}
-                                        style={{
-                                            backgroundColor: '#f4f5fa',
-                                            height: '80%',
-                                            objectFit: 'contain',
-                                            borderRadius: '10px',
-                                            border: '1px solid #ccc',
-                                            padding: '10%',
-                                        }}
-                                        alt="example"
-                                        src={item.imageUrl}
-                                    />
-                                }
+                            {awardee?.name
+                                .split(' ')
+                                .slice(0, 2)
+                                .map((n) => n[0])
+                                .join('')}
+                        </Avatar>
+                        <Col style={{ margin: '0px 0px 0px 10px', padding: '0px' }}>
+                            <p
+                                style={{
+                                    fontSize: '200%',
+                                    margin: '0',
+                                }}
                             >
-                                <Meta
-                                    className={styles.meta}
-                                    title={
-                                        <Title level={4} ellipsis={true}>
-                                            {item.certificateName}
-                                        </Title>
+                                {awardee?.name}
+                            </p>
+                            <p
+                                style={{
+                                    fontSize: '110%',
+                                    fontWeight: 400,
+                                    color: '#737373',
+                                }}
+                            >
+                                {`${certificates.length} Credentials`}
+                            </p>
+                        </Col>
+                    </Row>
+                    <Divider style={{ backgroundColor: '#ececec' }}></Divider>
+                    <List
+                        style={{ margin: '0 8% 0 8%' }}
+                        grid={{ gutter: 16, column: 4 }}
+                        dataSource={certificates}
+                        renderItem={(item) => (
+                            <List.Item>
+                                <Card
+                                    onClick={() =>
+                                        router.push(
+                                            `/certificate/${item.certificateId}`
+                                        )
                                     }
-                                    description={item.orgName}
-                                />
-                            </Card>
-                        </List.Item>
-                    )}
-                />
-                ,
-            </Col>
+                                    className={styles.box}
+                                    hoverable
+                                    cover={
+                                        <img
+                                            onError={handleImageError}
+                                            style={{
+                                                backgroundColor: '#f4f5fa',
+                                                height: '80%',
+                                                objectFit: 'contain',
+                                                borderRadius: '10px',
+                                                border: '1px solid #ccc',
+                                                padding: '10%',
+                                            }}
+                                            alt="example"
+                                            src={item.imageUrl}
+                                        />
+                                    }
+                                >
+                                    <Meta
+                                        className={styles.meta}
+                                        title={
+                                            <Title level={4} ellipsis={true}>
+                                                {item.certificateName}
+                                            </Title>
+                                        }
+                                        description={item.orgName}
+                                    />
+                                </Card>
+                            </List.Item>
+                        )}
+                    />
+                    ,
+                </Col>
+                : !loading ? (
+                    <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                    >
+                        <Col>
+                            <div style={{textAlign:'center', fontSize: "150%", fontWeight: "700"}}>
+                                Whoops! Looking at the wrong place?
+                            </div>
+                            <Image
+                                width={'80vh'}
+                                preview={false}
+                                src="/images/not-found.png"
+                            />
+                        </Col>
+
+                    </div>
+
+                ) : (
+                    <Spin
+                        size="large"
+                        style={{
+                            position: 'fixed' /* or absolute */,
+                            top: '50%',
+                            left: '50%',
+                        }}
+                        indicator={antIcon}
+                    />
+                )}
         </BaseLayout>
-    ) : !loading ? (
-        <div
-            style={{
-                padding: '64px 16px 16px 64px',
-                textAlign: 'center',
-            }}
-        >
-            Email not found!
-        </div>
-    ) : (
-        <Spin
-            size="large"
-            style={{
-                position: 'fixed' /* or absolute */,
-                top: '50%',
-                left: '50%',
-            }}
-            indicator={antIcon}
-        />
-    );
+    )
 };
 
 export default observer(ProfilePage);

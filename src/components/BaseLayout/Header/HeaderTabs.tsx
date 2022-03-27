@@ -9,7 +9,7 @@ export const HeaderTabs = () => {
 
     return (
         <>
-            {appStore.currentUser.accountType === AccountType.ORGANISATION && (
+            {appStore?.currentUser?.accountType === AccountType.ORGANISATION && (
                 <div className={styles.headerTabs}>
                     <div>
                         <Link href={'/groups'} passHref>
@@ -38,7 +38,7 @@ export const HeaderTabs = () => {
                     </div>
                 </div>
             )}
-            {appStore.currentUser.accountType === AccountType.AWARDEE && (
+            {appStore?.currentUser?.accountType === AccountType.AWARDEE && (
                 <div className={styles.headerTabs}>
                     <div>
                         <Link href={'/privacySettings'} passHref>
@@ -55,7 +55,7 @@ export const HeaderTabs = () => {
                     </div>
                 </div>
             )}
-            {appStore.currentUser.accountType === AccountType.ADMIN && (
+            {appStore?.currentUser?.accountType === AccountType.ADMIN && (
                 <div className={styles.headerTabs}>
                     <div>
                         <Link href={'/dashboard'} passHref>

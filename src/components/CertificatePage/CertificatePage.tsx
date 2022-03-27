@@ -8,6 +8,7 @@ import { CertificateDetails } from '../../stores/AppStore';
 import { CheckCircleFilled, CheckCircleOutlined, FilePdfOutlined, FilePdfTwoTone, LoadingOutlined } from '@ant-design/icons';
 import { redirect } from 'next/dist/server/api-utils';
 import { randomHSL } from '../../helpers/helper';
+import BaseLayout from '../BaseLayout';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -29,8 +30,9 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
         setLoading(false);
     }, []);
 
-    return (
+    return (<BaseLayout>{
         !loading && certificate ?
+
             <div>
                 <div className={styles.center} style={{
                     backgroundColor: '#f4f5fa',
@@ -67,7 +69,7 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                                         shape="circle"
                                         size={50}
                                     >
-                                        {certificate.awardeeName.split(" ").slice(0,2).map((n)=>n[0]).join("")}
+                                        {certificate.awardeeName.split(" ").slice(0, 2).map((n) => n[0]).join("")}
                                     </Avatar>
                                     {certificate.awardeeName.toUpperCase()}
                                 </Space>
@@ -106,9 +108,9 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                     <Col span={6}>
                         <Row>
                             <Button ghost style={{
-                                borderColor:'#737373',
-                                color:'#737373',
-                                }} type="primary" icon={<FilePdfOutlined />} size={"large"}>
+                                borderColor: '#737373',
+                                color: '#737373',
+                            }} type="primary" icon={<FilePdfOutlined />} size={"large"}>
                                 Download
                             </Button>
                         </Row>
@@ -129,7 +131,8 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                     position: "fixed", /* or absolute */
                     top: "50%",
                     left: '50%'
-                }} indicator={antIcon} />
+                }} indicator={antIcon} />}
+    </BaseLayout>
     )
 };
 

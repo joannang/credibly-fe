@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { Avatar, Layout } from 'antd';
+import { Avatar, Button, Layout } from 'antd';
 import { useStores } from '../../../stores/StoreProvider';
 import styles from '../BaseLayout.module.css';
 import { HeaderTabs } from './HeaderTabs';
 import { observer } from 'mobx-react';
+import Link from 'next/link';
 
 type HeaderProps = {};
 
-const Header: React.FC<HeaderProps> = ({}) => {
+const Header: React.FC<HeaderProps> = ({ }) => {
     const { appStore } = useStores();
 
     return (
@@ -17,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
                     <img src="/images/c-logo-1.png" alt="Credibly" />
                 </div>
                 <div className={styles.profileContainer}>
-                    <Avatar
+                    {appStore.currentUser ? <Avatar
                         alt="Profile Image"
                         style={{
                             backgroundColor: 'white',
@@ -30,7 +31,9 @@ const Header: React.FC<HeaderProps> = ({}) => {
                     >
                         {appStore.currentUser?.name?.charAt(0).toUpperCase() ||
                             'U'}
-                    </Avatar>
+                    </Avatar> 
+                    : 
+                    <Link href={"/login"}><Button ghost={true} >Login</Button></Link>}
                 </div>
                 <HeaderTabs />
             </div>
