@@ -13,9 +13,9 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [transferTo, setTransferTo] = React.useState<string>('');
     const [confirmEmail, setConfirmEmail] = React.useState<string>('');
+    // const [fileList, setFileList] = React.useState<any>([]);
 
     const organisationId = 2;
-
     const fileUpload = (e: any) => {
         if (Array.isArray(e)) {
             return e;
@@ -44,10 +44,10 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
                 };
 
                 await appStore.transferRequestUpload(uploadRequest);
-
                 setTransferTo('');
                 setConfirmEmail('');
                 message.success('Success!');
+                return {};
             } catch (err) {
                 // uiState.setError(err.error);
                 console.log(err);
@@ -56,6 +56,7 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
                 }
             } finally {
                 setLoading(false);
+                return {};
             }
         } else {
             message.error('Emails entered do not match!');
