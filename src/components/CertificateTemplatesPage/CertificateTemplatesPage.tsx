@@ -57,7 +57,8 @@ const CertificateTemplatesPage: React.FC = () => {
             }
         } finally {
             // TOFIX
-            setCertificateTemplates(); // There is some lag during deletion. Not sure if that is why this is not working here, unlike in onFinish
+            await new Promise(r => setTimeout(r, 500)); // Hack to give delete operation time to process first, before retreiving again
+            setCertificateTemplates();
         }
     };
 
