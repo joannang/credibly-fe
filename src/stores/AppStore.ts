@@ -256,7 +256,7 @@ class AppStore {
     // @action
     setCertificateTemplates = async (organisationId: number) => {
         try {
-            const { data } = await this.appService.getCertificateTemplatesAsync(organisationId);
+            const { data } = await this.appService.getCertificateTemplatesAsync(organisationId, this.currentUser.token);
 
             runInAction(() => (this.certificateTemplates = [...data]));
         } catch (err) {
@@ -270,7 +270,7 @@ class AppStore {
 
     deleteCertificateTemplate = async (certificateName: string, organisationId: number) => {
         try {
-            await this.appService.deleteCertificateTemplateAsync(certificateName, organisationId);
+            await this.appService.deleteCertificateTemplateAsync(certificateName, organisationId, this.currentUser.token);
         } catch (err) {
             console.log(err);
         }
@@ -308,7 +308,7 @@ class AppStore {
         }
     }
 
-    
+
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
 
     retrieveCertificateInfo = async (certificateId: string) => {
@@ -341,10 +341,10 @@ class AppStore {
         }
     };
 
-    createCertificateNFT = async(ipfsHash: string) => {
+    createCertificateNFT = async (ipfsHash: string) => {
         try {
             console.log(this.currentUser.walletAddress)
-            const tokenId = ( await this.appService.createCertificateNFT(
+            const tokenId = (await this.appService.createCertificateNFT(
                 // this.currentUser.walletAddress,  // TODO: i think currently the wallet address field is not wallet address?
                 "0x06954880866b10a73689197A72165aC585ec6E9E",
                 ipfsHash
@@ -356,7 +356,7 @@ class AppStore {
         }
     }
 
-    retrieveCertificateNFT = async(tokenId: number) => {
+    retrieveCertificateNFT = async (tokenId: number) => {
         try {
             const response = await this.appService.retrieveCertificateNFT(
                 tokenId

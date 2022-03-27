@@ -146,11 +146,12 @@ class AppService {
         });
     }
 
-    getCertificateTemplatesAsync(organisationId: number): any {
+    getCertificateTemplatesAsync(organisationId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/certificateTemplate/organisation/${organisationId}`,
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -159,7 +160,7 @@ class AppService {
         });
     }
 
-    deleteCertificateTemplateAsync(certificateName: string, organisationId: number): any {
+    deleteCertificateTemplateAsync(certificateName: string, organisationId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
@@ -168,6 +169,7 @@ class AppService {
                         certificateName: certificateName,
                         organisationId: organisationId
                     },
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -431,7 +433,7 @@ class AppService {
     async retrieveCertificateNFT(tokenId: number) {
         return this.certificateContract.connect(this.signer).tokenURI(tokenId);
     }
-    
+
     retrieveCertificateInfo(certificateId: string): any {
         return new Promise(async (resolve, reject) => {
             try {
