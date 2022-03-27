@@ -1,15 +1,7 @@
-import {
-    Button,
-    Form,
-    FormInstance,
-    Image,
-    Input,
-    Modal,
-    Radio,
-    Space,
-} from 'antd';
+import { Button, Form, Image, Input, Modal, Radio, Space } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
+import { useStores } from '../../stores/StoreProvider';
 import styles from './Groups.module.css';
 
 export type CreateGroupModalProps = {
@@ -42,6 +34,7 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     handleCreateForm,
     handleCancel,
 }) => {
+    const { appStore } = useStores();
     return (
         <Modal
             title="Create Awardee Group"
@@ -54,7 +47,12 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                 <Button key="cancel" onClick={handleCancel}>
                     Cancel
                 </Button>,
-                <Button form="createForm" key="submit" htmlType="submit">
+                <Button
+                    form="createForm"
+                    key="submit"
+                    htmlType="submit"
+                    disabled={appStore.certificateTemplates.length == 0}
+                >
                     Create
                 </Button>,
             ]}
@@ -86,61 +84,64 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                         />
                     </div>
                 </Form.Item>
-                <Form.Item
-                    label="Certificate Template"
-                    name="certificateTemplateId"
-                    rules={[
-                        {
-                            required: true,
-                            message:
-                                'Please select a certificate template for this group!',
-                        },
-                    ]}
-                >
-                    <div
-                    // style={{
-                    //     height: '35vh',
-                    //     overflowY: 'scroll',
-                    // }}
+
+                <div>
+                    <Form.Item
+                        label="Certificate Template"
+                        name="certificateTemplateId"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    'Please select a certificate template for this group!',
+                            },
+                        ]}
                     >
-                        <Radio.Group
-                            onChange={(e) => handleTemplateSelected(e)}
-                            value={certificateTemplateId}
-                        >
-                            <Space direction="vertical">
-                                {/* {certificateTemplates.map((i) => (
-                                <Radio value={`${i}`}>
-                                    Option A
-                                </Radio>
-                            ))} */}
-                                <Radio value={1}>
-                                    <Image
-                                        height="20vh"
-                                        width="auto"
-                                        preview={false}
-                                        src="https://previews.123rf.com/images/auroradesignco/auroradesignco2009/auroradesignco200900041/156020129-.jpg"
-                                    />
-                                </Radio>
-                                <Radio value={2}>
-                                    <Image
-                                        height="20vh"
-                                        width="auto"
-                                        preview={false}
-                                        src="https://simplecert.net/wp-content/uploads/2020/08/SimpleCert-Stock-certificate.jpg"
-                                    />
-                                </Radio>
-                                <Radio value={3}>
-                                    <Image
-                                        height="20vh"
-                                        width="auto"
-                                        preview={false}
-                                        src="https://semoscloud.com/wp-content/uploads/2020/03/sales-quota-achievement-employee-of-the-month-template-1024x791.png"
-                                    />
-                                </Radio>
-                            </Space>
-                        </Radio.Group>
-                    </div>
-                </Form.Item>
+                        {appStore.certificateTemplates.length !== 0 ? (
+                            appStore.certificateTemplates.map(
+                                (certificateTemplate) => (
+                                    <Radio.Group
+                                        onChange={(e) =>
+                                            handleTemplateSelected(e)
+                                        }
+                                        value={certificateTemplateId}
+                                    >
+                                        <Space direction="vertical">
+                                            <Radio
+                                                value={`${certificateTemplate.certificateId}`}
+                                            >
+                                                <>
+                                                    <div
+                                                        className={
+                                                            styles.modalCertTemp
+                                                        }
+                                                    >
+                                                        {
+                                                            certificateTemplate.certificateName
+                                                        }
+                                                    </div>
+                                                    <p />
+                                                    <Image
+                                                        height="20vh"
+                                                        width="auto"
+                                                        preview={false}
+                                                        src={`data:image/png;base64,${certificateTemplate.image}`}
+                                                    />
+                                                </>
+                                            </Radio>
+                                        </Space>
+                                    </Radio.Group>
+                                )
+                            )
+                        ) : (
+                            <div>
+                                Please upload an certificate template for your
+                                organisation to create a group!
+                            </div>
+                        )}
+                    </Form.Item>
+                </div>
+
                 {/* implementation for awardee selection here */}
             </Form>
         </Modal>
