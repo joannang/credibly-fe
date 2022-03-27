@@ -9,12 +9,11 @@ export type TransferRequestTabProps = {};
 
 const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
     const { appStore } = useStores();
-    const userId = JSON.parse(sessionStorage.getItem('user')).id;
+    const userId = appStore.currentUser.id;
     const [loading, setLoading] = React.useState<boolean>(false);
     const [transferTo, setTransferTo] = React.useState<string>('');
     const [confirmEmail, setConfirmEmail] = React.useState<string>('');
 
-    // const userId = 3;
     const organisationId = 2;
 
     const fileUpload = (e: any) => {

@@ -11,32 +11,41 @@ const AwardeeGroups: React.FC = () => {
 
     const [loading, setLoading] = React.useState<boolean>(false);
     const [selectedRowKeys, setSelectedRowKeys] = React.useState<number[]>([]);
-    const [isModalVisible, setIsModalVisible] = React.useState(false);
-    const [groupName, setGroupName] = React.useState('');
-    const [certificateTemplateId, setTemplateSelected] = React.useState(1);
+    const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false);
+    const [groupName, setGroupName] = React.useState<string>('');
+    const [certificateTemplateId, setTemplateSelected] =
+        React.useState<number>(1);
+    const [groupDescription, setGroupDescription] = React.useState<string>('');
 
-    const organisationId = 1; // hardcoded value for now
-    // const organisationId = JSON.parse(sessionStorage.getItem('user')).id;
+    const organisationId = appStore.currentUser.id;
 
     const columns = [
         {
             title: 'Certificate Template',
             dataIndex: 'image',
-            width: '20%',
+            width: '25%',
             render: (image) => (
                 <Image
-                    height="100px"
-                    width="auto"
+                    height="auto"
+                    width="100%"
                     preview={false}
                     src={`data:image/png;base64,${image}`}
                 />
             ),
         },
         {
-            title: 'Group Name',
+            title: 'Name',
             dataIndex: 'groupName',
-            width: '80%',
-            render: (text) => <a>{text}</a>,
+            width: '20%',
+            render: (text) => <div>{text}</div>,
+        },
+        {
+            title: 'Description',
+            dataIndex: 'groupDescription',
+            width: '55%',
+            render: (text) => {
+                return <div className={styles.description}>{text}</div>;
+            },
         },
     ];
 
@@ -84,10 +93,15 @@ const AwardeeGroups: React.FC = () => {
         setTemplateSelected(e.target.value);
     };
 
+    const handleGroupDescription = (e: any) => {
+        setGroupDescription(e.target.value);
+    };
+
     const handleCancel = () => {
         setIsModalVisible(false);
         setGroupName('');
         setTemplateSelected(1);
+        setGroupDescription('');
     };
 
     const handleCreateForm = async () => {
@@ -97,11 +111,13 @@ const AwardeeGroups: React.FC = () => {
             await appStore.createAwardeeGroup(
                 organisationId,
                 groupName,
+                groupDescription,
                 certificateTemplateId
             );
 
             setGroupName('');
             setTemplateSelected(1);
+            setGroupDescription('');
 
             message.success('Success!');
         } catch (err) {
@@ -202,9 +218,11 @@ const AwardeeGroups: React.FC = () => {
                         isModalVisible={isModalVisible}
                         loading={loading}
                         groupName={groupName}
+                        groupDescription={groupDescription}
                         handleGroupName={handleGroupName}
                         certificateTemplateId={certificateTemplateId}
                         handleTemplateSelected={handleTemplateSelected}
+                        handleGroupDescription={handleGroupDescription}
                         handleCreateForm={handleCreateForm}
                         handleCancel={handleCancel}
                         setTemplateSelected={setTemplateSelected}

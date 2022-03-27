@@ -370,6 +370,7 @@ class AppService {
     createAwardeeGroupAsync(
         organisationId: number,
         groupName: string,
+        groupDescription: string,
         certificateTemplateId: number,
         accessToken: string
     ): any {
@@ -380,6 +381,7 @@ class AppService {
                     data: {
                         organisationId: organisationId,
                         groupName: groupName,
+                        groupDescription: groupDescription,
                         certificateTemplateId: certificateTemplateId,
                     },
                     credentials: { accessToken },

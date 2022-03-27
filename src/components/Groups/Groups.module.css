@@ -14,3 +14,13 @@
     display: block;
     margin: auto;
 }
+
+.description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+    padding-right: 15px;
+}

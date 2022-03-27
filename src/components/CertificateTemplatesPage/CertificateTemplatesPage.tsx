@@ -12,7 +12,8 @@ const CertificateTemplatesPage: React.FC = () => {
     const { uiState, appStore } = useStores();
     const [loading, setLoading] = React.useState<boolean>(false);
 
-    const organisationId = 1; // Hard coded for now
+    // const organisationId = 1; // Hard coded for now
+    const organisationId = appStore.currentUser.id;
 
     const onFinish = async (values: any) => {
         console.log('Received values of form: ', values);

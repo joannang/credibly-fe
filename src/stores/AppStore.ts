@@ -72,6 +72,7 @@ export type AwardeeGroupType = {
     id: number;
     organisationId: number;
     groupName: string;
+    groupDescription: string;
     certificateTemplateId: number;
 };
 
@@ -243,11 +244,13 @@ class AppStore {
     createAwardeeGroup = async (
         organisationId: number,
         groupName: string,
+        groupDescription: string,
         certificateTemplateId: number
     ) => {
         const { data } = await this.appService.createAwardeeGroupAsync(
             organisationId,
             groupName,
+            groupDescription,
             certificateTemplateId,
             this.currentUser.token
         );
