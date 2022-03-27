@@ -54,6 +54,11 @@ export interface DocumentDto {
     id: number;
     name: string;
 }
+export interface UserDto {
+    name: string;
+    email: string;
+    newEmail: string;
+}
 
 export type ApprovalType = {
     key: number;
@@ -62,6 +67,13 @@ export type ApprovalType = {
     uen: string;
     documents: DocumentDto[];
 };
+
+export type PendingTransferRequests = {
+    key: number;
+    user: UserDto;
+    documents: DocumentDto[];
+};
+
 export type CertificateTemplateType = {
     certificateId: string;
     certificateName: string;
@@ -375,9 +387,26 @@ class AppStore {
         await this.appService.transferRequestUploadAsync(transferRequestUpload);
     };
 
+    getTransferRequestsByOrganisation = async () => {
+        const { data } = await this.appService.getPendingTransferRequests(
+            this.currentUser.id,
+            this.currentUser.token
+        )
+        console.log(data);
+        return data as PendingTransferRequests[];
+    }
+
+    approveTransferRequests = async (transferRequestIds: number[]) => {
+        await this.appService.approveTransferRequests(
+            this.currentUser.id,
+            transferRequestIds,
+            this.currentUser.token
+        );
+    };
+
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
 
-    retrieveCertificateInfo = async (certificateId: string) => {
+    retrieveCertificateInfo = async (certificateId: number) => {
         try {
             const data = await this.appService.retrieveCertificateInfo(
                 certificateId

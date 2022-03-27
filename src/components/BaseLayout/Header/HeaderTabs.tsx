@@ -32,9 +32,9 @@ export const HeaderTabs = () => {
                         </Link>
                     </div>
                     <div>
-                        {/* <Link href={'/workExperiences'} passHref> */}
+                        <Link href={'/transferRequests'} passHref>
                         Transfer Requests
-                        {/* </Link> */}
+                        </Link>
                     </div>
                 </div>
             )}
