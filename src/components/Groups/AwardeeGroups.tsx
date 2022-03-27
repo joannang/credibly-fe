@@ -2,7 +2,6 @@
 import { Button, Image, message, Table } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import { CertificateTemplateType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
 import CreateGroupModal from './CreateGroupModal';
 import styles from './Groups.module.css';
@@ -15,8 +14,6 @@ const AwardeeGroups: React.FC = () => {
     const [isModalVisible, setIsModalVisible] = React.useState(false);
     const [groupName, setGroupName] = React.useState('');
     const [certificateTemplateId, setTemplateSelected] = React.useState(1);
-    let certificateTemplatesByOrg: CertificateTemplateType[] = [];
-    let imageEncodedStrings = [];
 
     const organisationId = 1; // hardcoded value for now
     // const organisationId = JSON.parse(sessionStorage.getItem('user')).id;
@@ -50,30 +47,30 @@ const AwardeeGroups: React.FC = () => {
         },
     };
 
-    const getCertificateTemplatesById = async () => {
-        // const certificateTemplateIdArr = appStore?.awardeeGroups?.map(i=>i.certificateTemplateId) || [];
-        const certificateTemplateIdArr = [];
+    // const getCertificateTemplatesById = async () => {
+    //     // const certificateTemplateIdArr = appStore?.awardeeGroups?.map(i=>i.certificateTemplateId) || [];
+    //     const certificateTemplateIdArr = [];
 
-        for (let i = 0; i < appStore.awardeeGroups.length; i++) {
-            certificateTemplateIdArr.push(
-                appStore?.awardeeGroups[i]?.certificateTemplateId
-            );
-        }
+    //     for (let i = 0; i < appStore.awardeeGroups.length; i++) {
+    //         certificateTemplateIdArr.push(
+    //             appStore?.awardeeGroups[i]?.certificateTemplateId
+    //         );
+    //     }
 
-        appStore
-            .getCertificateTemplatesById(certificateTemplateIdArr)
-            .then(function (data) {
-                certificateTemplatesByOrg = data;
-            })
-            .then(function () {
-                for (let j = 0; j < certificateTemplatesByOrg.length; j++) {
-                    imageEncodedStrings.push(
-                        certificateTemplatesByOrg[j].image
-                    );
-                }
-                console.log('images', imageEncodedStrings);
-            });
-    };
+    //     appStore
+    //         .getCertificateTemplatesById(certificateTemplateIdArr)
+    //         .then(function (data) {
+    //             certificateTemplatesByOrg = data;
+    //         })
+    //         .then(function () {
+    //             for (let j = 0; j < certificateTemplatesByOrg.length; j++) {
+    //                 imageEncodedStrings.push(
+    //                     certificateTemplatesByOrg[j].image
+    //                 );
+    //             }
+    //             console.log('images', imageEncodedStrings);
+    //         });
+    // };
 
     const handleModal = async () => {
         setIsModalVisible(true);
@@ -150,7 +147,7 @@ const AwardeeGroups: React.FC = () => {
         }
         async function loadCertificateTemplates() {
             await resetData();
-            await getCertificateTemplatesById();
+            // await getCertificateTemplatesById();
         }
         resetData();
         loadCertificateTemplates();
