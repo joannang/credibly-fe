@@ -44,7 +44,9 @@ const CreateCertificates: React.FC = () => {
     /**
      * Remove awardee from list
      */
-    const handleDelete = () => {};
+    const handleDelete = (index) => {
+        setAwardees(awardees.filter((a, idx) => idx !== index));
+    };
 
     const addRecipient = () => {
         const newRecipient = {
@@ -52,7 +54,7 @@ const CreateCertificates: React.FC = () => {
             email: null,
             date: null,
         };
-        setAwardees([...awardees, newRecipient]);
+        setAwardees(awardees => [...awardees, newRecipient]);
         console.log(awardees);
     };
 
@@ -181,7 +183,7 @@ const CreateCertificates: React.FC = () => {
                                 <Button
                                     className={styles.delete}
                                     icon={<MinusCircleFilled />}
-                                    onClick={() => handleDelete()}
+                                    onClick={() => handleDelete(index)}
                                 />
                             </Col>
                         </Row>
