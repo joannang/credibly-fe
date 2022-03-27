@@ -61,8 +61,9 @@ export type ApprovalType = {
     email: string;
     uen: string;
     documents: DocumentDto[];
-}
+};
 export type CertificateTemplateType = {
+    certificateId: string;
     certificateName: string;
     image: string;
 };
@@ -71,12 +72,13 @@ export type AwardeeGroupType = {
     id: number;
     organisationId: number;
     groupName: string;
+    certificateTemplateId: number;
 };
 
 export type Awardee = {
     name: string;
     email: string;
-}
+};
 
 export type CertificateDetails = {
     awardeeName: string;
@@ -86,12 +88,12 @@ export type CertificateDetails = {
     description: string;
     imageUrl: string;
     certificateId: string;
-}
+};
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
     currentUser: Partial<UserType> = JSON.parse(sessionStorage.getItem('user'));
-    pendingApprovalList: ApprovalType[] = []
+    pendingApprovalList: ApprovalType[] = [];
     certificateTemplates: CertificateTemplateType[] = [];
     awardeeGroups: AwardeeGroupType[] = [];
 
@@ -158,7 +160,11 @@ class AppStore {
         }
     };
 
-    generateCertificates = async (certName: string, orgId: number, awardeeNames: string[]) => {
+    generateCertificates = async (
+        certName: string,
+        orgId: number,
+        awardeeNames: string[]
+    ) => {
         try {
             const response = await this.appService.generateCertificatesAsync(
                 certName,
@@ -170,7 +176,7 @@ class AppStore {
         } catch (err) {
             this.uiState.setError(err.messsage);
         }
-    }
+    };
 
     // signUp = async (user: UserType) => {
     //     try {
@@ -248,15 +254,27 @@ class AppStore {
         }
     };
 
-    uploadCertificateTemplate = async (certificateTemplateName: string, image: File, organisationId: number) => {
-        const { data } = await this.appService.uploadCertificateTemplateAsync(certificateTemplateName, image, organisationId, this.currentUser.token);
+    uploadCertificateTemplate = async (
+        certificateTemplateName: string,
+        image: File,
+        organisationId: number
+    ) => {
+        const { data } = await this.appService.uploadCertificateTemplateAsync(
+            certificateTemplateName,
+            image,
+            organisationId,
+            this.currentUser.token
+        );
         return data;
-    }
+    };
 
     // @action
     setCertificateTemplates = async (organisationId: number) => {
         try {
-            const { data } = await this.appService.getCertificateTemplatesAsync(organisationId);
+            const { data } = await this.appService.getCertificateTemplatesAsync(
+                organisationId,
+                this.currentUser.token
+            );
 
             runInAction(() => (this.certificateTemplates = [...data]));
         } catch (err) {
@@ -268,13 +286,27 @@ class AppStore {
         return this.certificateTemplates;
     }
 
-    deleteCertificateTemplate = async (certificateName: string, organisationId: number) => {
+    getCertificateTemplatesById = async (ids: number[]) => {
+        const { data } = await this.appService.getCertificateTemplatesByIdAsync(
+            ids,
+            this.currentUser.token
+        );
+        return data;
+    };
+
+    deleteCertificateTemplate = async (
+        certificateName: string,
+        organisationId: number
+    ) => {
         try {
-            await this.appService.deleteCertificateTemplateAsync(certificateName, organisationId);
+            await this.appService.deleteCertificateTemplateAsync(
+                certificateName,
+                organisationId
+            );
         } catch (err) {
             console.log(err);
         }
-    }
+    };
 
     // @action
     setIsAuthenticated = (auth: string) => {
@@ -303,20 +335,21 @@ class AppStore {
             return data as Awardee;
         } catch (err) {
             if (err) {
-                this.uiState.setError(err.error)
+                this.uiState.setError(err.error);
             }
         }
-    }
+    };
 
-    
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
 
     retrieveCertificateInfo = async (certificateId: string) => {
         try {
-            const data = await this.appService.retrieveCertificateInfo(certificateId);
+            const data = await this.appService.retrieveCertificateInfo(
+                certificateId
+            );
             return data as CertificateDetails;
         } catch (err) {
-            this.uiState.setError(err.error)
+            this.uiState.setError(err.error);
         }
     };
     retrieveProfileDetails = async (email: string) => {
@@ -324,9 +357,9 @@ class AppStore {
             const data = await this.appService.retrieveProfileDetails(email);
             return data as CertificateDetails[];
         } catch (err) {
-            this.uiState.setError(err.error)
+            this.uiState.setError(err.error);
         }
-    }
+    };
 
     setAwardeeGroups = async (organisationId: number) => {
         try {
@@ -341,22 +374,22 @@ class AppStore {
         }
     };
 
-    createCertificateNFT = async(ipfsHash: string) => {
+    createCertificateNFT = async (ipfsHash: string) => {
         try {
-            console.log(this.currentUser.walletAddress)
-            const tokenId = ( await this.appService.createCertificateNFT(
+            console.log(this.currentUser.walletAddress);
+            const tokenId = await this.appService.createCertificateNFT(
                 // this.currentUser.walletAddress,  // TODO: i think currently the wallet address field is not wallet address?
-                "0x06954880866b10a73689197A72165aC585ec6E9E",
+                '0x06954880866b10a73689197A72165aC585ec6E9E',
                 ipfsHash
-            ));
+            );
             console.log(typeof tokenId);
             return tokenId;
         } catch (err) {
-            console.log(err.message)
+            console.log(err.message);
         }
-    }
+    };
 
-    retrieveCertificateNFT = async(tokenId: number) => {
+    retrieveCertificateNFT = async (tokenId: number) => {
         try {
             const response = await this.appService.retrieveCertificateNFT(
                 tokenId
@@ -365,7 +398,7 @@ class AppStore {
         } catch (err) {
             console.log(err.message);
         }
-    }
+    };
 }
 
 export default AppStore;

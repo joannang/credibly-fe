@@ -14,11 +14,8 @@ const Header: React.FC<HeaderProps> = ({}) => {
         <Layout.Header>
             <div className={styles.headerContainer}>
                 <div>
-                    <a href={'/dashboard'}>
-                        <img src="/images/c-logo-1.png" alt="Credibly" />
-                    </a>
+                    <img src="/images/c-logo-1.png" alt="Credibly" />
                 </div>
-                <HeaderTabs />
                 <div className={styles.profileContainer}>
                     <Avatar
                         alt="Profile Image"
@@ -35,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
                             'U'}
                     </Avatar>
                 </div>
+                <HeaderTabs />
             </div>
         </Layout.Header>
     );

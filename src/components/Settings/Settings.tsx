@@ -7,6 +7,7 @@ import { useStores } from '../../stores/StoreProvider';
 import BaseLayout from '../BaseLayout';
 import { NotFoundPage } from '../Errors/404';
 import styles from './Settings.module.css';
+import TransferRequest from './TransferRequest';
 
 const SettingsPage: React.FC = () => {
     const { appStore } = useStores();
@@ -70,14 +71,11 @@ const SettingsPage: React.FC = () => {
                     <div>awardee privacy settings component</div>
                 ) : appStore.currentUser.accountType === AccountType.AWARDEE &&
                   transferSelected ? (
-                    <div>transfer request component</div>
+                    <TransferRequest />
                 ) : (
                     <NotFoundPage />
                 )}
             </div>
-            {/* <Layout> */}
-
-            {/* </Layout> */}
         </BaseLayout>
     );
 };

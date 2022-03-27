@@ -1,3 +1,17 @@
 .sider {
     height: calc(100vh - 64px);
 }
+
+.transferRequestContainer {
+    padding: 16px;
+    background-color: #fff;
+}
+
+.transferRequestTag {
+    padding: 8px;
+    width: 100%;
+    height: auto;
+    white-space: pre-wrap;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
