@@ -101,6 +101,7 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                             appStore.certificateTemplates.map(
                                 (certificateTemplate) => (
                                     <Radio.Group
+                                        key={certificateTemplate.certificateId}
                                         onChange={(e) =>
                                             handleTemplateSelected(e)
                                         }

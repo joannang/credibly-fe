@@ -6,13 +6,12 @@ import { useStores } from '../src/stores/StoreProvider';
 const CreateCertsPage: React.FC = () => {
     const { appStore } = useStores();
 
-    // const withCheckLoginProps = {
-    //     appStore,
-    //     routeToLogin: () => redirect('/login'), // route for failed login
-    // };
+    const withCheckLoginProps = {
+        appStore,
+        routeToLogin: () => redirect('/login'), // route for failed login
+    };
 
-    // return <DashboardPage {...withCheckLoginProps} />;
-    return <CreateCertificates/>
+    return <CreateCertificates {...withCheckLoginProps} />;
 };
 
 export default CreateCertsPage;

@@ -25,6 +25,7 @@ export type UserType = {
     password: string;
     walletAddress: string;
     accountType: AccountType;
+    uen?: string;
     token: string;
 };
 
@@ -69,10 +70,11 @@ export type CertificateTemplateType = {
 };
 
 export type AwardeeGroupType = {
-    id: number;
+    key: number;
     organisationId: number;
     groupName: string;
     certificateTemplateId: number;
+    certificateName: string;
 };
 
 export type Awardee = {
@@ -163,13 +165,13 @@ class AppStore {
     generateCertificates = async (
         certName: string,
         orgId: number,
-        awardeeNames: string[]
+        awardees: AwardeeType[]
     ) => {
         try {
             const response = await this.appService.generateCertificatesAsync(
                 certName,
                 orgId,
-                awardeeNames,
+                awardees,
                 this.currentUser.token
             );
             return response.data;
@@ -374,27 +376,86 @@ class AppStore {
         }
     };
 
-    createCertificateNFT = async (ipfsHash: string) => {
+    getAwardeeGroups = () => {
+        return this.awardeeGroups;
+    };
+
+    addAwardeeToOrganisation = async (
+        uen: string,
+        email: string,
+        name: string
+    ) => {
         try {
-            console.log(this.currentUser.walletAddress);
-            const tokenId = await this.appService.createCertificateNFT(
-                // this.currentUser.walletAddress,  // TODO: i think currently the wallet address field is not wallet address?
-                '0x06954880866b10a73689197A72165aC585ec6E9E',
-                ipfsHash
+            const res = await this.appService.addAwardeeToOrganisation(
+                uen,
+                email,
+                name
             );
-            console.log(typeof tokenId);
-            return tokenId;
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    createCertificateContract = async (
+        groupName: string,
+        groupId: number,
+        uen: string
+    ) => {
+        try {
+            const res = await this.appService.createCertificateContract(
+                groupName,
+                groupId,
+                uen
+            );
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    mintCertificateNFT = async (
+        email: string,
+        groupId: number,
+        ipfsHash: string,
+        uen: string
+    ) => {
+        try {
+            const res = await this.appService.mintCertificateNFT(
+                email,
+                groupId,
+                ipfsHash,
+                uen
+            );
+            console.log(res);
+            return res;
         } catch (err) {
             console.log(err.message);
         }
     };
 
-    retrieveCertificateNFT = async (tokenId: number) => {
+    getOrganisation = async (uen: string) => {
         try {
-            const response = await this.appService.retrieveCertificateNFT(
-                tokenId
+            const res = await this.appService.getOrganisation(uen);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
+    registerOrganisation = async (
+        name: string,
+        uen: string,
+        adminWalletAddress: string
+    ) => {
+        try {
+            const res = await this.appService.registerOrganisation(
+                name,
+                uen,
+                adminWalletAddress
             );
-            console.log(response);
+            console.log(res);
         } catch (err) {
             console.log(err.message);
         }

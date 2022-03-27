@@ -1,7 +1,7 @@
 ## Wallet folder
 The wallet folder for this module handles networking switching using the MetaMask provider. The user will be prompted by the MetaMask extension or application to switch networks if they are not on the currently configured one. 
 
-The configured network can be modified in the WalletStore found in the stores folder. Here, the current network is set to 'Dev Private Tinnolab' but these values can be changed according to the application's needs.
+The configured network can be modified in the WalletStore found in the stores folder. Here, the current network is set to 'Rinkeby' but these values can be changed according to the application's needs.
 ```ts
 getEthereumChainParameters = () => {
         return {
@@ -12,7 +12,7 @@ getEthereumChainParameters = () => {
                 symbol: 'ETH', // 2-6 characters long
                 decimals: 18,
             },
-            rpcUrls: ['https://ethereum.app.dev.tinnolab.org'],
+            rpcUrls: ['https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
         };
     };
 ```

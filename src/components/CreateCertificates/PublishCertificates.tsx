@@ -1,4 +1,4 @@
-import { Button, Descriptions, Empty, PageHeader, Table } from 'antd';
+import { Button, Descriptions, Empty, message, PageHeader, Table } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
@@ -7,11 +7,12 @@ import { useStores } from '../../stores/StoreProvider';
 import styles from './CreateCredentials.module.css';
 import { create } from 'ipfs-http-client';
 import BaseLayout from '../BaseLayout';
+import checkAuthenticated from '../../security/checkAuthenticated';
+import { IPFS_PROJECT_ID, IPFS_PROJECT_SECRET } from '../../settings';
 
-const projectId = '26bbuL0MXuph9BdyJbp4ZefpS34';
-const projectSecret = '2263bf12ad5bbe8ac4a1106387fe5737';
 const auth =
-    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    'Basic ' +
+    Buffer.from(IPFS_PROJECT_ID + ':' + IPFS_PROJECT_SECRET).toString('base64');
 
 const client = create({
     host: 'ipfs.infura.io',
@@ -26,17 +27,31 @@ const PublishCertificates: React.FC = () => {
     const { appStore } = useStores();
     const [awardees, setAwardees] = useState<AwardeeType[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [certName, setCertName] = useState('');
+
+    const groupId = parseInt(window.location.search.substring(4));
+    const orgId = JSON.parse(sessionStorage.getItem('user')).id;
+    const uen = JSON.parse(sessionStorage.getItem('user')).uen;
 
     // get awardees in the awardeeGroup to populate table
     useEffect(() => {
         getAwardees();
+        getCertificateName();
     }, []);
 
     const getAwardees = async () => {
-        const groupId = 1; // TODO: implement
-        const awardees = await appStore.getAwardeesFromGroup(groupId);
-
+        // Revised: getting awardees from localStorage so that i can get the issue dates
+        const key = `awardees/${orgId}/${groupId}`;
+        const awardees = JSON.parse(localStorage.getItem(key)).awardees;
         setAwardees(awardees);
+        console.log(awardees);
+    };
+
+    const getCertificateName = async () => {
+        await appStore.setAwardeeGroups(orgId);
+        const groups = await appStore.getAwardeeGroups();
+        const group = groups.filter((x) => x.key == groupId);
+        setCertName(group[0].certificateName);
     };
 
     const columns = [
@@ -52,6 +67,10 @@ const PublishCertificates: React.FC = () => {
             title: 'Email',
             dataIndex: 'email',
         },
+        {
+            title: 'Issue Date',
+            dataIndex: 'date',
+        },
     ];
 
     const onSelectChange = (selectedRowKeys) => {
@@ -65,15 +84,17 @@ const PublishCertificates: React.FC = () => {
 
     // create certificates and put on ipfs
     const publishCreds = async () => {
-        // logic
-        const certName = 'LEAD'; // TODO: change with implementation
-        const orgId = 1; // TODO: change
+        message.loading({
+            content: 'Loading...',
+            key: 'loading',
+            duration: 60,
+        });
 
-        const awardeeNames = [];
+        const chosenAwardees = [];
         for (let i = 0; i < selectedRowKeys.length; i++) {
             awardees.map((awardee) => {
                 if (awardee.key == selectedRowKeys[i]) {
-                    awardeeNames.push(awardee.name);
+                    chosenAwardees.push(awardee);
                 }
             });
         }
@@ -82,7 +103,7 @@ const PublishCertificates: React.FC = () => {
             const response = await appStore.generateCertificates(
                 certName,
                 orgId,
-                awardeeNames
+                chosenAwardees
             );
             console.log(response);
             for (let i = 0; i < response.length; i++) {
@@ -92,10 +113,14 @@ const PublishCertificates: React.FC = () => {
 
                 const { path } = await client.add(Buffer.from(encodedImg));
 
-                const bcResp: any = await appStore.createCertificateNFT(path);
-                console.log(bcResp);
-
-                // const retrieveResp = await appStore.retrieveCertificateNFT(value);
+                const hash = path + '/' + response[i].issueDate;
+                const resp: any = await appStore.mintCertificateNFT(
+                    response[i].awardeeEmail,
+                    groupId,
+                    hash,
+                    uen
+                );
+                console.log(resp);
 
                 const chunks = [];
                 for await (const chunk of client.cat(path)) {
@@ -103,11 +128,14 @@ const PublishCertificates: React.FC = () => {
                 }
                 console.log(Buffer.concat(chunks).toString());
             }
-            // todo: after successful publish, mark those creds as published?
+
+            message.success({
+                content: 'Success!',
+                key: 'loading',
+            });
         } catch (err) {
             console.log(err.message);
         }
-        // success!
     };
 
     function decodeBase64Image(dataString) {
@@ -159,10 +187,9 @@ const PublishCertificates: React.FC = () => {
                         <Empty description="All available credentials have been published" />
                     )}
                 </div>
-                <img src={''} />
             </div>
         </BaseLayout>
     );
 };
 
-export default observer(PublishCertificates);
+export default checkAuthenticated(observer(PublishCertificates));

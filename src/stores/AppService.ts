@@ -4,7 +4,7 @@ import {
     Web3Provider,
     JsonRpcSigner,
 } from '@ethersproject/providers';
-import { ENDPOINT } from '../settings';
+import { ENDPOINT, SYSTEM_ADDRESS } from '../settings';
 import restGet from '../lib/restGet';
 import restPost from '../lib/restPost';
 import {
@@ -14,6 +14,8 @@ import {
 } from './AppStore';
 import { CERTIFICATE_ADDRESS } from '../settings';
 import Certificate from '../../ethereum/build/contracts/Certificate.json';
+import Organisation from '../../ethereum/build/contracts/Organisation.json';
+import System from '../../ethereum/build/contracts/System.json';
 
 declare global {
     interface Window {
@@ -27,6 +29,7 @@ interface AppService {
     signer: JsonRpcSigner;
     certificateContract: Contract; // factory contract instance
     supplierContract: Contract;
+    systemContract: Contract;
 }
 
 /**
@@ -55,6 +58,12 @@ class AppService {
         this.certificateContract = new ethers.Contract(
             CERTIFICATE_ADDRESS,
             Certificate.abi,
+            this.provider
+        );
+
+        this.systemContract = new ethers.Contract(
+            SYSTEM_ADDRESS,
+            System.abi,
             this.provider
         );
     }
@@ -113,7 +122,7 @@ class AppService {
     generateCertificatesAsync(
         certName: string,
         orgId: number,
-        awardeeNames: string[],
+        awardees: AwardeeType[],
         accessToken: string
     ): any {
         return new Promise(async (resolve, reject) => {
@@ -121,7 +130,7 @@ class AppService {
                 const data = {
                     certificateName: certName,
                     organisationId: orgId,
-                    awardeeNames: awardeeNames,
+                    awardees: awardees,
                 };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/certificateTemplate/generateCertificates`,
@@ -438,34 +447,75 @@ class AppService {
             }
         });
     }
-    /**
-     * EXAMPLES TO CALL SMART CONTRACT METHODS
-     */
-    // async getLastTokenId() {
-    //     return this.factory.connect(this.signer).lastTokenID();
-    // }
 
-    // async buyFoodAsync(
-    //     foodId: string,
-    //     price: number
-    // ): Promise<ContractTransaction> {
-    //     price = Math.floor((price * 1038114374) / 3300);
-    //     return this.factory.connect(this.signer).buyFood(foodId, {
-    //         value: ethers.utils.parseUnits(price.toString(), 'gwei'),
-    //         gasLimit: 2500000,
-    //     });
-    // }
-
-    async createCertificateNFT(adminWalletAddress: string, ipfsHash: string) {
-        return this.certificateContract
+    // SMART CONTRACT CALLS
+    async addAwardeeToOrganisation(
+        uen: string,
+        email: string,
+        awardee: string
+    ) {
+        return this.systemContract
             .connect(this.signer)
-            .create(adminWalletAddress, ipfsHash, {
+            .addAwardeeToOrganisation(uen, email, awardee, {
                 gasLimit: 2500000,
             });
     }
 
-    async retrieveCertificateNFT(tokenId: number) {
-        return this.certificateContract.connect(this.signer).tokenURI(tokenId);
+    async createCertificateContract(
+        groupName: string,
+        groupId: number,
+        uen: string
+    ) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract
+            .connect(this.signer)
+            .addCertificate(groupName, groupId, 'description');
+    }
+
+    // -------- REMOVE LATER REPLACE WITH JUNLE FUNCTIONS, JUST TESTING
+    async registerOrganisation(
+        name: string,
+        uen: string,
+        adminWalletAddress: string
+    ) {
+        return this.systemContract
+            .connect(this.signer)
+            .registerOrganisation(name, uen, adminWalletAddress);
+    }
+
+    async getOrganisation(uen: string) {
+        return this.systemContract.connect(this.signer).organisations(uen, {
+            gasLimit: 2500000,
+        });
+    }
+
+    // -------
+
+    async mintCertificateNFT(
+        awardeeEmail: string,
+        groupId: number,
+        ipfsHash: string,
+        uen: string
+    ) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract.connect(this.signer).awardCertificate(
+            awardeeEmail,
+            groupId,
+            ipfsHash,
+            {
+                gasLimit: 2500000,
+            }
+        );
     }
 
     retrieveCertificateInfo(certificateId: string): any {

@@ -2,21 +2,44 @@ import { DeleteFilled, MinusCircleFilled } from '@ant-design/icons';
 import { Button, Card, Col, Input, notification, PageHeader, Row } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import redirect from '../../lib/redirect';
+import checkAuthenticated from '../../security/checkAuthenticated';
 import { AwardeeType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
 import BaseLayout from '../BaseLayout';
 import styles from './CreateCredentials.module.css';
+
+type AwardeeResponse = {
+    key?: number,
+    id: number,
+    name: string,
+    email: string,
+    organisationId: number,
+    date?: any,
+}
 
 /**
  * Page to create credentials either manually or via spreadsheet
  */
 const CreateCertificates: React.FC = () => {
     const { appStore } = useStores();
-    const [loading, setLoading] = useState(null);
+    const [templateId, setTemplateId] = useState(0);
 
     const [awardees, setAwardees] = useState<AwardeeType[]>([]); // list of awardees
+
+    useEffect(() => {
+        getCertificateTemplateId();
+    }, []);
+
+    const getCertificateTemplateId = async () => {
+        const groupid = parseInt(window.location.search.substring(4));
+        const orgId = JSON.parse(sessionStorage.getItem('user')).id;
+        await appStore.setAwardeeGroups(orgId);
+        const groups = await appStore.getAwardeeGroups();
+        const group = groups.filter((x) => x.key == groupid);
+        setTemplateId(group[0].certificateTemplateId);
+    };
 
     /**
      * Remove awardee from list
@@ -45,7 +68,14 @@ const CreateCertificates: React.FC = () => {
         awardees[index].date = e.target.value;
     };
 
-    // TODO: post to blockchain
+    const addIssueDate = (response: AwardeeResponse[]) => {
+        for (let i = 0; i < response.length; i++) {
+            response[i].date = awardees[i].date;
+            response[i].key = response[i].id;
+        }
+        console.log(response);
+    }
+
     const createCerts = async () => {
         const valid = awardees.every((x) => x.date && x.email && x.name);
 
@@ -61,21 +91,54 @@ const CreateCertificates: React.FC = () => {
         }
 
         const orgId = JSON.parse(sessionStorage.getItem('user')).id;
-        const groupId = 1; // TODO: add logic when implemented
+        const groupId = parseInt(window.location.search.substring(4));
 
         try {
             // create awardees
-            const response = await appStore.createAwardees(orgId, awardees);
+            let response = await appStore.createAwardees(orgId, awardees);
+            console.log(response);
             const awardeeIds = response.map((x) => x.id);
 
             // post awardees to group using awardee ids
             await appStore.addAwardeesToGroup(orgId, groupId, awardeeIds);
 
+            const uen = JSON.parse(sessionStorage.getItem('user')).uen;
+
+            // add awardees to blockchain
+            for (let i = 0; i < response.length; i++) {
+                await appStore.addAwardeeToOrganisation(
+                    uen,
+                    response[i].email,
+                    response[i].name
+                );
+            }
+
+            addIssueDate(response);
+
+            // So i can access issue date from the publish certs page
+            const key = `awardees/${orgId}/${groupId}`;
+            // key already exists, update existing array
+            if (localStorage.getItem(key)) {
+                const awardees = JSON.parse(localStorage.getItem(key)).awardees;
+                response = awardees.concat(response);
+            };
+
+            const awardeesToStoreInLocalStorage = {
+                organisationId: orgId,
+                groupId: groupId,
+                awardees: response
+            }
+
+            localStorage.setItem(
+                `awardees/${orgId}/${groupId}`,
+                JSON.stringify(awardeesToStoreInLocalStorage)
+            );
+
             notification.success({
                 message: 'Successfully added credentials',
             });
 
-            redirect('/publishcerts');
+            redirect(`/publishcerts?id=${groupId}`);
         } catch (err) {
             setTimeout(() => {
                 notification.error({
@@ -140,11 +203,6 @@ const CreateCertificates: React.FC = () => {
                     <PageHeader
                         title="Create Credentials"
                         subTitle="Step 1 of 2"
-                        extra={[
-                            <Button key="1">
-                                Create Credentials via Spreadsheet
-                            </Button>,
-                        ]}
                     />
                     <AwardeeList />
                     <div className={styles.buttonContainer}>
@@ -176,4 +234,4 @@ const CreateCertificates: React.FC = () => {
     );
 };
 
-export default observer(CreateCertificates);
+export default checkAuthenticated(observer(CreateCertificates));

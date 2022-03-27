@@ -38,8 +38,18 @@ const AwardeeGroups: React.FC = () => {
         {
             title: 'Group Name',
             dataIndex: 'groupName',
-            width: '80%',
+            width: '60%',
             render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Action',
+            dataIndex: 'key',
+            width: '20%',
+            render: (id) => (
+                <Button href={`createCertificate?id=${id}`}>
+                    Create Certificates
+                </Button>
+            ),
         },
     ];
 
@@ -97,11 +107,18 @@ const AwardeeGroups: React.FC = () => {
         setLoading(true);
 
         try {
-            await appStore.createAwardeeGroup(
+            const data = await appStore.createAwardeeGroup(
                 organisationId,
                 groupName,
                 certificateTemplateId
             );
+
+            const groupId = data.id;
+            
+            // create new certificate contract on blockchain
+            const uen = JSON.parse(sessionStorage.getItem('user')).uen;
+            const res = await appStore.createCertificateContract(groupName, groupId, uen);
+            console.log(res);
 
             setGroupName('');
             setTemplateSelected(1);
