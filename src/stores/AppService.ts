@@ -11,6 +11,7 @@ import {
     RegisterAccountType,
     RegisterUploadType,
     AwardeeType,
+    TransferRequestUploadType,
 } from './AppStore';
 import { CERTIFICATE_ADDRESS } from '../settings';
 import Certificate from '../../ethereum/build/contracts/Certificate.json';
@@ -369,6 +370,7 @@ class AppService {
     createAwardeeGroupAsync(
         organisationId: number,
         groupName: string,
+        groupDescription: string,
         certificateTemplateId: number,
         accessToken: string
     ): any {
@@ -379,6 +381,7 @@ class AppService {
                     data: {
                         organisationId: organisationId,
                         groupName: groupName,
+                        groupDescription: groupDescription,
                         certificateTemplateId: certificateTemplateId,
                     },
                     credentials: { accessToken },
@@ -438,6 +441,51 @@ class AppService {
             }
         });
     }
+
+    createTransferRequestAsync(
+        userId: number,
+        organisationId: number,
+        transferTo: string,
+        accessToken: string
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/transferRequest/create`,
+                    data: {
+                        userId: userId,
+                        organisationId: organisationId,
+                        transferTo: transferTo,
+                    },
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    transferRequestUploadAsync(
+        transferRequestUpload: TransferRequestUploadType
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                console.log(transferRequestUpload.documents);
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/document/transferRequest/upload/${transferRequestUpload.transferRequestId}`,
+                    data: {
+                        document: transferRequestUpload.documents,
+                    },
+                    formData: true,
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
     /**
      * EXAMPLES TO CALL SMART CONTRACT METHODS
      */
