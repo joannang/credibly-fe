@@ -11,11 +11,15 @@ export type CreateGroupModalProps = {
 
     groupName: string;
 
+    groupDescription: string;
+
     handleGroupName: (e) => void;
 
     certificateTemplateId: number;
 
     handleTemplateSelected: (e) => void;
+
+    handleGroupDescription: (e) => void;
 
     handleCreateForm: () => void;
 
@@ -28,13 +32,16 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     isModalVisible,
     loading,
     groupName,
+    groupDescription,
     handleGroupName,
     certificateTemplateId,
     handleTemplateSelected,
+    handleGroupDescription,
     handleCreateForm,
     handleCancel,
 }) => {
     const { appStore } = useStores();
+    const { TextArea } = Input;
     return (
         <Modal
             title="Create Awardee Group"
@@ -143,7 +150,26 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                     </Form.Item>
                 </div>
 
-                {/* implementation for awardee selection here */}
+                <Form.Item
+                    label="Group Description"
+                    name="groupDescription"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input a group description!',
+                        },
+                    ]}
+                >
+                    <div style={{ width: '100%' }}>
+                        <TextArea
+                            rows={4}
+                            maxLength={255}
+                            placeholder="Group Description"
+                            value={groupDescription}
+                            onChange={(e) => handleGroupDescription(e)}
+                        />
+                    </div>
+                </Form.Item>
             </Form>
         </Modal>
     );

@@ -73,6 +73,7 @@ export type AwardeeGroupType = {
     key: number;
     organisationId: number;
     groupName: string;
+    groupDescription: string;
     certificateTemplateId: number;
     certificateName: string;
 };
@@ -91,6 +92,18 @@ export type CertificateDetails = {
     imageUrl: string;
     certificateId: string;
 };
+
+export type TransferRequestType = {
+    userId: number;
+    organisationId: number;
+    transferTo: string;
+};
+
+export type TransferRequestUploadType = {
+    transferRequestId: number;
+    documents: File[];
+};
+
 class AppStore {
     appService = new AppService();
     isAuthenticated: string = sessionStorage.getItem('authenticated');
@@ -233,11 +246,13 @@ class AppStore {
     createAwardeeGroup = async (
         organisationId: number,
         groupName: string,
+        groupDescription: string,
         certificateTemplateId: number
     ) => {
         const { data } = await this.appService.createAwardeeGroupAsync(
             organisationId,
             groupName,
+            groupDescription,
             certificateTemplateId,
             this.currentUser.token
         );
@@ -340,6 +355,26 @@ class AppStore {
                 this.uiState.setError(err.error);
             }
         }
+    };
+
+    createTransferRequest = async (
+        userId: number,
+        organisationId: number,
+        transferTo: string
+    ) => {
+        const { data } = await this.appService.createTransferRequestAsync(
+            userId,
+            organisationId,
+            transferTo,
+            this.currentUser.token
+        );
+        return data;
+    };
+
+    transferRequestUpload = async (
+        transferRequestUpload: TransferRequestUploadType
+    ) => {
+        await this.appService.transferRequestUploadAsync(transferRequestUpload);
     };
 
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------

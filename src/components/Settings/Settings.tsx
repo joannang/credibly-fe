@@ -33,7 +33,7 @@ const SettingsPage: React.FC = () => {
     return (
         <BaseLayout
             sider={
-                <Sider width={'15%'} className={styles.sider}>
+                <Sider width={'20%'} className={styles.sider}>
                     <Menu
                         mode="inline"
                         defaultSelectedKeys={['1']}
@@ -60,7 +60,7 @@ const SettingsPage: React.FC = () => {
                 </Sider>
             }
         >
-            <div style={{ padding: '0 16px 16px 16px' }}>
+            <div className={styles.settingsContainer}>
                 <h1>
                     Welcome to Credibly,&nbsp;
                     {appStore?.currentUser?.name.toUpperCase() || 'User'}!
