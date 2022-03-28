@@ -66,7 +66,7 @@ contract('System', function(accounts) {
         let Awardee1WorkExperiences = await Awardee1Instance.getWorkExperiences();
         let Awardee1WorkExperience1 = await Awardee1WorkExperiences[0]
         let WorkExperience1Instance = await WorkExperience.at(Awardee1WorkExperience1);
-        let WorkExperience1Data = await WorkExperience1Instance.data();
+        let WorkExperience1Data = await WorkExperience1Instance.details();
         let WorkExperience1Position = await WorkExperience1Data.position;
         assert.equal(WorkExperience1Position, position);
     })
@@ -122,7 +122,7 @@ contract('System', function(accounts) {
         for (let i = 0; i < Awardee1WorkExperiences.length; i++) {
             let Awardee1WorkExperience = await Awardee1WorkExperiences[i];
             let WorkExperienceInstance = await WorkExperience.at(Awardee1WorkExperience);
-            console.log(await WorkExperienceInstance.data());
+            console.log(await WorkExperienceInstance.details());
         }
     })
 
@@ -167,6 +167,10 @@ contract('System', function(accounts) {
         await truffleAssert.reverts(Awardee1Instance.getCertificates(), "Unauthorised user.")
         await truffleAssert.reverts(Awardee1Instance.getWorkExperiences(), "Unauthorised user.")
     })
+
+    // set approved users
+
+    // remove access rights
 
 
 })

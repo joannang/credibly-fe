@@ -52,6 +52,16 @@ contract System {
         string memory name
     ) public {
         Awardee awardee = registerAwardee(email, name);
-        awardee.setWalletAddress(msg.sender);
+        awardee.setWalletAddress(tx.origin);
+    }
+
+    function changeEmail(
+        string memory oldEmail,
+        string memory newEmail
+    ) public {
+        require (address(awardees[oldEmail]) != address(0), "Awardee does not exist.");
+        awardees[oldEmail].updateEmail(newEmail);
+        awardees[newEmail] = awardees[oldEmail];
+        awardees[oldEmail] = Awardee(address(0));
     }
 }

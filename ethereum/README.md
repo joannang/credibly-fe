@@ -15,10 +15,3 @@
 1. Mint a Certificate NFT for an Employee
     - Get the Organisation Contract on System.sol: getOrganisation(UEN of Organisation : string) returns (Organisation Contract : address)
     - Mint a new Certificate NFT on Organisation.sol: awardCertificate(email of Employee: string, Certificate ID: string, IPFS Hash: string)
-
-// remove
-1. Get Employee Certificate in an Organisation by Email
-    - Get the Organisation Contract on System.sol: getOrganisation(UEN of Organisation : string) returns Organisation contract address
-    - Get all Employee Certificates on Organisation.sol: getEmployeeCertificates(email of Employee: string) returns list of Employee Certificates as (Certificate : address, tokenID: int)
-    - Get IPFS Hash of Certificate on Certificate.sol: tokenURI(tokenID: int) returns (IPSH Hash: string)
-
