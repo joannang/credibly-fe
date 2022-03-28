@@ -17,11 +17,6 @@ export const HeaderTabs = () => {
                         </Link>
                     </div>
                     <div>
-                        <Link href={'/createCertificate'} passHref>
-                            Create Certificate
-                        </Link>
-                    </div>
-                    <div>
                         <Link href={'/certificateTemplates'} passHref>
                             Certificate Templates
                         </Link>

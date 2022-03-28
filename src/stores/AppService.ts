@@ -465,7 +465,6 @@ class AppService {
     ): any {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(transferRequestUpload.documents);
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/document/transferRequest/upload/${transferRequestUpload.transferRequestId}`,
                     data: {
