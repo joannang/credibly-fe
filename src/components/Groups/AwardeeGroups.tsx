@@ -129,7 +129,7 @@ const AwardeeGroups: React.FC = () => {
             
             // create new certificate contract on blockchain
             const uen = JSON.parse(sessionStorage.getItem('user')).uen;
-            const res = await appStore.createCertificateContract(groupName, groupId, uen);
+            const res = await appStore.createCertificateContract(groupName, groupId, groupDescription, uen);
             console.log(res);
 
             setGroupName('');

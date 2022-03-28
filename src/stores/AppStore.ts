@@ -435,12 +435,14 @@ class AppStore {
     createCertificateContract = async (
         groupName: string,
         groupId: number,
+        description: string,
         uen: string
     ) => {
         try {
             const res = await this.appService.createCertificateContract(
                 groupName,
                 groupId,
+                description,
                 uen
             );
             return res;
@@ -460,6 +462,28 @@ class AppStore {
                 email,
                 groupId,
                 ipfsHash,
+                uen
+            );
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+    
+    addWorkExperience = async (
+        email: string,
+        position: string,
+        description: string,
+        startDate: string,
+        uen: string
+    ) => {
+        try {
+            const res = await this.appService.addWorkExperience(
+                email,
+                position,
+                description,
+                startDate,
                 uen
             );
             console.log(res);

@@ -518,6 +518,7 @@ class AppService {
     async createCertificateContract(
         groupName: string,
         groupId: number,
+        description: string,
         uen: string
     ) {
         const organisation_addr = await this.getOrganisation(uen);
@@ -528,7 +529,25 @@ class AppService {
         );
         return organisationContract
             .connect(this.signer)
-            .addCertificate(groupName, groupId, 'description');
+            .addCertificate(groupName, groupId, description);
+    }
+
+    async addWorkExperience(
+        email: string,
+        position: string,
+        description: string,
+        startDate: string,
+        uen: string
+    ) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract
+            .connect(this.signer)
+            .addWorkExperience(email, position, description, startDate);
     }
 
     // -------- REMOVE LATER REPLACE WITH JUNLE FUNCTIONS, JUST TESTING
@@ -547,8 +566,7 @@ class AppService {
             gasLimit: 2500000,
         });
     }
-
-    // -------
+    // ---------
 
     async mintCertificateNFT(
         awardeeEmail: string,
@@ -562,14 +580,11 @@ class AppService {
             Organisation.abi,
             this.provider
         );
-        return organisationContract.connect(this.signer).awardCertificate(
-            awardeeEmail,
-            groupId,
-            ipfsHash,
-            {
+        return organisationContract
+            .connect(this.signer)
+            .awardCertificate(awardeeEmail, groupId, ipfsHash, {
                 gasLimit: 2500000,
-            }
-        );
+            });
     }
 
     retrieveCertificateInfo(certificateId: string): any {
