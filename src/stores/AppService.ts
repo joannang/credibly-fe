@@ -18,6 +18,7 @@ import Organisation from '../../ethereum/build/contracts/Organisation.json';
 import Awardee from '../../ethereum/build/contracts/Awardee.json';
 import System from '../../ethereum/build/contracts/System.json';
 import WorkExperience from '../../ethereum/build/contracts/WorkExperience.json';
+import { create, IPFSHTTPClient } from 'ipfs-http-client';
 
 declare global {
     interface Window {
@@ -26,13 +27,17 @@ declare global {
     }
 }
 
+const projectId = '26bbuL0MXuph9BdyJbp4ZefpS34';
+const projectSecret = '2263bf12ad5bbe8ac4a1106387fe5737';
+const auth =
+    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
 interface AppService {
     provider: JsonRpcProvider | Web3Provider; // ethers provider
     signer: JsonRpcSigner;
     certificateContract: Contract; // factory contract instance
     systemContract: Contract;
     supplierContract: Contract;
-    systemContract: Contract;
+    ipfsClient: IPFSHTTPClient;
 }
 
 /**
@@ -68,6 +73,15 @@ class AppService {
             System.abi,
             this.provider
         )
+        this.ipfsClient = create({
+            host: 'ipfs.infura.io',
+            port: 5001,
+            protocol: 'https',
+            headers: {
+                authorization: auth,
+            },
+        });;
+
     }
 
     createAwardeesAsync(
@@ -302,6 +316,40 @@ class AppService {
             try {
                 const response = await restGet({
                     endpoint: `${ENDPOINT}/user/pendingApprovals`,
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    getPendingTransferRequests(id: number, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: `${ENDPOINT}/transferRequest/pendingApprovals`,
+                    _id: `${id}`,
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
+    approveTransferRequests(
+        approverId: number,
+        transferRequestIds: number[],
+        accessToken: string
+    ): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/transferRequest/approve`,
+                    data: { approverId, transferRequestIds },
                     credentials: { accessToken },
                 });
                 resolve(response.data);
@@ -589,21 +637,35 @@ class AppService {
             });
     }
 
-    retrieveCertificateInfo(certificateId: string): any {
-        return new Promise(async (resolve, reject) => {
-            try {
-                resolve({
-                    awardeeName: 'Mark Tan Jun Xuan',
-                    orgName: 'National University of Singapore',
-                    certificateName: 'North Korean Fine Citizen Award',
-                    dateOfIssue: '22/02/2022',
-                    description:
-                        "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
-                });
-            } catch (err) {
-                reject(err.response.data.error);
-            }
-        });
+    async retrieveCertificateInfo(tokenId: number) {
+        var res: [string, string, string] = await this.certificateContract.connect(this.signer).getData(tokenId);
+
+        const chunks = [];
+        for await (const chunk of this.ipfsClient.cat(res[0])) {
+            chunks.push(chunk);
+        }
+        console.log(Buffer.concat(chunks).toString());
+        return {
+            awardeeName: 'John Doe',
+            description: res[1],
+            orgName: res[2],
+            certificateName: 'North Korean Fine Citizen Award',
+            dateOfIssue: '22/02/2022',
+        };
+        // return new Promise(async (resolve, reject) => {
+        //     try {
+        //         resolve({
+        //             awardeeName: 'Mark Tan Jun Xuan',
+        //             orgName: 'National University of Singapore',
+        //             certificateName: 'North Korean Fine Citizen Award',
+        //             dateOfIssue: '22/02/2022',
+        //             description:
+        //                 "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
+        //         });
+        //     } catch (err) {
+        //         reject(err.response.data.error);
+        //     }
+        // });
     }
     retrieveProfileDetails(certificateId: string): any {
         return new Promise(async (resolve, reject) => {

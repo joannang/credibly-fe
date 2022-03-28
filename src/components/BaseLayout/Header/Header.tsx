@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { LogoutOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Layout, Menu } from 'antd';
+import { Avatar, Button, Dropdown, Layout, Menu } from 'antd';
 import { useStores } from '../../../stores/StoreProvider';
 import styles from '../BaseLayout.module.css';
 import { HeaderTabs } from './HeaderTabs';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 type HeaderProps = {};
 
@@ -37,6 +38,7 @@ const Header: React.FC<HeaderProps> = ({ }) => {
                 </div>
                 <div className={styles.profileContainer}>
                     <Dropdown overlay={menu} placement="bottomRight">
+                        {appStore.currentUser ?
                         <Avatar
                             alt="Profile Image"
                             style={{
@@ -51,6 +53,9 @@ const Header: React.FC<HeaderProps> = ({ }) => {
                             {appStore.currentUser?.name?.charAt(0).toUpperCase() ||
                                 'U'}
                         </Avatar>
+                        :
+                        <Link href={"/login"}><Button ghost={true} >Login</Button></Link>
+                        }
                     </Dropdown>
                 </div>
                 <HeaderTabs />
