@@ -13,7 +13,7 @@ contract Organisation {
     string public uen;
     address public admin;
 
-    mapping (string => WorkExperience[]) public awardeesWorkExperiences;
+    mapping (string => WorkExperience[]) awardeesWorkExperiences;
     mapping (string => Certificate) public certificateContracts;
     mapping (string => Awardee) public awardees;
 
@@ -53,7 +53,7 @@ contract Organisation {
         string memory description,
         uint256 startDate
     ) public onlyAdmin awardeeExists(email) {
-        WorkExperience workExperience = new WorkExperience(name, description, position, startDate);
+        WorkExperience workExperience = new WorkExperience(name, position, description, startDate);
         awardeesWorkExperiences[email].push(workExperience);
         Awardee awardee = awardees[email];
         awardee.addWorkExperience(address(workExperience));
@@ -71,11 +71,11 @@ contract Organisation {
     function awardCertificate(
         string memory email,
         string memory certificateId,
-        string memory url
+        string memory ipfsHash
     ) public onlyAdmin awardeeExists(email) certificateExists(certificateId){
         Certificate certificate = certificateContracts[certificateId];
         Awardee awardee = awardees[email];
-        uint256 tokenId = certificate.create(address(awardee), url);
+        uint256 tokenId = certificate.create(address(awardee), ipfsHash);
         awardee.addCertificate(address(certificate), tokenId);
     }
 }

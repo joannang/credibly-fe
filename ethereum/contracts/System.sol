@@ -54,13 +54,4 @@ contract System {
         Awardee awardee = registerAwardee(email, name);
         awardee.setWalletAddress(msg.sender);
     }
-
-    // function getOrganisation(string memory uen) public view returns (Organisation) {
-    //     return organisations[uen];
-    // }
-
-    // function getAwardee(string memory email) public view returns (Awardee) {
-    //     return awardees[email];
-    // }
-
 }
