@@ -4,7 +4,7 @@ import redirect from '../src/lib/redirect';
 
 const Index: React.FC = () => {
     useEffect(() => {
-        redirect('/login'); // default redirect
+        redirect('/landing'); // default redirect
     });
     return null;
 };

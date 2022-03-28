@@ -177,6 +177,24 @@ class AppService {
             }
         })
     };
+
+    searchAwardeesAsync(query: string, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/awardee/search`,
+                    data: {
+                        query: query,
+                    },
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        });
+    }
+
     getAwardeesFromGroupAsync(groupId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {

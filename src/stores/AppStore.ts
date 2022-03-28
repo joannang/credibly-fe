@@ -94,6 +94,7 @@ class AppStore {
     pendingApprovalList: ApprovalType[] = []
     certificateTemplates: CertificateTemplateType[] = [];
     awardeeGroups: AwardeeGroupType[] = [];
+    searchResults: Awardee[] = []
 
     constructor(uiState: UiState) {
         makeObservable(this, {
@@ -101,12 +102,14 @@ class AppStore {
             currentUser: observable,
             pendingApprovalList: observable,
             awardeeGroups: observable,
+            searchResults: observable,
             setIsAuthenticated: action,
             setCurrentUser: action,
             setPendingApprovalsList: action,
             certificateTemplates: observable,
             setCertificateTemplates: action,
             setAwardeeGroups: action,
+            setSearchResults: action,
         });
         this.uiState = uiState;
     }
@@ -274,6 +277,21 @@ class AppStore {
         } catch (err) {
             console.log(err);
         }
+    }
+
+    // @action
+    setSearchResults = async (query: string) => {
+        try {
+            const { data } = await this.appService.searchAwardeesAsync(query, this.currentUser.token);
+
+            runInAction(() => (this.searchResults = [...data]));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    getSearchResults() {
+        return this.searchResults;
     }
 
     // @action
