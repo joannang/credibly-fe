@@ -27,8 +27,8 @@ export const HeaderTabs = () => {
                         </Link>
                     </div>
                     <div>
-                        <Link href={'/workExperiences'} passHref>
-                            Work Experiences
+                        <Link href={'/employees'} passHref>
+                            Manage Employees
                         </Link>
                     </div>
                     <div>

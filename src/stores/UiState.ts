@@ -8,22 +8,29 @@ interface UiState {
     error: string;
     success: string;
     isLoading: boolean;
+    modalOpen: boolean;
 }
 
 class UiState {
     error = '';
     success = '';
     isLoading: boolean = false;
+    modalOpen: boolean = false;
+    employeesUpdated: boolean = false;
 
     constructor() {
         makeObservable(this, {
             error: observable,
             success: observable,
             isLoading: observable,
+            modalOpen: observable,
+            employeesUpdated: observable,
 
             setError: action,
             setSuccess: action,
             setIsLoading: action,
+            setModalOpen: action,
+            setEmployeesUpdated: action,
         });
     }
 
@@ -40,6 +47,16 @@ class UiState {
     // @action
     setIsLoading = (loading: boolean) => {
         this.isLoading = loading;
+    }
+
+    // @action
+    setModalOpen = (open: boolean) => {
+        this.modalOpen = open;
+    }
+
+    // @action
+    setEmployeesUpdated = (updated: boolean) => {
+        this.employeesUpdated = updated;
     }
 }
 

@@ -13,10 +13,11 @@ import {
     AwardeeType,
     TransferRequestUploadType,
 } from './AppStore';
-import { CERTIFICATE_ADDRESS } from '../settings';
 import Certificate from '../../ethereum/build/contracts/Certificate.json';
 import Organisation from '../../ethereum/build/contracts/Organisation.json';
+import Awardee from '../../ethereum/build/contracts/Awardee.json';
 import System from '../../ethereum/build/contracts/System.json';
+import WorkExperience from '../../ethereum/build/contracts/WorkExperience.json';
 
 declare global {
     interface Window {
@@ -54,13 +55,6 @@ class AppService {
         } else {
             // We are on the server *OR* the user is not running metamask
         }
-
-        // contracts
-        this.certificateContract = new ethers.Contract(
-            CERTIFICATE_ADDRESS,
-            Certificate.abi,
-            this.provider
-        );
 
         this.systemContract = new ethers.Contract(
             SYSTEM_ADDRESS,
@@ -111,6 +105,20 @@ class AppService {
                 const response = await restPost({
                     endpoint: ENDPOINT + '/awardeeGroup/add',
                     data: data,
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.message);
+            }
+        });
+    }
+
+    getAwardeesFromOrganisationAsync(orgId: number, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restGet({
+                    endpoint: ENDPOINT + `/awardee/organisation/${orgId}`,
                     credentials: { accessToken },
                 });
                 resolve(response.data);
@@ -235,29 +243,6 @@ class AppService {
             }
         });
     }
-
-    /**
-     * REST Example below
-     */
-    // signUpAsync(user: UserType): any {
-    //     return new Promise(async (resolve, reject) => {
-    //         try {
-    //             const data = {
-    //                 userName: user.userName,
-    //                 userPassword: user.userPassword,
-    //                 userWalletAddress: user.userWalletAddress,
-    //             };
-
-    //             const response = await restPost({
-    //                 endpoint: ENDPOINT + '/signup',
-    //                 data: data,
-    //             });
-    //             resolve(response.data);
-    //         } catch (err) {
-    //             reject(err.message);
-    //         }
-    //     });
-    // }
 
     registerAsync(accountDetails: RegisterAccountType): any {
         return new Promise(async (resolve, reject) => {
@@ -495,13 +480,6 @@ class AppService {
         });
     }
 
-    /**
-     * EXAMPLES TO CALL SMART CONTRACT METHODS
-     */
-    // async getLastTokenId() {
-    //     return this.factory.connect(this.signer).lastTokenID();
-    // }
-
     // SMART CONTRACT CALLS
     async addAwardeeToOrganisation(
         uen: string,
@@ -530,6 +508,36 @@ class AppService {
         return organisationContract
             .connect(this.signer)
             .addCertificate(groupName, groupId, description);
+    }
+
+    async getAwardeeContractAddr(email: string) {
+        return this.systemContract.connect(this.signer).awardees(email);
+    }
+
+    async getWorkExperiences(email: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+        
+        let workExperiences = [];
+
+        const workExpAddresses = await awardeeContract.connect(this.signer).getWorkExperiences();
+        console.log(workExpAddresses);
+        for (let i = 0; i < workExpAddresses.length; i++) {
+            const workExpContract = new ethers.Contract(
+                workExpAddresses[i],
+                WorkExperience.abi,
+                this.provider
+            );
+            const workExp = workExpContract.connect(this.signer).data;
+            console.log(workExp);
+            workExperiences.push(workExp);
+        }
+        
+        return workExperiences;
     }
 
     async addWorkExperience(

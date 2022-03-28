@@ -1,80 +1,98 @@
-import { Button, Card, Col, Row, Typography } from 'antd';
+import { Button, Card, Col, Empty, PageHeader, Row, Table, Typography } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useStores } from '../../stores/StoreProvider';
 import BaseLayout from '../BaseLayout';
+import AddWorkExperienceModal from './AddWorkExperienceModal/AddWorkExperienceModal';
 import styles from './ManageWorkExperiences.module.css';
 
 const ManageWorkExperiences: React.FC = () => {
-    const { appStore } = useStores();
-    const { Text } = Typography;
+    const { appStore, uiState } = useStores();
+    
+    const [experiences, setExperiences] = useState([]);
+    const [position, setPosition] = useState('');
+    const [description, setDescription] = useState('');
+    const [startDate, setStartDate] = useState('');
 
-    // TODO: update backend to have work experiences details
-    // position, company, start and end date, location(?)
+    const orgId = JSON.parse(sessionStorage.getItem('user')).id;
+    const uen = JSON.parse(sessionStorage.getItem('user')).uen;
 
-    const testData = [
+    const email = window.location.search.substring(7);
+
+    useEffect(() => {
+        getEmployeeWorkExperiences();
+    }, [])
+
+    // add to blockchain
+    const getEmployeeWorkExperiences = async() => {
+        // console.log(email);
+        // const res = await appStore.addWorkExperience(email, 'Software Engineer', 'APAC Senior Developer', '01052022', '9345');
+        // console.log(res);
+
+        const workExperiences = await appStore.getWorkExperiences(email);
+        console.log(workExperiences);
+        setExperiences(workExperiences);
+        console.log(experiences);
+    }
+
+    const addEmployeeWorkExperience = async() => {
+        try {
+            const res = await appStore.addWorkExperience(email, position, description, startDate, uen);
+            console.log(res);
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    const columns = [
         {
-            id: 1,
-            position: 'Software Engineer',
-            company: 'Shopee',
-            startDate: 'Dec 2021',
-            endDate: 'Feb 2022',
-            name: 'Fred Yeo',
+            title: 'Email',
+            dataIndex: 'email',
         },
         {
-            id: 2,
-            position: 'Data Scientist',
-            company: 'Shopee',
-            startDate: 'Apr 2020',
-            endDate: 'Nov 2021',
-            name: 'Alice Lee',
+            title: 'Position',
+            dataIndex: 'position', 
         },
         {
-            id: 3,
-            position: 'Data Analyst',
-            company: 'Shopee',
-            startDate: 'Apr 2020',
-            endDate: 'Jan 2022',
-            name: 'George Tan',
+            title: 'Description',
+            dataIndex: 'description',
         },
+        {
+            title: 'Start Date',
+            dataIndex: 'startDate',
+        }, {
+            title: 'End Date',
+            dataIndex: 'endDate',
+        }
     ];
-
-    const WorkCard = ({ experience }) => (
-        <Card hoverable key={experience.id + Math.random()}>
-            <Card.Meta className={styles.meta} title={experience.name} />
-            {experience.company + ' • ' + experience.position}
-            <br />
-            <Text type="secondary">
-                {experience.startDate} - {experience.endDate}
-            </Text>
-        </Card>
-    );
-
-    const CardList = () => {
-        const items = testData.map((exp, index) => {
-            return (
-                <Col xs={24} sm={12} md={8} xl={6} key={index}>
-                    <WorkCard experience={exp} />
-                </Col>
-            );
-        });
-        return (
-            <Row gutter={[15, 15]} className={styles.rowContainer}>
-                {items}
-            </Row>
-        );
-    };
 
     return (
         <BaseLayout>
-            <div style={{ padding: '0 16px 16px 16px' }}>
-                <div className={styles.buttonContainer}>
-                    <Button>Add new work experience</Button>
-                </div>
-                <div className={styles.cardsContainer}>
-                    <CardList />
+            <div>
+                <div className={styles.container}>
+                    <PageHeader
+                        title={`Manage Work Experiences for ${email}`}
+                        extra={[
+                            <Button
+                                key="1"
+                                onClick={() => uiState.setModalOpen(true)}
+                            >
+                                Add Employee
+                            </Button>,
+                        ]}
+                    />
+                    {experiences && experiences.length !== 0 ? (
+                        <Table
+                            dataSource={experiences}
+                            columns={columns}
+                        />
+                    ) : (
+                        <Empty description="No work experiences have been added" />
+                    )}
                 </div>
             </div>
+            <AddWorkExperienceModal/>
         </BaseLayout>
     );
 };

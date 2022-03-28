@@ -415,6 +415,21 @@ class AppStore {
         return this.awardeeGroups;
     };
 
+    // awardee = employee apparently...
+    getAwardeesFromOrganisation = async(
+        orgId: number
+    ) => {
+        try {
+            const res = await this.appService.getAwardeesFromOrganisationAsync(
+                orgId,
+                this.currentUser.token
+            );
+            return res.data;
+        } catch (err) {
+            console.log(err);
+        }
+    } 
+
     addAwardeeToOrganisation = async (
         uen: string,
         email: string,
@@ -519,6 +534,16 @@ class AppStore {
             console.log(err.message);
         }
     };
+
+    getWorkExperiences = async(email: string) => {
+        try {
+            const res = await this.appService.getWorkExperiences(email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
 }
 
 export default AppStore;
