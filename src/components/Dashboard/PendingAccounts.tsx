@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Table } from 'antd';
+import { Button, notification, Table } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { ApprovalType } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
 
 const PendingAccounts: React.FC = () => {
-  const { appStore, uiState } = useStores();
+  const { appStore } = useStores();
 
   const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<number[]>([]);
@@ -65,7 +65,7 @@ const PendingAccounts: React.FC = () => {
       document.body.appendChild(link);
       link.click();
     } catch (err) {
-      uiState.setError(err.error);
+      notification.error({ message: err.error });
     }
   }
 
@@ -86,10 +86,10 @@ const PendingAccounts: React.FC = () => {
 
       appStore.setPendingApprovalsList();
 
-      uiState.setSuccess('Approved users successful!');
+      notification.success({ message: 'Successfully approved users!' });
 
     } catch (err) {
-      uiState.setError(err.error);
+      notification.error({ message: err.error });
     } finally {
       setLoading(false);
     }

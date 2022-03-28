@@ -30,6 +30,7 @@ interface AppService {
     provider: JsonRpcProvider | Web3Provider; // ethers provider
     signer: JsonRpcSigner;
     certificateContract: Contract; // factory contract instance
+    systemContract: Contract;
     supplierContract: Contract;
     systemContract: Contract;
 }
@@ -61,6 +62,12 @@ class AppService {
             System.abi,
             this.provider
         );
+
+        this.systemContract = new ethers.Contract(
+            SYSTEM_ADDRESS,
+            System.abi,
+            this.provider
+        )
     }
 
     createAwardeesAsync(
@@ -557,23 +564,11 @@ class AppService {
             .addWorkExperience(email, position, description, startDate);
     }
 
-    // -------- REMOVE LATER REPLACE WITH JUNLE FUNCTIONS, JUST TESTING
-    async registerOrganisation(
-        name: string,
-        uen: string,
-        adminWalletAddress: string
-    ) {
-        return this.systemContract
-            .connect(this.signer)
-            .registerOrganisation(name, uen, adminWalletAddress);
-    }
-
     async getOrganisation(uen: string) {
         return this.systemContract.connect(this.signer).organisations(uen, {
             gasLimit: 2500000,
         });
     }
-    // ---------
 
     async mintCertificateNFT(
         awardeeEmail: string,
@@ -669,6 +664,16 @@ class AppService {
             } catch (err) {
                 reject(err.response.data.error);
             }
+        });
+    }
+
+    async registerOrganisation(
+        name: string,
+        uen: string,
+        adminWalletAddress: string
+    ) {
+        return this.systemContract.connect(this.signer).registerOrganisation(name, uen, adminWalletAddress, {
+            gasLimit: 2500000,
         });
     }
 }

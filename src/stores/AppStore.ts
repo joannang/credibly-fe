@@ -544,6 +544,19 @@ class AppStore {
             console.log(err.message);
         }
     }
+
+    registerOrganisation = async (name: string, uen: string, adminWalletAddress: string) => {
+        try {
+            const res = await this.appService.registerOrganisation(
+                name,
+                uen,
+                adminWalletAddress
+            );
+            console.log(res);
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
 }
 
 export default AppStore;

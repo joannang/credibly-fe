@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { LockOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
-import { Form, Input, Button, Tabs, Radio, Upload } from 'antd';
+import { Form, Input, Button, Tabs, Radio, Upload, notification } from 'antd';
 import { observer } from 'mobx-react';
 import { useStores } from '../../stores/StoreProvider';
 import styles from './LoginPage.module.css';
 import { AccountType } from '../../stores/AppStore';
+import { useRouter } from 'next/router';
 
 const { TabPane } = Tabs;
 
@@ -23,9 +24,11 @@ const validateMessages = {
 /* eslint-enable no-template-curly-in-string */
 
 const LoginPage: React.FC = () => {
-    const { uiState, appStore } = useStores();
+    const { appStore, walletStore } = useStores();
 
-    const [tabIndex, setTabIndex] = React.useState<string>('1');
+    const router = useRouter()
+
+    const [tabIndex, setTabIndex] = React.useState<string>(`${AccountType.ORGANISATION}`);
     const [loading, setLoading] = React.useState<boolean>(false);
 
     const [form] = Form.useForm();
@@ -88,14 +91,15 @@ const LoginPage: React.FC = () => {
         try {
             await appStore.login(values.email, values.password);
             if (appStore.currentUser.accountType === AccountType.ORGANISATION) {
-                window.location.href = '/groups';
+                router.push('/groups');
             } else if (appStore.currentUser.accountType === AccountType.ADMIN) {
-                window.location.href = '/dashboard';
+                router.push('/dashboard');
             } else {
-                window.location.href = '/privacySettings';
+                router.push('/privacySettings');
             }
+            notification.success({ message: `Welcome back to Credibly, ${appStore.currentUser.name}!` });
         } catch (err) {
-            uiState.setError(err.error);
+            notification.error({ message: err.error });
         } finally {
             setLoading(false);
         }
@@ -120,7 +124,7 @@ const LoginPage: React.FC = () => {
                 form={form}
                 onFinish={onRegisterFinish}
                 validateMessages={validateMessages}
-                initialValues={{ accountType: 'organisation' }}
+                initialValues={{ accountType: 'organisation', walletAddress: walletStore.walletAddress }}
             >
                 <Form.Item
                     label="Account Type"
@@ -136,9 +140,8 @@ const LoginPage: React.FC = () => {
                 </Form.Item>
                 <Form.Item
                     name="name"
-                    label={`${
-                        accountType === 'organisation' ? 'Organisation' : ''
-                    } Name`}
+                    label={`${accountType === 'organisation' ? 'Organisation' : ''
+                        } Name`}
                     rules={[{ required: true }]}
                 >
                     <Input />
@@ -164,7 +167,7 @@ const LoginPage: React.FC = () => {
                     label="Wallet Address"
                     rules={[{ required: true }]}
                 >
-                    <Input />
+                    <Input disabled />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -204,38 +207,41 @@ const LoginPage: React.FC = () => {
 
     const onRegisterFinish = async (values: any) => {
         setLoading(true);
-        const isOrganisationRegistration =
-            values.accountType === 'organisation';
+
+        const { name, email, password, uen, walletAddress, accountType, documents } = values;
+
+        const isOrganisationRegistration = accountType === 'organisation';
 
         try {
             const registerRequest = {
-                name: values.name,
-                email: values.email,
-                password: values.password,
-                uen: !!values.uen ? values.uen : null,
-                walletAddress: values.walletAddress,
-                accountType: isOrganisationRegistration ? 1 : 2,
+                name,
+                email,
+                password,
+                uen: !!uen ? uen : null,
+                walletAddress,
+                accountType: isOrganisationRegistration ? AccountType.ORGANISATION : AccountType.AWARDEE,
             };
             const userId = await appStore.register(registerRequest);
 
             if (isOrganisationRegistration) {
                 const uploadRequest = {
                     userId,
-                    documents: values.documents.map(
+                    documents: documents.map(
                         (doc: any) => doc.originFileObj
                     ),
                 };
                 await appStore.registerUpload(uploadRequest);
+                await appStore.registerOrganisation(name, uen, walletAddress);
             }
 
-            uiState.setSuccess(
-                isOrganisationRegistration
-                    ? 'Registration successful! Please wait for the Credibly Admin to activate your account'
+            notification.success({
+                message: isOrganisationRegistration
+                    ? 'Registration successful! Please wait for the Credibly Admin to activate your account.'
                     : 'Registration successful! You may now login to Credibly!'
-            );
+            });
             form.resetFields();
         } catch (err) {
-            uiState.setError(err.error);
+            notification.error({ message: err.error });
         } finally {
             setLoading(false);
         }
