@@ -58,7 +58,11 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                     form="createForm"
                     key="submit"
                     htmlType="submit"
-                    disabled={appStore.certificateTemplates.length == 0}
+                    disabled={
+                        appStore.certificateTemplates.length == 0 ||
+                        groupName == '' ||
+                        groupDescription == ''
+                    }
                 >
                     Create
                 </Button>,

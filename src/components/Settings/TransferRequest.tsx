@@ -24,7 +24,6 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
     };
 
     const handleTransferRequest = async (values: any) => {
-        console.log('Received values of form: ', values);
         setLoading(true);
         const emailsMatch = values.transferTo === confirmEmail;
 
@@ -44,8 +43,13 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
                 };
 
                 await appStore.transferRequestUpload(uploadRequest);
-                setTransferTo('');
-                setConfirmEmail('');
+
+                setTimeout(() => {
+                    window.location.href = '/privacySettings';
+                    setTransferTo('');
+                    setConfirmEmail('');
+                }, 1000);
+
                 message.success('Success!');
                 return {};
             } catch (err) {
