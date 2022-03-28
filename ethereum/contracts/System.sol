@@ -9,6 +9,8 @@ contract System {
     mapping (string => Organisation) public organisations;
     // email => Awardee Obj
     mapping (string => Awardee) public awardees;
+    // email => list of uen
+    mapping (string => Organisation[]) public awardeesOrganisations;
 
     constructor() {}
 
@@ -45,6 +47,18 @@ contract System {
         Awardee awardee = registerAwardee(email, name);
         Organisation organisation = organisations[uen];
         organisation.addAwardee(email, address(awardee));
+        awardeesOrganisations[email].push(organisation);
+    }
+
+    function addAwardeesToOrganisation(
+        string memory uen,
+        string[] memory emails,
+        string[] memory names
+    ) public {
+        require(emails.length == names.length, "Invalid data.");
+        for (uint i = 0; i < emails.length; i++) {
+            addAwardeeToOrganisation(uen, emails[i], names[i]);
+        }
     }
 
     function linkAwardee(
@@ -60,8 +74,17 @@ contract System {
         string memory newEmail
     ) public {
         require (address(awardees[oldEmail]) != address(0), "Awardee does not exist.");
-        awardees[oldEmail].updateEmail(newEmail);
+        // update email on awardee side
+        awardees[oldEmail].updateEmail(newEmail); // reverts if tx.origin is not owner of awardee contract
         awardees[newEmail] = awardees[oldEmail];
-        awardees[oldEmail] = Awardee(address(0));
+        // awardees[oldEmail] = Awardee(address(0)); // delete mapping
+        delete awardees[oldEmail]; // need to test if it works
+        // update all awardee information in organisation
+        awardeesOrganisations[newEmail] = awardeesOrganisations[oldEmail];
+        Organisation[] memory lOrganisations = awardeesOrganisations[newEmail];
+        for (uint i = 0; i < lOrganisations.length; i++) {
+            lOrganisations[i].updateEmail(oldEmail, newEmail);
+        }
+        delete awardeesOrganisations[oldEmail]; // need to test if it works
     }
 }

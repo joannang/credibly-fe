@@ -17,6 +17,8 @@ contract Organisation {
     mapping (string => Certificate) public certificateContracts;
     mapping (string => Awardee) public awardees;
 
+    Awardee[] public allAwardees;
+
     constructor(string memory _name, string memory _uen, address _admin) {
         name = _name;
         uen = _uen;
@@ -42,9 +44,19 @@ contract Organisation {
 
     function addAwardee(
         string memory email,
-        address awardeeContractAddress // NOT WALLET ADDRESS 
+        address awardeeContractAddress // NOT WALLET ADDRESS
     ) public {
-        awardees[email] = Awardee(awardeeContractAddress);
+        Awardee awardee = Awardee(awardeeContractAddress);
+        awardees[email] = awardee;
+        allAwardees.push(awardee);
+    }
+
+    function updateEmail(
+        string memory oldEmail,
+        string memory newEmail
+    ) public awardeeExists(oldEmail) {
+        awardees[newEmail] = awardees[oldEmail];
+        delete awardees[oldEmail]; // need to test if it works
     }
 
     function addWorkExperience(
@@ -77,5 +89,16 @@ contract Organisation {
         Awardee awardee = awardees[email];
         uint256 tokenId = certificate.create(address(awardee), ipfsHash);
         awardee.addCertificate(address(certificate), tokenId);
+    }
+
+    function awardCertificates(
+        string[] memory emails,
+        string memory certificateId,
+        string[] memory ipfsHashs
+    ) public onlyAdmin {
+        require(emails.length == ipfsHashs.length, "Invalid data.");
+        for (uint i = 0; i < emails.length; i++) {
+            awardCertificate(emails[i], certificateId, ipfsHashs[i]);
+        }
     }
 }

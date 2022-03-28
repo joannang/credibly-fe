@@ -20,11 +20,11 @@ contract Certificate is ERC721URIStorage, ERC721Enumerable {
         organisation = _organisation;
     }
 
-    function create(address admin, string memory ipfs) public returns (uint256) {
+    function create(address admin, string memory ipfsHash) public returns (uint256) {
         uint256 tokenId = tokenIdTracker.current();
         tokenIdTracker.increment();
         _mint(admin, tokenId);
-        _setTokenURI(tokenId, ipfs);
+        _setTokenURI(tokenId, ipfsHash);
         return tokenId;
     }
 
