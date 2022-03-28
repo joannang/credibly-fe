@@ -7,6 +7,7 @@ import { useStores } from '../../stores/StoreProvider';
 import BaseLayout from '../BaseLayout';
 import { NotFoundPage } from '../Errors/404';
 import styles from './Settings.module.css';
+import Privacy from '../Privacy/Privacy';
 
 const SettingsPage: React.FC = () => {
     const { appStore } = useStores();
@@ -66,14 +67,14 @@ const SettingsPage: React.FC = () => {
                 </h1>
                 <p />
                 {appStore.currentUser.accountType === AccountType.AWARDEE &&
-                generalSelected ? (
-                    <div>awardee privacy settings component</div>
-                ) : appStore.currentUser.accountType === AccountType.AWARDEE &&
-                  transferSelected ? (
-                    <div>transfer request component</div>
-                ) : (
-                    <NotFoundPage />
-                )}
+                    generalSelected ? (
+                        <Privacy />
+                    ) : appStore.currentUser.accountType === AccountType.AWARDEE &&
+                        transferSelected ? (
+                            <div>transfer request component</div>
+                        ) : (
+                            <NotFoundPage />
+                        )}
             </div>
             {/* <Layout> */}
 
