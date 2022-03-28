@@ -21,7 +21,7 @@ type PostRequest = {
 const formatData = (data) => {
     const formData = new FormData();
     for (const key in data) {
-        if (key === 'document' || key === 'image') {
+        if ((key === 'document' || key === 'image') && Array.isArray(data[key])) {
             data[key].forEach((doc: File) => formData.append(key, doc));
         } else {
             formData.append(key, data[key]);
@@ -30,20 +30,7 @@ const formatData = (data) => {
     return formData;
 };
 
-// const formatData = (data) => {
-//     const formData = new FormData();
-//     for (const key in data) {
-//         formData.append(key, data[key]);
-//     }
-//     return formData;
-// };
-
-const restPost = ({
-    endpoint,
-    data = {},
-    credentials = null,
-    formData = false,
-}: PostRequest) => {
+const restPost = ({ endpoint, data = {}, credentials = null, formData = false }: PostRequest) => {
     let options = { headers: {} };
 
     if (credentials) {
