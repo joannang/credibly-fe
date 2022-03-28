@@ -586,7 +586,7 @@ class AppService {
                 WorkExperience.abi,
                 this.provider
             );
-            const workExp = workExpContract.connect(this.signer).data;
+            const workExp = await workExpContract.connect(this.signer).data(); // ! problem
             console.log(workExp);
             workExperiences.push(workExp);
         }
@@ -609,7 +609,9 @@ class AppService {
         );
         return organisationContract
             .connect(this.signer)
-            .addWorkExperience(email, position, description, startDate);
+            .addWorkExperience(email, position, description, startDate, {
+                gasLimit: 2500000,
+            });
     }
 
     async getOrganisation(uen: string) {
