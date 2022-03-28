@@ -24,7 +24,7 @@ contract Organisation {
     }
 
     modifier onlyAdmin {
-        require(msg.sender == admin, "Unauthorised user.");
+        require(tx.origin == admin, "Unauthorised user.");
         _;
     }
 

@@ -10,9 +10,9 @@ contract Awardee {
     address public walletAddress;
     CertificateToken[] certificates;
     WorkExperience[] workExperiences;
-    mapping (address => bool) public accessRights;
     bool public linkedWalletAddress;
     bool publicVisibility;
+    mapping (address => bool) public accessRights;
 
     struct CertificateToken{
         Certificate certificate;
@@ -21,13 +21,13 @@ contract Awardee {
 
     modifier privacySettings {
         if (linkedWalletAddress) {
-            require (publicVisibility == true || msg.sender == walletAddress || accessRights[msg.sender] == true, "Unauthorised user.");
+            require (publicVisibility == true || tx.origin == walletAddress || accessRights[tx.origin] == true, "Unauthorised user.");
         }
         _;
     }
 
     modifier onlyOwner {
-        require(msg.sender == walletAddress, "Unauthorised user.");
+        require(tx.origin == walletAddress, "Unauthorised user.");
         _;
     }
 
@@ -35,6 +35,10 @@ contract Awardee {
         email = _email;
         name = _name;
         publicVisibility = true;
+    }
+
+    function updateEmail(string memory newEmail) public onlyOwner {
+        email = newEmail;
     }
 
     function setVisibility(bool visible) public onlyOwner {
