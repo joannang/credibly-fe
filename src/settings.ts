@@ -2,7 +2,7 @@
 
 // Constants to be changed
 export const ENDPOINT = 'http://localhost:8080/api';
-export const SYSTEM_ADDRESS = '0xb9E1B5508735dC162E1b64e450E905f2683fD8a1';
+export const SYSTEM_ADDRESS = '0x7FA2213f43F4b70B227Eaf61227C2b295f0451f8';
 export const SUPPLIER_ADDRESS = '0x0CfB757D1dc2B016Fb7F3de604CBB7bB7b0B621D';
 
 // IPFS INFURA CONSTANTS
