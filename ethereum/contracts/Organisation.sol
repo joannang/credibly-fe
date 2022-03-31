@@ -65,7 +65,7 @@ contract Organisation {
         string memory description,
         uint256 startDate
     ) public onlyAdmin awardeeExists(email) {
-        WorkExperience workExperience = new WorkExperience(name, position, description, startDate);
+        WorkExperience workExperience = new WorkExperience(name, position, description, startDate, admin);
         awardeesWorkExperiences[email].push(workExperience);
         Awardee awardee = awardees[email];
         awardee.addWorkExperience(address(workExperience));
