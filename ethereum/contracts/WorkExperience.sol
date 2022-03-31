@@ -34,11 +34,7 @@ contract WorkExperience {
         _;
     }
 
-    function setEndStatus() public {
-        details.end = true;
-    }
-
-    function setEndDate(uint256 _endDate) public {
+    function setEndDate(uint256 _endDate) public onlyAdmin {
         details.endDate = _endDate;
     }
 

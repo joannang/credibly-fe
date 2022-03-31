@@ -13,7 +13,8 @@ contract Organisation {
     string public uen;
     address public admin;
 
-    mapping (string => WorkExperience[]) awardeesWorkExperiences;
+    // email => position => workExperience
+    mapping (string => mapping (string => WorkExperience)) awardeesWorkExperiences;
     mapping (string => Certificate) public certificateContracts;
     mapping (string => Awardee) public awardees;
 
@@ -66,9 +67,20 @@ contract Organisation {
         uint256 startDate
     ) public onlyAdmin awardeeExists(email) {
         WorkExperience workExperience = new WorkExperience(name, position, description, startDate, admin);
-        awardeesWorkExperiences[email].push(workExperience);
+        awardeesWorkExperiences[email][position] = workExperience;
         Awardee awardee = awardees[email];
         awardee.addWorkExperience(address(workExperience));
+    }
+
+    // need to test
+    function endWorkExperience(
+        string memory email,
+        string memory position,
+        uint256 endDate
+    ) public onlyAdmin awardeeExists(email) {
+        require (address(awardeesWorkExperiences[email][position]) != address(0), "Awardee Work Experience does not exist.");
+        WorkExperience workExperience = awardeesWorkExperiences[email][position];
+        workExperience.setEndDate(endDate);
     }
 
     function addCertificate(
@@ -76,7 +88,7 @@ contract Organisation {
         string memory certificateId,
         string memory description
     ) public onlyAdmin {
-        Certificate certificate = new Certificate(certificateName, certificateId, description, name);
+        Certificate certificate = new Certificate(certificateName, certificateId, description, name, admin);
         certificateContracts[certificateId] = certificate;
     }
 
