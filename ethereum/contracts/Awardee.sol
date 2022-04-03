@@ -12,7 +12,7 @@ contract Awardee {
     WorkExperience[] workExperiences;
     bool public linkedWalletAddress;
     bool publicVisibility;
-    mapping (address => bool) public accessRights;
+    mapping (address => bool) accessRights;
 
     struct CertificateToken{
         Certificate certificate;
