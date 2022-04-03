@@ -199,10 +199,7 @@ class AppService {
         });
     }
 
-    getCertificateTemplatesAsync(
-        organisationId: number,
-        accessToken: string
-    ): any {
+    getCertificateTemplatesAsync(organisationId: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restGet({
@@ -233,7 +230,8 @@ class AppService {
 
     deleteCertificateTemplateAsync(
         certificateName: string,
-        organisationId: number
+        organisationId: number,
+        accessToken: string
     ): any {
         return new Promise(async (resolve, reject) => {
             try {
@@ -243,6 +241,24 @@ class AppService {
                         certificateName: certificateName,
                         organisationId: organisationId,
                     },
+                    credentials: { accessToken },
+                });
+                resolve(response.data);
+            } catch (err) {
+                reject(err.response.data.error);
+            }
+        })
+    };
+
+    searchAwardeesAsync(query: string, accessToken: string): any {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await restPost({
+                    endpoint: `${ENDPOINT}/awardee/search`,
+                    data: {
+                        query: query,
+                    },
+                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -575,7 +591,7 @@ class AppService {
             Awardee.abi,
             this.provider
         );
-        
+
         let workExperiences = [];
 
         const workExpAddresses = await awardeeContract.connect(this.signer).getWorkExperiences();
@@ -590,7 +606,7 @@ class AppService {
             console.log(workExp);
             workExperiences.push(workExp);
         }
-        
+
         return workExperiences;
     }
 

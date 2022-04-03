@@ -123,6 +123,7 @@ class AppStore {
     pendingApprovalList: ApprovalType[] = [];
     certificateTemplates: CertificateTemplateType[] = [];
     awardeeGroups: AwardeeGroupType[] = [];
+    searchResults: Awardee[] = []
 
     constructor(uiState: UiState) {
         makeObservable(this, {
@@ -130,12 +131,14 @@ class AppStore {
             currentUser: observable,
             pendingApprovalList: observable,
             awardeeGroups: observable,
+            searchResults: observable,
             setIsAuthenticated: action,
             setCurrentUser: action,
             setPendingApprovalsList: action,
             certificateTemplates: observable,
             setCertificateTemplates: action,
             setAwardeeGroups: action,
+            setSearchResults: action,
         });
         this.uiState = uiState;
     }
@@ -300,10 +303,7 @@ class AppStore {
     // @action
     setCertificateTemplates = async (organisationId: number) => {
         try {
-            const { data } = await this.appService.getCertificateTemplatesAsync(
-                organisationId,
-                this.currentUser.token
-            );
+            const { data } = await this.appService.getCertificateTemplatesAsync(organisationId, this.currentUser.token);
 
             runInAction(() => (this.certificateTemplates = [...data]));
         } catch (err) {
@@ -328,14 +328,26 @@ class AppStore {
         organisationId: number
     ) => {
         try {
-            await this.appService.deleteCertificateTemplateAsync(
-                certificateName,
-                organisationId
-            );
+            await this.appService.deleteCertificateTemplateAsync(certificateName, organisationId, this.currentUser.token);
         } catch (err) {
             console.log(err);
         }
     };
+
+    // @action
+    setSearchResults = async (query: string) => {
+        try {
+            const { data } = await this.appService.searchAwardeesAsync(query, this.currentUser.token);
+
+            runInAction(() => (this.searchResults = [...data]));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    getSearchResults() {
+        return this.searchResults;
+    }
 
     // @action
     setIsAuthenticated = (auth: string) => {
@@ -445,7 +457,7 @@ class AppStore {
     };
 
     // awardee = employee apparently...
-    getAwardeesFromOrganisation = async(
+    getAwardeesFromOrganisation = async (
         orgId: number
     ) => {
         try {
@@ -457,7 +469,7 @@ class AppStore {
         } catch (err) {
             console.log(err);
         }
-    } 
+    }
 
     addAwardeeToOrganisation = async (
         uen: string,
@@ -514,7 +526,7 @@ class AppStore {
             console.log(err.message);
         }
     };
-    
+
     addWorkExperience = async (
         email: string,
         position: string,
@@ -564,7 +576,7 @@ class AppStore {
         }
     };
 
-    getWorkExperiences = async(email: string) => {
+    getWorkExperiences = async (email: string) => {
         try {
             const res = await this.appService.getWorkExperiences(email);
             console.log(res);
