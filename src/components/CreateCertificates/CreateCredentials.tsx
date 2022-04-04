@@ -107,13 +107,10 @@ const CreateCertificates: React.FC = () => {
             const uen = JSON.parse(sessionStorage.getItem('user')).uen;
 
             // add awardees to blockchain
-            for (let i = 0; i < response.length; i++) {
-                await appStore.addAwardeeToOrganisation(
-                    uen,
-                    response[i].email,
-                    response[i].name
-                );
-            }
+            const emails = response.map(x => x.email);
+            const names = response.map(x => x.name);
+            const bcResp = await appStore.bulkAddAwardeesToOrganisation(uen, emails, names);
+            console.log(bcResp);
 
             addIssueDate(response);
 
@@ -124,6 +121,11 @@ const CreateCertificates: React.FC = () => {
                 const awardees = JSON.parse(localStorage.getItem(key)).awardees;
                 response = awardees.concat(response);
             };
+
+            response = response.map(x => ({
+                ...x,
+                published: x.published ? true: false
+            }));
 
             const awardeesToStoreInLocalStorage = {
                 organisationId: orgId,

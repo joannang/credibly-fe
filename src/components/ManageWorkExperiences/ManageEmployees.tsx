@@ -13,9 +13,9 @@ import AddEmployeeModal from './AddEmployeeModal/AddEmployeeModal';
 const ManageEmployees: React.FC = () => {
     const { appStore, uiState } = useStores();
     const [awardees, setAwardees] = useState<AwardeeType[]>([]);
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const orgId = JSON.parse(sessionStorage.getItem('user')).id;
+    const uen = JSON.parse(sessionStorage.getItem('user')).uen;
 
     // get awardees in the awardeeGroup to populate table
     useEffect(() => {
@@ -23,7 +23,8 @@ const ManageEmployees: React.FC = () => {
     }, [uiState.employeesUpdated]);
 
     const getAwardees = async () => {
-        const awardees = await appStore.getAwardeesFromOrganisation(orgId);
+        // const awardees = await appStore.getAwardeesFromOrganisation(orgId);
+        const awardees = await appStore.getEmployeesFromOrganisationContract(uen);
         setAwardees(awardees);
         console.log(awardees);
     };
@@ -57,16 +58,7 @@ const ManageEmployees: React.FC = () => {
             )
         }
     ];
-
-    const onSelectChange = (selectedRowKeys) => {
-        setSelectedRowKeys(selectedRowKeys);
-    };
-
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-
+    
     return (
         <BaseLayout>
             <div>
@@ -84,7 +76,6 @@ const ManageEmployees: React.FC = () => {
                     />
                     {awardees && awardees.length !== 0 ? (
                         <Table
-                            rowSelection={rowSelection}
                             dataSource={awardees}
                             columns={columns}
                         />

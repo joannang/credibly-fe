@@ -29,15 +29,18 @@ const PublishCertificates: React.FC = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [certName, setCertName] = useState('');
 
+    const [publishToggle, setPublishToggle] = useState(false);
+
     const groupId = parseInt(window.location.search.substring(4));
     const orgId = JSON.parse(sessionStorage.getItem('user')).id;
     const uen = JSON.parse(sessionStorage.getItem('user')).uen;
+    const key = `awardees/${orgId}/${groupId}`;
 
     // get awardees in the awardeeGroup to populate table
     useEffect(() => {
         getAwardees();
         getCertificateName();
-    }, []);
+    }, [publishToggle]);
 
     const getAwardees = async () => {
         // Revised: getting awardees from localStorage so that i can get the issue dates
@@ -71,6 +74,13 @@ const PublishCertificates: React.FC = () => {
             title: 'Issue Date',
             dataIndex: 'date',
         },
+        {
+            title: 'Published',
+            dataIndex: 'published',
+            render: (published) => {
+                return <div>{published.toString()}</div>
+            }
+        }
     ];
 
     const onSelectChange = (selectedRowKeys) => {
@@ -106,6 +116,7 @@ const PublishCertificates: React.FC = () => {
                 chosenAwardees
             );
             console.log(response);
+            const ipfsHashes = [];
             for (let i = 0; i < response.length; i++) {
                 const encodedImg = response[i].encodedCertificate;
                 // const res = decodeBase64Image(encodedImg);
@@ -114,20 +125,19 @@ const PublishCertificates: React.FC = () => {
                 const { path } = await client.add(Buffer.from(encodedImg));
 
                 const hash = path + '/' + response[i].issueDate;
-                const resp: any = await appStore.mintCertificateNFT(
-                    response[i].awardeeEmail,
-                    groupId,
-                    hash,
-                    uen
-                );
-                console.log(resp);
+                ipfsHashes.push(hash);
 
-                const chunks = [];
-                for await (const chunk of client.cat(path)) {
-                    chunks.push(chunk);
-                }
-                console.log(Buffer.concat(chunks).toString());
+                // const chunks = [];
+                // for await (const chunk of client.cat(path)) {
+                //     chunks.push(chunk);
+                // }
+                // console.log(Buffer.concat(chunks).toString());
             }
+            const emails = response.map(x => x.awardeeEmail);
+            const res = await awardCertificates(ipfsHashes, emails);
+            console.log(res);
+
+            updateLocalStorage(emails);
 
             message.success({
                 content: 'Success!',
@@ -137,6 +147,34 @@ const PublishCertificates: React.FC = () => {
             console.log(err.message);
         }
     };
+
+    const awardCertificates = async(ipfsHashes: string[], emails) => {
+        const res: any = await appStore.bulkAwardCertificates(
+            uen, groupId, ipfsHashes, emails
+        )
+        return res;
+    }
+
+    const updateLocalStorage = (emails) => {
+        var storageAwardees = JSON.parse(localStorage.getItem(key)).awardees;
+        storageAwardees = storageAwardees.map(x => ({
+            ...x,
+            published: emails.includes(x.email) ? true: x.published,
+        }));
+
+        const awardeesToStoreInLocalStorage = {
+            organisationId: orgId,
+            groupId: groupId,
+            awardees: storageAwardees,
+        }
+
+        localStorage.setItem(
+            `awardees/${orgId}/${groupId}`,
+            JSON.stringify(awardeesToStoreInLocalStorage)
+        );
+
+        setPublishToggle(!publishToggle);
+    }
 
     function decodeBase64Image(dataString) {
         var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),

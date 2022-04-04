@@ -11,12 +11,23 @@ interface UiState {
     modalOpen: boolean;
 }
 
+type EditableUser = {
+    position?: string,
+    endDate?: string,
+}
+
 class UiState {
     error = '';
     success = '';
     isLoading: boolean = false;
     modalOpen: boolean = false;
+    secondaryModalOpen: boolean = false;
     employeesUpdated: boolean = false;
+    editableUser: EditableUser = {
+        position: '',
+        endDate: '',
+    }
+    toggle: boolean = false;
 
     constructor() {
         makeObservable(this, {
@@ -24,13 +35,19 @@ class UiState {
             success: observable,
             isLoading: observable,
             modalOpen: observable,
+            secondaryModalOpen: observable,
             employeesUpdated: observable,
+            editableUser: observable,
+            toggle: observable,
 
             setError: action,
             setSuccess: action,
             setIsLoading: action,
             setModalOpen: action,
+            setSecondaryModalOpen: action,
             setEmployeesUpdated: action,
+            setEditableUser: action,
+            setToggle: action,
         });
     }
 
@@ -57,6 +74,28 @@ class UiState {
     // @action
     setEmployeesUpdated = (updated: boolean) => {
         this.employeesUpdated = updated;
+    }
+
+    //@action
+    setEditableUser = (user: EditableUser) => {
+        const {
+            position,
+            endDate,
+        } = user;
+        this.editableUser = {
+            position: position,
+            endDate: endDate
+        };
+    };
+
+    //@action
+    setToggle = (toggle: boolean) => {
+        this.toggle = toggle;
+    }
+
+    // @action
+    setSecondaryModalOpen = (open: boolean) => {
+        this.secondaryModalOpen = open;
     }
 }
 

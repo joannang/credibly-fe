@@ -68,11 +68,6 @@ class AppService {
             this.provider
         );
 
-        this.systemContract = new ethers.Contract(
-            SYSTEM_ADDRESS,
-            System.abi,
-            this.provider
-        )
         this.ipfsClient = create({
             host: 'ipfs.infura.io',
             port: 5001,
@@ -80,8 +75,7 @@ class AppService {
             headers: {
                 authorization: auth,
             },
-        });;
-
+        });
     }
 
     createAwardeesAsync(
@@ -199,7 +193,10 @@ class AppService {
         });
     }
 
-    getCertificateTemplatesAsync(organisationId: number, accessToken: string): any {
+    getCertificateTemplatesAsync(
+        organisationId: number,
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restGet({
@@ -247,8 +244,8 @@ class AppService {
             } catch (err) {
                 reject(err.response.data.error);
             }
-        })
-    };
+        });
+    }
 
     searchAwardeesAsync(query: string, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
@@ -563,6 +560,28 @@ class AppService {
             });
     }
 
+    async getEmployeesFromOrganisation(uen: string) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract.connect(this.signer).allAwardees();
+    }
+
+    async bulkAddAwardeesToOrganisation(
+        uen: string,
+        emails: string[],
+        names: string[]
+    ) {
+        return this.systemContract
+            .connect(this.signer)
+            .addAwardeesToOrganisation(uen, emails, names, {
+                gasLimit: 2500000,
+            });
+    }
+
     async createCertificateContract(
         groupName: string,
         groupId: number,
@@ -594,7 +613,9 @@ class AppService {
 
         let workExperiences = [];
 
-        const workExpAddresses = await awardeeContract.connect(this.signer).getWorkExperiences();
+        const workExpAddresses = await awardeeContract
+            .connect(this.signer)
+            .getWorkExperiences();
         console.log(workExpAddresses);
         for (let i = 0; i < workExpAddresses.length; i++) {
             const workExpContract = new ethers.Contract(
@@ -602,7 +623,9 @@ class AppService {
                 WorkExperience.abi,
                 this.provider
             );
-            const workExp = await workExpContract.connect(this.signer).data(); // ! problem
+            const workExp = await workExpContract
+                .connect(this.signer)
+                .details(); // ! problem
             console.log(workExp);
             workExperiences.push(workExp);
         }
@@ -630,6 +653,23 @@ class AppService {
             });
     }
 
+    async endWorkExperience(
+        email: string,
+        position: string,
+        endDate: string,
+        uen: string
+    ) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract.connect(this.signer).endWorkExperience(email, position, endDate, {
+            gasLimit: 2500000,
+        });
+    }
+
     async getOrganisation(uen: string) {
         return this.systemContract.connect(this.signer).organisations(uen, {
             gasLimit: 2500000,
@@ -655,8 +695,29 @@ class AppService {
             });
     }
 
+    async bulkAwardCertificates(
+        uen: string,
+        emails: string[],
+        groupId: number,
+        ipfsHashes: string[]
+    ) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract
+            .connect(this.signer)
+            .awardCertificates(emails, groupId, ipfsHashes, {
+                gasLimit: 2500000,
+            });
+    }
+
     async retrieveCertificateInfo(tokenId: number) {
-        var res: [string, string, string] = await this.certificateContract.connect(this.signer).getData(tokenId);
+        var res: [string, string, string] = await this.certificateContract
+            .connect(this.signer)
+            .getData(tokenId);
 
         const chunks = [];
         for await (const chunk of this.ipfsClient.cat(res[0])) {
@@ -752,9 +813,9 @@ class AppService {
         uen: string,
         adminWalletAddress: string
     ) {
-        return this.systemContract.connect(this.signer).registerOrganisation(name, uen, adminWalletAddress, {
-            gasLimit: 2500000,
-        });
+        return this.systemContract
+            .connect(this.signer)
+            .registerOrganisation(name, uen, adminWalletAddress);
     }
 }
 

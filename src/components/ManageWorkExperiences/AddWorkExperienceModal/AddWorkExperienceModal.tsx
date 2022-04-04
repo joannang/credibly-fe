@@ -64,10 +64,6 @@ const AddWorkExperienceModal: React.FC = () => {
         }
     };
 
-    const validateEmail = (email: string) => {
-        return email.match(/\S+@\S+\.\S+/);
-    };
-
     return (
         <Modal
             visible={uiState.modalOpen}
@@ -88,6 +84,7 @@ const AddWorkExperienceModal: React.FC = () => {
                 onChange={(e) => setDescription(e.target.value)}
             />
              <Input
+                addonBefore='Start Date:'
                 type="date"
                 placeholder="Date"
                 value={startDate}
