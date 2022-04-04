@@ -13,9 +13,11 @@ contract Organisation {
     string public uen;
     address public admin;
 
-    // email => position => workExperience
+    // email => position => WorkExperience Contract
     mapping (string => mapping (string => WorkExperience)) awardeesWorkExperiences;
+    // certificateId => Certificate Contract
     mapping (string => Certificate) public certificateContracts;
+    // email => Awardee Contract
     mapping (string => Awardee) public awardees;
 
     Awardee[] public allAwardees;
@@ -41,6 +43,10 @@ contract Organisation {
         Certificate certificate = certificateContracts[certificateId];
         require(address(certificate) != address(0), "Certificate does not exist.");
         _;
+    }
+
+    function getAwardees() public view returns (Awardee[] memory) {
+        return allAwardees;
     }
 
     function addAwardee(
@@ -113,4 +119,5 @@ contract Organisation {
             awardCertificate(emails[i], certificateId, ipfsHashs[i]);
         }
     }
+
 }
