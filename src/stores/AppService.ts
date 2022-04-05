@@ -567,7 +567,22 @@ class AppService {
             Organisation.abi,
             this.provider
         );
-        return organisationContract.connect(this.signer).allAwardees();
+        const awardeeAddresses = await organisationContract.connect(this.signer).getAwardees();
+        const awardees: {name?: string, email?: string}[] = [];
+        for (let i = 0; i < awardeeAddresses.length; i++) {
+            const awardeeContract = new ethers.Contract(
+                awardeeAddresses[i],
+                Awardee.abi,
+                this.provider
+            );
+            const email = await awardeeContract
+                .connect(this.signer)
+                .email(); 
+            const name = await awardeeContract.connect(this.signer).name();
+            awardees.push({name: name, email: email});
+        }
+
+        return awardees;
     }
 
     async bulkAddAwardeesToOrganisation(
@@ -625,7 +640,7 @@ class AppService {
             );
             const workExp = await workExpContract
                 .connect(this.signer)
-                .details(); // ! problem
+                .details(); 
             console.log(workExp);
             workExperiences.push(workExp);
         }

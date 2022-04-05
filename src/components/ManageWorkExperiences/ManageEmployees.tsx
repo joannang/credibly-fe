@@ -1,4 +1,4 @@
-import { Button, Empty, message, PageHeader, Table, Tooltip } from 'antd';
+import { Button, Empty, message, PageHeader, Spin, Table, Tooltip } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
@@ -12,9 +12,9 @@ import AddEmployeeModal from './AddEmployeeModal/AddEmployeeModal';
 
 const ManageEmployees: React.FC = () => {
     const { appStore, uiState } = useStores();
-    const [awardees, setAwardees] = useState<AwardeeType[]>([]);
+    const [awardees, setAwardees] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const orgId = JSON.parse(sessionStorage.getItem('user')).id;
     const uen = JSON.parse(sessionStorage.getItem('user')).uen;
 
     // get awardees in the awardeeGroup to populate table
@@ -23,20 +23,14 @@ const ManageEmployees: React.FC = () => {
     }, [uiState.employeesUpdated]);
 
     const getAwardees = async () => {
-        // const awardees = await appStore.getAwardeesFromOrganisation(orgId);
+        setLoading(true);
         const awardees = await appStore.getEmployeesFromOrganisationContract(uen);
         setAwardees(awardees);
         console.log(awardees);
+        setLoading(false);
     };
 
     const columns = [
-        {
-            title: 'ID',
-            dataIndex: 'key',
-            sorter: (a, b) => a.id - b.id,
-            defaultSortOrder: 'ascend',
-            width: '5%',
-        },
         {
             title: 'Name',
             dataIndex: 'name',
@@ -74,14 +68,22 @@ const ManageEmployees: React.FC = () => {
                             </Button>,
                         ]}
                     />
-                    {awardees && awardees.length !== 0 ? (
-                        <Table
-                            dataSource={awardees}
-                            columns={columns}
-                        />
-                    ) : (
-                        <Empty description="No employees have been added" />
-                    )}
+                    { loading ?
+                        <Spin className={styles.spin} />
+                        :
+<>
+                        {awardees && awardees.length !== 0 ? (
+                            <Table
+                                dataSource={awardees}
+                                columns={columns}
+                            />
+                        ) : (
+                            <Empty description="No employees have been added" />
+                        )}
+                    </>
+                    }
+                    
+                    
                 </div>
             </div>
             <AddEmployeeModal/>

@@ -1,4 +1,4 @@
-import { Input, Modal, Spin } from 'antd';
+import { Input, message, Modal, Spin } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -16,6 +16,13 @@ const EditEndDateModal: React.FC = () => {
 
     const updateEndDate = async () => {
         setLoading(true);
+        if (!compareDates(updatableEndDate)) {
+            message.error({
+                content: 'End Date should be after the Start Date',
+            })
+            setLoading(false);
+            return;
+        }
         const res = await appStore.endWorkExperience(
             email,
             extractParams(position).position,
@@ -64,6 +71,23 @@ const EditEndDateModal: React.FC = () => {
         const dateArr = date.split('-');
         return dateArr[2] + dateArr[1] + dateArr[0];
     };
+
+    const compareDates = (end: string) => {
+        const endDate = new Date(end.replaceAll("-", "/"));
+        const startList = extractParams(position).startDate.split('-');
+        const formattedStart = [
+            startList[1],
+            startList[0],
+            startList[2]
+        ].join('/')
+        const startDate = new Date(formattedStart);
+        console.log(endDate, startDate)
+        if (endDate <= startDate) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     return (
         <Modal

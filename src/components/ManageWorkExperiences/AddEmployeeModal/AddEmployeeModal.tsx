@@ -1,4 +1,4 @@
-import { Input, message, Modal } from 'antd';
+import { Input, message, Modal, Spin } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -10,31 +10,27 @@ const AddEmployeeModal: React.FC = () => {
     const { appStore, uiState } = useStores();
     const [employeeEmail, setEmployeeEmail] = useState('');
     const [employeeName, setEmployeeName] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const orgId = JSON.parse(sessionStorage.getItem('user')).id;
     const uen = JSON.parse(sessionStorage.getItem('user')).uen;
 
     const addEmployee = async () => {
+        setLoading(true);
         try {
-            message.loading({
-                content: 'Loading...',
-                key: 'employee-msg',
-                duration: 60,
-            });
-
             if (!employeeName || !employeeEmail) {
                 message.info({
                     content: 'Please fill in both fields',
                     key: 'employee-msg',
-                })
+                });
                 return;
             } else if (!validateEmail(employeeEmail)) {
                 message.info({
                     content: 'Please key in a valid email',
                     key: 'employee-msg',
-                })
+                });
                 return;
-            };
+            }
 
             const awardee: AwardeeType = {
                 name: employeeName,
@@ -52,15 +48,17 @@ const AddEmployeeModal: React.FC = () => {
                 employeeName
             );
             console.log(resp);
-
-            message.success({
-                content: 'Success!',
-                key: 'employee-msg',
-            })
-            uiState.setModalOpen(false);
-            setEmployeeEmail('');
-            setEmployeeName('');
-            uiState.setEmployeesUpdated(!uiState.employeesUpdated);
+            setTimeout(() => {
+                setLoading(false);
+                message.success({
+                    content: 'Success!',
+                    key: 'employee-msg',
+                });
+                uiState.setModalOpen(false);
+                setEmployeeEmail('');
+                setEmployeeName('');
+                uiState.setEmployeesUpdated(!uiState.employeesUpdated);
+            }, 5000);
         } catch (err) {
             console.log(err.message);
             message.error({
@@ -72,7 +70,7 @@ const AddEmployeeModal: React.FC = () => {
 
     const validateEmail = (email: string) => {
         return email.match(/\S+@\S+\.\S+/);
-    }
+    };
 
     return (
         <Modal
@@ -81,18 +79,26 @@ const AddEmployeeModal: React.FC = () => {
             onCancel={() => uiState.setModalOpen(false)}
             onOk={addEmployee}
         >
-            <Input
-                className={styles.input}
-                placeholder="Employee Name"
-                value={employeeName}
-                onChange={(e) => setEmployeeName(e.target.value)}
-            />
-            <Input
-                className={styles.input}
-                placeholder="Employee Email"
-                value={employeeEmail}
-                onChange={(e) => setEmployeeEmail(e.target.value)}
-            />
+            {loading ? (
+                <Spin className={styles.spin}>
+                    Please do not close this prompt
+                </Spin>
+            ) : (
+                <>
+                    <Input
+                        className={styles.input}
+                        placeholder="Employee Name"
+                        value={employeeName}
+                        onChange={(e) => setEmployeeName(e.target.value)}
+                    />
+                    <Input
+                        className={styles.input}
+                        placeholder="Employee Email"
+                        value={employeeEmail}
+                        onChange={(e) => setEmployeeEmail(e.target.value)}
+                    />
+                </>
+            )}
         </Modal>
     );
 };
