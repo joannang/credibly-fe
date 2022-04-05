@@ -14,6 +14,10 @@ contract System {
 
     constructor() {}
 
+    function getAwardeeOrganisations(string memory email) public view returns(Organisation[] memory) {
+        return awardeesOrganisations[email];
+    }
+
     // register organisation
     function registerOrganisation(
         string memory name,
@@ -90,14 +94,13 @@ contract System {
         // update email on awardee side
         awardees[oldEmail].updateEmail(newEmail); // reverts if tx.origin is not owner of awardee contract
         awardees[newEmail] = awardees[oldEmail];
-        // awardees[oldEmail] = Awardee(address(0)); // delete mapping
-        delete awardees[oldEmail]; // need to test if it works
+        delete awardees[oldEmail];
         // update all awardee information in organisation
         awardeesOrganisations[newEmail] = awardeesOrganisations[oldEmail];
         Organisation[] memory lOrganisations = awardeesOrganisations[newEmail];
         for (uint i = 0; i < lOrganisations.length; i++) {
             lOrganisations[i].updateEmail(oldEmail, newEmail);
         }
-        delete awardeesOrganisations[oldEmail]; // need to test if it works
+        delete awardeesOrganisations[oldEmail];
     }
 }

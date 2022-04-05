@@ -63,7 +63,7 @@ contract Organisation {
         string memory newEmail
     ) public awardeeExists(oldEmail) {
         awardees[newEmail] = awardees[oldEmail];
-        delete awardees[oldEmail]; // need to test if it works
+        delete awardees[oldEmail];
     }
 
     function addWorkExperience(
@@ -78,7 +78,6 @@ contract Organisation {
         awardee.addWorkExperience(address(workExperience));
     }
 
-    // need to test
     function endWorkExperience(
         string memory email,
         string memory position,
