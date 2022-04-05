@@ -25,6 +25,18 @@ contract System {
         organisations[uen] = organisation;
     }
 
+    // bulk registerOrganisations()
+    function registerOrganisations(
+        string[] memory names,
+        string[] memory uens,
+        address[] memory admins
+    ) public {
+        require(uens.length == uens.length, "Invalid data.");
+        for (uint i = 0; i < uens.length; i++) {
+            registerOrganisation(names[i], uens[i], admins[i]);
+        }
+    }
+
     // register awardee
     function registerAwardee(
         string memory email,
@@ -50,6 +62,7 @@ contract System {
         awardeesOrganisations[email].push(organisation);
     }
 
+    // bulk addAwardeeToOrganisation()
     function addAwardeesToOrganisation(
         string memory uen,
         string[] memory emails,
