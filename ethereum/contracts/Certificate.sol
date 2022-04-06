@@ -15,7 +15,6 @@ contract Certificate is ERC721URIStorage, ERC721Enumerable {
 
     address admin;
 
-
     constructor(string memory name, string memory _certificateId, string memory _description, string memory _organisation, address _admin) ERC721(name, 'Credibly') {
         certificateId = _certificateId;
         description = _description;
