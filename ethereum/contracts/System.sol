@@ -9,8 +9,14 @@ contract System {
     mapping (string => Organisation) public organisations;
     // email => Awardee Obj
     mapping (string => Awardee) public awardees;
+    // email => list of uen
+    mapping (string => Organisation[]) public awardeesOrganisations;
 
     constructor() {}
+
+    function getAwardeeOrganisations(string memory email) public view returns(Organisation[] memory) {
+        return awardeesOrganisations[email];
+    }
 
     // register organisation
     function registerOrganisation(
@@ -21,6 +27,18 @@ contract System {
         require(address(organisations[uen]) == address(0), "Organisation already exists in system.");
         Organisation organisation = new Organisation(name, uen, admin);
         organisations[uen] = organisation;
+    }
+
+    // bulk registerOrganisations()
+    function registerOrganisations(
+        string[] memory names,
+        string[] memory uens,
+        address[] memory admins
+    ) public {
+        require(uens.length == uens.length, "Invalid data.");
+        for (uint i = 0; i < uens.length; i++) {
+            registerOrganisation(names[i], uens[i], admins[i]);
+        }
     }
 
     // register awardee
@@ -45,6 +63,19 @@ contract System {
         Awardee awardee = registerAwardee(email, name);
         Organisation organisation = organisations[uen];
         organisation.addAwardee(email, address(awardee));
+        awardeesOrganisations[email].push(organisation);
+    }
+
+    // bulk addAwardeeToOrganisation()
+    function addAwardeesToOrganisation(
+        string memory uen,
+        string[] memory emails,
+        string[] memory names
+    ) public {
+        require(emails.length == names.length, "Invalid data.");
+        for (uint i = 0; i < emails.length; i++) {
+            addAwardeeToOrganisation(uen, emails[i], names[i]);
+        }
     }
 
     function linkAwardee(
@@ -60,8 +91,16 @@ contract System {
         string memory newEmail
     ) public {
         require (address(awardees[oldEmail]) != address(0), "Awardee does not exist.");
-        awardees[oldEmail].updateEmail(newEmail);
+        // update email on awardee side
+        awardees[oldEmail].updateEmail(newEmail); // reverts if tx.origin is not owner of awardee contract
         awardees[newEmail] = awardees[oldEmail];
-        awardees[oldEmail] = Awardee(address(0));
+        delete awardees[oldEmail];
+        // update all awardee information in organisation
+        awardeesOrganisations[newEmail] = awardeesOrganisations[oldEmail];
+        Organisation[] memory lOrganisations = awardeesOrganisations[newEmail];
+        for (uint i = 0; i < lOrganisations.length; i++) {
+            lOrganisations[i].updateEmail(oldEmail, newEmail);
+        }
+        delete awardeesOrganisations[oldEmail];
     }
 }

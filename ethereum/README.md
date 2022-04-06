@@ -1,17 +1,9 @@
-# Workflow
+# Deploy Smart Contracts Locally
+1. Set up local blockchain with Ganache
+1. Change directory to ethereum folder `cd ethererum`
+1. Compile and deploy contract `truffle compile` and `truffle migrate`
+1. Simple workflow test cases for smart contracts `truffle test`
 
-1. Deploy System.sol
-
-1. Creating Organisation
-    - Create a new Organisation Contract on System.sol: registerOrganisation(name of Organisation : string, UEN of Organisation : string, address of admin : address)
-
-1. Create new Certificate NFT contract for a specific Organisation
-    - Get the Organisation Contract on System.sol: getOrganisation(UEN of Organisation: string) returns Organisation contract address
-    - Create a new Certificate Contract on Organisation.sol: addCertificate(name of Certificate: string, Certificate ID: string)
-
-1. Register an Employee to an Organisation
-    - System.sol: registerEmployee(UEN of Organisation : string, email of Employee: string)
-
-1. Mint a Certificate NFT for an Employee
-    - Get the Organisation Contract on System.sol: getOrganisation(UEN of Organisation : string) returns (Organisation Contract : address)
-    - Mint a new Certificate NFT on Organisation.sol: awardCertificate(email of Employee: string, Certificate ID: string, IPFS Hash: string)
+# Deploy Smart Contracts on Rinkeby Testnet
+1. Upload all contracts on remix
+1. Connect to Rinkeby Testnet and deploy System.sol

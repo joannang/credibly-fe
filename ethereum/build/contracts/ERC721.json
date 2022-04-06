@@ -33195,8 +33195,13 @@
     "version": "0.8.12+commit.f00d7308.Emscripten.clang"
   },
   "networks": {},
+<<<<<<< HEAD
   "schemaVersion": "3.4.4",
   "updatedAt": "2022-03-26T04:07:55.803Z",
+=======
+  "schemaVersion": "3.4.6",
+  "updatedAt": "2022-04-04T05:38:04.607Z",
+>>>>>>> smartcontracts
   "devdoc": {
     "details": "Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including the Metadata extension, but not including the Enumerable extension, which is available separately as {ERC721Enumerable}.",
     "kind": "dev",

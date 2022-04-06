@@ -666,23 +666,41 @@
       "name": "#utility.yul"
     }
   ],
+<<<<<<< HEAD
   "sourceMap": "69:367:15:-:0;;;94:33;;;-1:-1:-1;;;;;;94:33:15;117:10;94:33;;;69:367;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "69:367:15:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;132:36;;;;;;;;;160:25:19;;;148:2;133:18;132:36:15;;;;;;;;94:33;;;;;-1:-1:-1;;;;;94:33:15;;;;;;-1:-1:-1;;;;;360:32:19;;;342:51;;330:2;315:18;94:33:15;196:203:19;328:105:15;;;;;;:::i;:::-;;:::i;:::-;;;234:5;;-1:-1:-1;;;;;234:5:15;220:10;:19;204:104;;;;-1:-1:-1;;;204:104:15;;791:2:19;204:104:15;;;773:21:19;830:2;810:18;;;803:30;869:34;849:18;;;842:62;-1:-1:-1;;;920:18:19;;;913:49;979:19;;204:104:15;;;;;;;;391:24:::1;:36:::0;328:105::o;404:180:19:-;463:6;516:2;504:9;495:7;491:23;487:32;484:52;;;532:1;529;522:12;484:52;-1:-1:-1;555:23:19;;404:180;-1:-1:-1;404:180:19:o",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity >=0.4.22 <0.9.0;\r\n\r\ncontract Migrations {\r\n  address public owner = msg.sender;\r\n  uint public last_completed_migration;\r\n\r\n  modifier restricted() {\r\n    require(\r\n      msg.sender == owner,\r\n      \"This function is restricted to the contract's owner\"\r\n    );\r\n    _;\r\n  }\r\n\r\n  function setCompleted(uint completed) public restricted {\r\n    last_completed_migration = completed;\r\n  }\r\n}\r\n",
   "sourcePath": "D:\\modules\\credibly-fe\\ethereum\\contracts\\Migrations.sol",
+=======
+  "sourceMap": "66:352:15:-:0;;;90:33;;;-1:-1:-1;;;;;;90:33:15;113:10;90:33;;;66:352;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "66:352:15:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;127:36;;;;;;;;;160:25:19;;;148:2;133:18;127:36:15;;;;;;;;90:33;;;;;-1:-1:-1;;;;;90:33:15;;;;;;-1:-1:-1;;;;;360:32:19;;;342:51;;330:2;315:18;90:33:15;196:203:19;313:103:15;;;;;;:::i;:::-;;:::i;:::-;;;225:5;;-1:-1:-1;;;;;225:5:15;211:10;:19;196:101;;;;-1:-1:-1;;;196:101:15;;791:2:19;196:101:15;;;773:21:19;830:2;810:18;;;803:30;869:34;849:18;;;842:62;-1:-1:-1;;;920:18:19;;;913:49;979:19;;196:101:15;;;;;;;;375:24:::1;:36:::0;313:103::o;404:180:19:-;463:6;516:2;504:9;495:7;491:23;487:32;484:52;;;532:1;529;522:12;484:52;-1:-1:-1;555:23:19;;404:180;-1:-1:-1;404:180:19:o",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.22 <0.9.0;\n\ncontract Migrations {\n  address public owner = msg.sender;\n  uint public last_completed_migration;\n\n  modifier restricted() {\n    require(\n      msg.sender == owner,\n      \"This function is restricted to the contract's owner\"\n    );\n    _;\n  }\n\n  function setCompleted(uint completed) public restricted {\n    last_completed_migration = completed;\n  }\n}\n",
+  "sourcePath": "C:\\Users\\MHA\\Desktop\\credibly-fe\\ethereum\\contracts\\Migrations.sol",
+>>>>>>> smartcontracts
   "ast": {
     "absolutePath": "project:/contracts/Migrations.sol",
     "exportedSymbols": {
       "Migrations": [
+<<<<<<< HEAD
         2582
       ]
     },
     "id": 2583,
+=======
+        2604
+      ]
+    },
+    "id": 2605,
+>>>>>>> smartcontracts
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
+<<<<<<< HEAD
         "id": 2551,
+=======
+        "id": 2573,
+>>>>>>> smartcontracts
         "literals": [
           "solidity",
           ">=",
@@ -702,9 +720,15 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
+<<<<<<< HEAD
         "id": 2582,
         "linearizedBaseContracts": [
           2582
+=======
+        "id": 2604,
+        "linearizedBaseContracts": [
+          2604
+>>>>>>> smartcontracts
         ],
         "name": "Migrations",
         "nameLocation": "78:10:15",
@@ -713,13 +737,22 @@
           {
             "constant": false,
             "functionSelector": "8da5cb5b",
+<<<<<<< HEAD
             "id": 2555,
+=======
+            "id": 2577,
+>>>>>>> smartcontracts
             "mutability": "mutable",
             "name": "owner",
             "nameLocation": "109:5:15",
             "nodeType": "VariableDeclaration",
+<<<<<<< HEAD
             "scope": 2582,
             "src": "94:33:15",
+=======
+            "scope": 2604,
+            "src": "90:33:15",
+>>>>>>> smartcontracts
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -727,7 +760,11 @@
               "typeString": "address"
             },
             "typeName": {
+<<<<<<< HEAD
               "id": 2552,
+=======
+              "id": 2574,
+>>>>>>> smartcontracts
               "name": "address",
               "nodeType": "ElementaryTypeName",
               "src": "94:7:15",
@@ -739,7 +776,11 @@
             },
             "value": {
               "expression": {
+<<<<<<< HEAD
                 "id": 2553,
+=======
+                "id": 2575,
+>>>>>>> smartcontracts
                 "name": "msg",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
@@ -750,7 +791,11 @@
                   "typeString": "msg"
                 }
               },
+<<<<<<< HEAD
               "id": 2554,
+=======
+              "id": 2576,
+>>>>>>> smartcontracts
               "isConstant": false,
               "isLValue": false,
               "isPure": false,
@@ -768,13 +813,22 @@
           {
             "constant": false,
             "functionSelector": "445df0ac",
+<<<<<<< HEAD
             "id": 2557,
+=======
+            "id": 2579,
+>>>>>>> smartcontracts
             "mutability": "mutable",
             "name": "last_completed_migration",
             "nameLocation": "144:24:15",
             "nodeType": "VariableDeclaration",
+<<<<<<< HEAD
             "scope": 2582,
             "src": "132:36:15",
+=======
+            "scope": 2604,
+            "src": "127:36:15",
+>>>>>>> smartcontracts
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -782,7 +836,11 @@
               "typeString": "uint256"
             },
             "typeName": {
+<<<<<<< HEAD
               "id": 2556,
+=======
+              "id": 2578,
+>>>>>>> smartcontracts
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "132:4:15",
@@ -795,7 +853,11 @@
           },
           {
             "body": {
+<<<<<<< HEAD
               "id": 2568,
+=======
+              "id": 2590,
+>>>>>>> smartcontracts
               "nodeType": "Block",
               "src": "197:125:15",
               "statements": [
@@ -807,14 +869,22 @@
                           "typeIdentifier": "t_address",
                           "typeString": "address"
                         },
+<<<<<<< HEAD
                         "id": 2563,
+=======
+                        "id": 2585,
+>>>>>>> smartcontracts
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "expression": {
+<<<<<<< HEAD
                             "id": 2560,
+=======
+                            "id": 2582,
+>>>>>>> smartcontracts
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -825,7 +895,11 @@
                               "typeString": "msg"
                             }
                           },
+<<<<<<< HEAD
                           "id": 2561,
+=======
+                          "id": 2583,
+>>>>>>> smartcontracts
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -841,12 +915,21 @@
                         "nodeType": "BinaryOperation",
                         "operator": "==",
                         "rightExpression": {
+<<<<<<< HEAD
                           "id": 2562,
                           "name": "owner",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 2555,
                           "src": "234:5:15",
+=======
+                          "id": 2584,
+                          "name": "owner",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2577,
+                          "src": "225:5:15",
+>>>>>>> smartcontracts
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -860,7 +943,11 @@
                       },
                       {
                         "hexValue": "546869732066756e6374696f6e206973207265737472696374656420746f2074686520636f6e74726163742773206f776e6572",
+<<<<<<< HEAD
                         "id": 2564,
+=======
+                        "id": 2586,
+>>>>>>> smartcontracts
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -886,7 +973,11 @@
                           "typeString": "literal_string \"This function is restricted to the contract's owner\""
                         }
                       ],
+<<<<<<< HEAD
                       "id": 2559,
+=======
+                      "id": 2581,
+>>>>>>> smartcontracts
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -900,7 +991,11 @@
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
+<<<<<<< HEAD
                     "id": 2565,
+=======
+                    "id": 2587,
+>>>>>>> smartcontracts
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -915,23 +1010,39 @@
                       "typeString": "tuple()"
                     }
                   },
+<<<<<<< HEAD
                   "id": 2566,
+=======
+                  "id": 2588,
+>>>>>>> smartcontracts
                   "nodeType": "ExpressionStatement",
                   "src": "204:104:15"
                 },
                 {
+<<<<<<< HEAD
                   "id": 2567,
+=======
+                  "id": 2589,
+>>>>>>> smartcontracts
                   "nodeType": "PlaceholderStatement",
                   "src": "315:1:15"
                 }
               ]
             },
+<<<<<<< HEAD
             "id": 2569,
+=======
+            "id": 2591,
+>>>>>>> smartcontracts
             "name": "restricted",
             "nameLocation": "184:10:15",
             "nodeType": "ModifierDefinition",
             "parameters": {
+<<<<<<< HEAD
               "id": 2558,
+=======
+              "id": 2580,
+>>>>>>> smartcontracts
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "194:2:15"
@@ -942,24 +1053,41 @@
           },
           {
             "body": {
+<<<<<<< HEAD
               "id": 2580,
+=======
+              "id": 2602,
+>>>>>>> smartcontracts
               "nodeType": "Block",
               "src": "384:49:15",
               "statements": [
                 {
                   "expression": {
+<<<<<<< HEAD
                     "id": 2578,
+=======
+                    "id": 2600,
+>>>>>>> smartcontracts
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
+<<<<<<< HEAD
                       "id": 2576,
                       "name": "last_completed_migration",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 2557,
                       "src": "391:24:15",
+=======
+                      "id": 2598,
+                      "name": "last_completed_migration",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2579,
+                      "src": "375:24:15",
+>>>>>>> smartcontracts
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -968,12 +1096,21 @@
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
+<<<<<<< HEAD
                       "id": 2577,
                       "name": "completed",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 2571,
                       "src": "418:9:15",
+=======
+                      "id": 2599,
+                      "name": "completed",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2593,
+                      "src": "402:9:15",
+>>>>>>> smartcontracts
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -985,18 +1122,27 @@
                       "typeString": "uint256"
                     }
                   },
+<<<<<<< HEAD
                   "id": 2579,
+=======
+                  "id": 2601,
+>>>>>>> smartcontracts
                   "nodeType": "ExpressionStatement",
                   "src": "391:36:15"
                 }
               ]
             },
             "functionSelector": "fdacd576",
+<<<<<<< HEAD
             "id": 2581,
+=======
+            "id": 2603,
+>>>>>>> smartcontracts
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
+<<<<<<< HEAD
                 "id": 2574,
                 "kind": "modifierInvocation",
                 "modifierName": {
@@ -1005,6 +1151,16 @@
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 2569,
                   "src": "373:10:15"
+=======
+                "id": 2596,
+                "kind": "modifierInvocation",
+                "modifierName": {
+                  "id": 2595,
+                  "name": "restricted",
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 2591,
+                  "src": "358:10:15"
+>>>>>>> smartcontracts
                 },
                 "nodeType": "ModifierInvocation",
                 "src": "373:10:15"
@@ -1014,18 +1170,31 @@
             "nameLocation": "337:12:15",
             "nodeType": "FunctionDefinition",
             "parameters": {
+<<<<<<< HEAD
               "id": 2572,
+=======
+              "id": 2594,
+>>>>>>> smartcontracts
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
+<<<<<<< HEAD
                   "id": 2571,
+=======
+                  "id": 2593,
+>>>>>>> smartcontracts
                   "mutability": "mutable",
                   "name": "completed",
                   "nameLocation": "355:9:15",
                   "nodeType": "VariableDeclaration",
+<<<<<<< HEAD
                   "scope": 2581,
                   "src": "350:14:15",
+=======
+                  "scope": 2603,
+                  "src": "335:14:15",
+>>>>>>> smartcontracts
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1033,7 +1202,11 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
+<<<<<<< HEAD
                     "id": 2570,
+=======
+                    "id": 2592,
+>>>>>>> smartcontracts
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "350:4:15",
@@ -1048,20 +1221,34 @@
               "src": "349:16:15"
             },
             "returnParameters": {
+<<<<<<< HEAD
               "id": 2575,
+=======
+              "id": 2597,
+>>>>>>> smartcontracts
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "384:0:15"
             },
+<<<<<<< HEAD
             "scope": 2582,
             "src": "328:105:15",
+=======
+            "scope": 2604,
+            "src": "313:103:15",
+>>>>>>> smartcontracts
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
+<<<<<<< HEAD
         "scope": 2583,
         "src": "69:367:15",
+=======
+        "scope": 2605,
+        "src": "66:352:15",
+>>>>>>> smartcontracts
         "usedErrors": []
       }
     ],
@@ -1071,15 +1258,26 @@
     "absolutePath": "project:/contracts/Migrations.sol",
     "exportedSymbols": {
       "Migrations": [
+<<<<<<< HEAD
         2582
       ]
     },
     "id": 2583,
+=======
+        2604
+      ]
+    },
+    "id": 2605,
+>>>>>>> smartcontracts
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
+<<<<<<< HEAD
         "id": 2551,
+=======
+        "id": 2573,
+>>>>>>> smartcontracts
         "literals": [
           "solidity",
           ">=",
@@ -1099,9 +1297,15 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
+<<<<<<< HEAD
         "id": 2582,
         "linearizedBaseContracts": [
           2582
+=======
+        "id": 2604,
+        "linearizedBaseContracts": [
+          2604
+>>>>>>> smartcontracts
         ],
         "name": "Migrations",
         "nameLocation": "78:10:15",
@@ -1110,13 +1314,22 @@
           {
             "constant": false,
             "functionSelector": "8da5cb5b",
+<<<<<<< HEAD
             "id": 2555,
+=======
+            "id": 2577,
+>>>>>>> smartcontracts
             "mutability": "mutable",
             "name": "owner",
             "nameLocation": "109:5:15",
             "nodeType": "VariableDeclaration",
+<<<<<<< HEAD
             "scope": 2582,
             "src": "94:33:15",
+=======
+            "scope": 2604,
+            "src": "90:33:15",
+>>>>>>> smartcontracts
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -1124,7 +1337,11 @@
               "typeString": "address"
             },
             "typeName": {
+<<<<<<< HEAD
               "id": 2552,
+=======
+              "id": 2574,
+>>>>>>> smartcontracts
               "name": "address",
               "nodeType": "ElementaryTypeName",
               "src": "94:7:15",
@@ -1136,7 +1353,11 @@
             },
             "value": {
               "expression": {
+<<<<<<< HEAD
                 "id": 2553,
+=======
+                "id": 2575,
+>>>>>>> smartcontracts
                 "name": "msg",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
@@ -1147,7 +1368,11 @@
                   "typeString": "msg"
                 }
               },
+<<<<<<< HEAD
               "id": 2554,
+=======
+              "id": 2576,
+>>>>>>> smartcontracts
               "isConstant": false,
               "isLValue": false,
               "isPure": false,
@@ -1165,13 +1390,22 @@
           {
             "constant": false,
             "functionSelector": "445df0ac",
+<<<<<<< HEAD
             "id": 2557,
+=======
+            "id": 2579,
+>>>>>>> smartcontracts
             "mutability": "mutable",
             "name": "last_completed_migration",
             "nameLocation": "144:24:15",
             "nodeType": "VariableDeclaration",
+<<<<<<< HEAD
             "scope": 2582,
             "src": "132:36:15",
+=======
+            "scope": 2604,
+            "src": "127:36:15",
+>>>>>>> smartcontracts
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -1179,7 +1413,11 @@
               "typeString": "uint256"
             },
             "typeName": {
+<<<<<<< HEAD
               "id": 2556,
+=======
+              "id": 2578,
+>>>>>>> smartcontracts
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "132:4:15",
@@ -1192,7 +1430,11 @@
           },
           {
             "body": {
+<<<<<<< HEAD
               "id": 2568,
+=======
+              "id": 2590,
+>>>>>>> smartcontracts
               "nodeType": "Block",
               "src": "197:125:15",
               "statements": [
@@ -1204,14 +1446,22 @@
                           "typeIdentifier": "t_address",
                           "typeString": "address"
                         },
+<<<<<<< HEAD
                         "id": 2563,
+=======
+                        "id": 2585,
+>>>>>>> smartcontracts
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "expression": {
+<<<<<<< HEAD
                             "id": 2560,
+=======
+                            "id": 2582,
+>>>>>>> smartcontracts
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -1222,7 +1472,11 @@
                               "typeString": "msg"
                             }
                           },
+<<<<<<< HEAD
                           "id": 2561,
+=======
+                          "id": 2583,
+>>>>>>> smartcontracts
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1238,12 +1492,21 @@
                         "nodeType": "BinaryOperation",
                         "operator": "==",
                         "rightExpression": {
+<<<<<<< HEAD
                           "id": 2562,
                           "name": "owner",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 2555,
                           "src": "234:5:15",
+=======
+                          "id": 2584,
+                          "name": "owner",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2577,
+                          "src": "225:5:15",
+>>>>>>> smartcontracts
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -1257,7 +1520,11 @@
                       },
                       {
                         "hexValue": "546869732066756e6374696f6e206973207265737472696374656420746f2074686520636f6e74726163742773206f776e6572",
+<<<<<<< HEAD
                         "id": 2564,
+=======
+                        "id": 2586,
+>>>>>>> smartcontracts
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -1283,7 +1550,11 @@
                           "typeString": "literal_string \"This function is restricted to the contract's owner\""
                         }
                       ],
+<<<<<<< HEAD
                       "id": 2559,
+=======
+                      "id": 2581,
+>>>>>>> smartcontracts
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -1297,7 +1568,11 @@
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
+<<<<<<< HEAD
                     "id": 2565,
+=======
+                    "id": 2587,
+>>>>>>> smartcontracts
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1312,23 +1587,39 @@
                       "typeString": "tuple()"
                     }
                   },
+<<<<<<< HEAD
                   "id": 2566,
+=======
+                  "id": 2588,
+>>>>>>> smartcontracts
                   "nodeType": "ExpressionStatement",
                   "src": "204:104:15"
                 },
                 {
+<<<<<<< HEAD
                   "id": 2567,
+=======
+                  "id": 2589,
+>>>>>>> smartcontracts
                   "nodeType": "PlaceholderStatement",
                   "src": "315:1:15"
                 }
               ]
             },
+<<<<<<< HEAD
             "id": 2569,
+=======
+            "id": 2591,
+>>>>>>> smartcontracts
             "name": "restricted",
             "nameLocation": "184:10:15",
             "nodeType": "ModifierDefinition",
             "parameters": {
+<<<<<<< HEAD
               "id": 2558,
+=======
+              "id": 2580,
+>>>>>>> smartcontracts
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "194:2:15"
@@ -1339,24 +1630,41 @@
           },
           {
             "body": {
+<<<<<<< HEAD
               "id": 2580,
+=======
+              "id": 2602,
+>>>>>>> smartcontracts
               "nodeType": "Block",
               "src": "384:49:15",
               "statements": [
                 {
                   "expression": {
+<<<<<<< HEAD
                     "id": 2578,
+=======
+                    "id": 2600,
+>>>>>>> smartcontracts
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
+<<<<<<< HEAD
                       "id": 2576,
                       "name": "last_completed_migration",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 2557,
                       "src": "391:24:15",
+=======
+                      "id": 2598,
+                      "name": "last_completed_migration",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2579,
+                      "src": "375:24:15",
+>>>>>>> smartcontracts
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1365,12 +1673,21 @@
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
+<<<<<<< HEAD
                       "id": 2577,
                       "name": "completed",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 2571,
                       "src": "418:9:15",
+=======
+                      "id": 2599,
+                      "name": "completed",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2593,
+                      "src": "402:9:15",
+>>>>>>> smartcontracts
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1382,18 +1699,27 @@
                       "typeString": "uint256"
                     }
                   },
+<<<<<<< HEAD
                   "id": 2579,
+=======
+                  "id": 2601,
+>>>>>>> smartcontracts
                   "nodeType": "ExpressionStatement",
                   "src": "391:36:15"
                 }
               ]
             },
             "functionSelector": "fdacd576",
+<<<<<<< HEAD
             "id": 2581,
+=======
+            "id": 2603,
+>>>>>>> smartcontracts
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
+<<<<<<< HEAD
                 "id": 2574,
                 "kind": "modifierInvocation",
                 "modifierName": {
@@ -1402,6 +1728,16 @@
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 2569,
                   "src": "373:10:15"
+=======
+                "id": 2596,
+                "kind": "modifierInvocation",
+                "modifierName": {
+                  "id": 2595,
+                  "name": "restricted",
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 2591,
+                  "src": "358:10:15"
+>>>>>>> smartcontracts
                 },
                 "nodeType": "ModifierInvocation",
                 "src": "373:10:15"
@@ -1411,18 +1747,31 @@
             "nameLocation": "337:12:15",
             "nodeType": "FunctionDefinition",
             "parameters": {
+<<<<<<< HEAD
               "id": 2572,
+=======
+              "id": 2594,
+>>>>>>> smartcontracts
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
+<<<<<<< HEAD
                   "id": 2571,
+=======
+                  "id": 2593,
+>>>>>>> smartcontracts
                   "mutability": "mutable",
                   "name": "completed",
                   "nameLocation": "355:9:15",
                   "nodeType": "VariableDeclaration",
+<<<<<<< HEAD
                   "scope": 2581,
                   "src": "350:14:15",
+=======
+                  "scope": 2603,
+                  "src": "335:14:15",
+>>>>>>> smartcontracts
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1430,7 +1779,11 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
+<<<<<<< HEAD
                     "id": 2570,
+=======
+                    "id": 2592,
+>>>>>>> smartcontracts
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "350:4:15",
@@ -1445,20 +1798,34 @@
               "src": "349:16:15"
             },
             "returnParameters": {
+<<<<<<< HEAD
               "id": 2575,
+=======
+              "id": 2597,
+>>>>>>> smartcontracts
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "384:0:15"
             },
+<<<<<<< HEAD
             "scope": 2582,
             "src": "328:105:15",
+=======
+            "scope": 2604,
+            "src": "313:103:15",
+>>>>>>> smartcontracts
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
+<<<<<<< HEAD
         "scope": 2583,
         "src": "69:367:15",
+=======
+        "scope": 2605,
+        "src": "66:352:15",
+>>>>>>> smartcontracts
         "usedErrors": []
       }
     ],
@@ -1472,12 +1839,21 @@
     "5777": {
       "events": {},
       "links": {},
+<<<<<<< HEAD
       "address": "0x031a4b8fc5EA2669B1C8c54F93A4B56E6c1eb75c",
       "transactionHash": "0xd8e4d7f956b4cb80937f395ffd162a03c2bae1440269de4c08ac625c77a5d82a"
     }
   },
   "schemaVersion": "3.4.4",
   "updatedAt": "2022-03-28T15:39:08.727Z",
+=======
+      "address": "0x23d45Bfc26A6Cb41a4089A295dF2318b2fD63AD4",
+      "transactionHash": "0x52aefe5611c9783e34cf9465226b7874e7888f50e3513a4a9f64bb0b871dcb64"
+    }
+  },
+  "schemaVersion": "3.4.6",
+  "updatedAt": "2022-04-04T05:48:12.950Z",
+>>>>>>> smartcontracts
   "devdoc": {
     "kind": "dev",
     "methods": {},

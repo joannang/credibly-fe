@@ -14,7 +14,7 @@ contract('System', function(accounts) {
         SystemInstance = await System.deployed();
     });
 
-    console.log("Testing Workflow. These are not unit tests.");
+    console.log("Basic test cases to test workflow. These are not unit tests.");
 
     it ('System Creates Organisation', async () => {
         let uen = 'uen1';
@@ -155,22 +155,84 @@ contract('System', function(accounts) {
         assert.equal(await Awardee1Instance.walletAddress(), walletAddress);
     })
 
-    it ('Set Public Visibility of Data to false (Only owner and approved users can view)', async () => {
+    it ('Set Public Visibility of Data to false (Only owner and authorised users can view)', async () => {
         let email = 'email1';
         let walletAddress = accounts[2];
+        let unauthorisedUser = accounts[3];
         // get instance of awardee1
         let Awardee1Address = await SystemInstance.awardees(email);
         let Awardee1Instance = await Awardee.at(Awardee1Address);
         // set public visibility of data to false
         await Awardee1Instance.setVisibility(false, {from: walletAddress})
-        // check that unauthorised users (neither owner nor approved users) cannot access functions to view data
-        await truffleAssert.reverts(Awardee1Instance.getCertificates(), "Unauthorised user.")
-        await truffleAssert.reverts(Awardee1Instance.getWorkExperiences(), "Unauthorised user.")
+        // check that unauthorised users (neither owner nor authorised users) cannot access functions to view data
+        await truffleAssert.reverts(Awardee1Instance.getCertificates({from: unauthorisedUser}), "Unauthorised user.")
+        await truffleAssert.reverts(Awardee1Instance.getWorkExperiences({from: unauthorisedUser}), "Unauthorised user.")
     })
 
-    // set approved users
+    it ('Set authorised users to have access rights to view', async () => {
+        let email = 'email1';
+        let walletAddress = accounts[2];
+        let authorisedUser = accounts[3];
+        // get instance of awardee1
+        let Awardee1Address = await SystemInstance.awardees(email);
+        let Awardee1Instance = await Awardee.at(Awardee1Address);
+        // give access rights to authorised users
+        await Awardee1Instance.addAccessRights(authorisedUser, {from: walletAddress});
+        // check that authorised users can access functions to view data
+        let certificates = await Awardee1Instance.getCertificates({from: authorisedUser});
+        let workExperiences = await Awardee1Instance.getWorkExperiences({from: authorisedUser});
+        assert.equal(certificates.length, 1);
+        assert.equal(workExperiences.length, 1);
+    })
 
-    // remove access rights
+    it ('Remove access rights from previously authorised users', async () => {
+        let email = 'email1';
+        let walletAddress = accounts[2];
+        let previouslyAuthorisedUser = accounts[3];
+        // get instance of awardee1
+        let Awardee1Address = await SystemInstance.awardees(email);
+        let Awardee1Instance = await Awardee.at(Awardee1Address);
+        // remove access rights from previously authorised users
+        await Awardee1Instance.removeAccessRights(previouslyAuthorisedUser, {from: walletAddress});
+        // check that previously authorised users cannot access functions to view data
+        await truffleAssert.reverts(Awardee1Instance.getCertificates({from: previouslyAuthorisedUser}), "Unauthorised user.")
+        await truffleAssert.reverts(Awardee1Instance.getWorkExperiences({from: previouslyAuthorisedUser}), "Unauthorised user.")
+    })
 
+    it ('Change Awardee Email', async () => {
+        let oldEmail = 'email1';
+        let newEmail = 'email2';
+        let walletAddress = accounts[2];
+        // get data mapped to old email
+        let OldEmailAwardee1Address = await SystemInstance.awardees(oldEmail);
+        let OldEmailAwardeeOrganisations = await SystemInstance.getAwardeeOrganisations(oldEmail);
+        // link wallet address to awardee account
+        await SystemInstance.changeEmail(oldEmail, newEmail, {from: walletAddress});
+        // get data mapped to new email
+        let NewEmailAwardee1Address = await SystemInstance.awardees(newEmail);
+        let NewEmailAwardeeOrganisations = await SystemInstance.getAwardeeOrganisations(newEmail);
+        // check that new email is updated on System contract
+        assert(OldEmailAwardee1Address === NewEmailAwardee1Address);
+        assert.equal(OldEmailAwardeeOrganisations.length, NewEmailAwardeeOrganisations.length);
+        // check that new email is updated on Awardee contract
+        let Awardee1Address = await SystemInstance.awardees(newEmail);
+        let Awardee1Instance = await Awardee.at(Awardee1Address);
+        let AwardeeNewEmail = await Awardee1Instance.email();
+        assert(AwardeeNewEmail === newEmail);
+        // check that new email is updated on Organisation contract
+        for (let i = 0; i < NewEmailAwardeeOrganisations.length; i++) {
+            let OrganisationAddress = await NewEmailAwardeeOrganisations[i];
+            let OrganisationInstance = await Organisation.at(OrganisationAddress);
+            let OrganisationNewEmailAwardeeAddress = await OrganisationInstance.awardees(newEmail);
+            let OrganisationOldEmailAwardeeAddress = await OrganisationInstance.awardees(oldEmail);
+            assert(OrganisationNewEmailAwardeeAddress === NewEmailAwardee1Address);
+            assert.equal(OrganisationOldEmailAwardeeAddress, 0);
+        }
+        // check that data mapped to old email in System contract is cleared
+        let OldEmailNoAwardeeAddress = await SystemInstance.awardees(oldEmail);
+        let OldEmailNoAwardeeOrganisations = await SystemInstance.getAwardeeOrganisations(oldEmail);
+        assert.equal(OldEmailNoAwardeeAddress, 0);
+        assert.equal(OldEmailNoAwardeeOrganisations.length, 0);
+    })
 
 })
