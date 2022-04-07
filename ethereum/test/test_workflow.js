@@ -205,34 +205,30 @@ contract('System', function(accounts) {
         let walletAddress = accounts[2];
         // get data mapped to old email
         let OldEmailAwardee1Address = await SystemInstance.awardees(oldEmail);
-        let OldEmailAwardeeOrganisations = await SystemInstance.getAwardeeOrganisations(oldEmail);
+        let OldEmailAwardeeOrganisations1 = await SystemInstance.awardeesOrganisations(oldEmail, 0);
         // link wallet address to awardee account
         await SystemInstance.changeEmail(oldEmail, newEmail, {from: walletAddress});
         // get data mapped to new email
         let NewEmailAwardee1Address = await SystemInstance.awardees(newEmail);
-        let NewEmailAwardeeOrganisations = await SystemInstance.getAwardeeOrganisations(newEmail);
+        let NewEmailAwardeeOrganisations1 = await SystemInstance.awardeesOrganisations(newEmail, 0);
         // check that new email is updated on System contract
         assert(OldEmailAwardee1Address === NewEmailAwardee1Address);
-        assert.equal(OldEmailAwardeeOrganisations.length, NewEmailAwardeeOrganisations.length);
+        assert.equal(OldEmailAwardeeOrganisations1, NewEmailAwardeeOrganisations1);
         // check that new email is updated on Awardee contract
         let Awardee1Address = await SystemInstance.awardees(newEmail);
         let Awardee1Instance = await Awardee.at(Awardee1Address);
         let AwardeeNewEmail = await Awardee1Instance.email();
         assert(AwardeeNewEmail === newEmail);
         // check that new email is updated on Organisation contract
-        for (let i = 0; i < NewEmailAwardeeOrganisations.length; i++) {
-            let OrganisationAddress = await NewEmailAwardeeOrganisations[i];
-            let OrganisationInstance = await Organisation.at(OrganisationAddress);
-            let OrganisationNewEmailAwardeeAddress = await OrganisationInstance.awardees(newEmail);
-            let OrganisationOldEmailAwardeeAddress = await OrganisationInstance.awardees(oldEmail);
-            assert(OrganisationNewEmailAwardeeAddress === NewEmailAwardee1Address);
-            assert.equal(OrganisationOldEmailAwardeeAddress, 0);
-        }
+        let OrganisationInstance = await Organisation.at(NewEmailAwardeeOrganisations1);
+        let OrganisationNewEmailAwardeeAddress = await OrganisationInstance.awardees(newEmail);
+        let OrganisationOldEmailAwardeeAddress = await OrganisationInstance.awardees(oldEmail);
+        assert(OrganisationNewEmailAwardeeAddress === NewEmailAwardee1Address);
+        assert.equal(OrganisationOldEmailAwardeeAddress, 0);
         // check that data mapped to old email in System contract is cleared
         let OldEmailNoAwardeeAddress = await SystemInstance.awardees(oldEmail);
-        let OldEmailNoAwardeeOrganisations = await SystemInstance.getAwardeeOrganisations(oldEmail);
         assert.equal(OldEmailNoAwardeeAddress, 0);
-        assert.equal(OldEmailNoAwardeeOrganisations.length, 0);
+        await truffleAssert.reverts(SystemInstance.awardeesOrganisations(oldEmail, 0)) // transaction should fail since data is no longer mapped to oldEmail
     })
 
 })
