@@ -76,7 +76,14 @@ const PendingAccounts: React.FC = () => {
       const approverId = appStore.currentUser.id;
       const userIds = [].concat(...[!id ? selectedRowKeys : id]);
 
+      const usersToApprove = appStore.pendingApprovalList.filter((pending: ApprovalType) => !!userIds.includes(pending.key));
+
+      const names = usersToApprove.map((pending: ApprovalType) => pending.name);
+      const uens = usersToApprove.map((pending: ApprovalType) => pending.uen);
+      const admins = usersToApprove.map((pending: ApprovalType) => pending.walletAddress);
+
       await appStore.approveAccounts(approverId, userIds);
+      await appStore.registerOrganisations(names, uens, admins);
 
       if (!id) {
         setSelectedRowKeys([]);

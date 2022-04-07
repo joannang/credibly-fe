@@ -66,6 +66,7 @@ export type ApprovalType = {
     name: string;
     email: string;
     uen: string;
+    walletAddress: string;
     documents: DocumentDto[];
 };
 
@@ -233,8 +234,8 @@ class AppStore {
         await this.appService.registerUploadAsync(registerUpload);
     };
 
-    login = async (email: string, password: string) => {
-        const { data } = await this.appService.loginAsync(email, password);
+    login = async (email: string, password: string, walletAddress: string) => {
+        const { data } = await this.appService.loginAsync(email, password, walletAddress);
         this.currentUser = { ...data };
         this.isAuthenticated = 'true';
         sessionStorage.setItem('authenticated', 'true');
@@ -632,16 +633,16 @@ class AppStore {
         }
     };
 
-    registerOrganisation = async (
-        name: string,
-        uen: string,
-        adminWalletAddress: string
+    registerOrganisations = async (
+        names: string[],
+        uens: string[],
+        admins: string[]
     ) => {
         try {
-            const res = await this.appService.registerOrganisation(
-                name,
-                uen,
-                adminWalletAddress
+            const res = await this.appService.registerOrganisations(
+                names,
+                uens,
+                admins
             );
             console.log(res);
         } catch (err) {
