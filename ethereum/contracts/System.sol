@@ -113,9 +113,4 @@ contract System {
         }
         delete awardeesOrganisations[oldEmail]; // delete old email mapping
     }
-
-    // Getter Functions
-    function getAwardeeOrganisations(string memory email) public view returns(Organisation[] memory) {
-        return awardeesOrganisations[email];
-    }
 }
