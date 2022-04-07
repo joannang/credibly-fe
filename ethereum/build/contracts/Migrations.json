@@ -1852,7 +1852,11 @@
     }
   },
   "schemaVersion": "3.4.6",
+<<<<<<< HEAD
   "updatedAt": "2022-04-04T05:48:12.950Z",
+>>>>>>> smartcontracts
+=======
+  "updatedAt": "2022-04-06T06:42:24.903Z",
 >>>>>>> smartcontracts
   "devdoc": {
     "kind": "dev",
