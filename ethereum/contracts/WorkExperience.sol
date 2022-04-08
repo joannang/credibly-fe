@@ -12,7 +12,7 @@ contract WorkExperience {
         bool end;
     }
 
-    address public admin;
+    address public admin; // admin wallet address of the Organisation that created this Work Experience instance
     Details public details;
 
     constructor(
@@ -29,11 +29,12 @@ contract WorkExperience {
         admin = _admin;
     }
 
-    modifier onlyAdmin {
+    modifier onlyAdmin { // only the admin wallet address can execute the function
         require(tx.origin == admin, "Unauthorised user.");
         _;
     }
 
+    // Update End Date of Work Experience
     function setEndDate(uint256 _endDate) public onlyAdmin {
         details.endDate = _endDate;
     }

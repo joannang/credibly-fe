@@ -14,7 +14,7 @@ contract('System', function(accounts) {
         SystemInstance = await System.deployed();
     });
 
-    console.log("Testing Workflow. These are not unit tests.");
+    console.log("Basic test cases to test workflow. These are not unit tests.");
 
     it ('System Creates Organisation', async () => {
         let uen = 'uen1';
@@ -70,31 +70,6 @@ contract('System', function(accounts) {
         let WorkExperience1Position = await WorkExperience1Data.position;
         assert.equal(WorkExperience1Position, position);
     })
-
-    // it ('Organisation Sets Work Experience End Date and Status for Awardee', async () => {
-    //     let uen = 'uen1'
-    //     let email = 'email1';
-    //     let position = 'position1';
-    //     let description = 'description1';
-    //     let endDate = '01012025';
-    //     let admin = accounts[1];
-    //     // get instance of organisation1
-    //     let Organisation1Address = await SystemInstance.organisations(uen);
-    //     let Organisation1Instance = await Organisation.at(Organisation1Address);
-    //     // add work experience for awardee using admin account
-    //     await Organisation1Instance.addWorkExperience(email, position, description, startDate, {from: admin});
-    //     // get instance of awardee1
-    //     let Awardee1Address = await SystemInstance.awardees(email);
-    //     let Awardee1Instance = await Awardee.at(Awardee1Address);
-    //     // check if work experience is added to awardee
-    //     let Awardee1WorkExperiences = await Awardee1Instance.getWorkExperiences();
-    //     let Awardee1WorkExperience1 = await Awardee1WorkExperiences[0]
-    //     let WorkExperience1Instance = await WorkExperience.at(Awardee1WorkExperience1);
-    //     let WorkExperience1Data = await WorkExperience1Instance.details();
-    //     let WorkExperience1Position = await WorkExperience1Data.position;
-    //     assert.equal(WorkExperience1Position, position);
-    // })
-
 
     it ('Organisation Creates Certificate Contract', async () => {
         let uen = 'uen1'
@@ -223,4 +198,37 @@ contract('System', function(accounts) {
         await truffleAssert.reverts(Awardee1Instance.getCertificates({from: previouslyAuthorisedUser}), "Unauthorised user.")
         await truffleAssert.reverts(Awardee1Instance.getWorkExperiences({from: previouslyAuthorisedUser}), "Unauthorised user.")
     })
+
+    it ('Change Awardee Email', async () => {
+        let oldEmail = 'email1';
+        let newEmail = 'email2';
+        let walletAddress = accounts[2];
+        // get data mapped to old email
+        let OldEmailAwardee1Address = await SystemInstance.awardees(oldEmail);
+        let OldEmailAwardeeOrganisations1 = await SystemInstance.awardeesOrganisations(oldEmail, 0);
+        // link wallet address to awardee account
+        await SystemInstance.changeEmail(oldEmail, newEmail, {from: walletAddress});
+        // get data mapped to new email
+        let NewEmailAwardee1Address = await SystemInstance.awardees(newEmail);
+        let NewEmailAwardeeOrganisations1 = await SystemInstance.awardeesOrganisations(newEmail, 0);
+        // check that new email is updated on System contract
+        assert(OldEmailAwardee1Address === NewEmailAwardee1Address);
+        assert.equal(OldEmailAwardeeOrganisations1, NewEmailAwardeeOrganisations1);
+        // check that new email is updated on Awardee contract
+        let Awardee1Address = await SystemInstance.awardees(newEmail);
+        let Awardee1Instance = await Awardee.at(Awardee1Address);
+        let AwardeeNewEmail = await Awardee1Instance.email();
+        assert(AwardeeNewEmail === newEmail);
+        // check that new email is updated on Organisation contract
+        let OrganisationInstance = await Organisation.at(NewEmailAwardeeOrganisations1);
+        let OrganisationNewEmailAwardeeAddress = await OrganisationInstance.awardees(newEmail);
+        let OrganisationOldEmailAwardeeAddress = await OrganisationInstance.awardees(oldEmail);
+        assert(OrganisationNewEmailAwardeeAddress === NewEmailAwardee1Address);
+        assert.equal(OrganisationOldEmailAwardeeAddress, 0);
+        // check that data mapped to old email in System contract is cleared
+        let OldEmailNoAwardeeAddress = await SystemInstance.awardees(oldEmail);
+        assert.equal(OldEmailNoAwardeeAddress, 0);
+        await truffleAssert.reverts(SystemInstance.awardeesOrganisations(oldEmail, 0)) // transaction should fail since data is no longer mapped to oldEmail
+    })
+
 })

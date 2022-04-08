@@ -7,8 +7,9 @@
 ## Folder Structure
 ```
 /ethereum
+|__ README.md **(View README in ethereum folder for smart contract deployment)**
 |__ /contracts (store smart contracts here)
-|__ /artifacts/contracts (where the compiled contracts are)
+|__ /build/contracts (where the compiled contracts are)
 
 /pages (routing done here)
 |__ index.css (styles for the application)
