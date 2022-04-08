@@ -309,10 +309,10 @@ class AppService {
         });
     }
 
-    loginAsync(email: string, password: string): any {
+    loginAsync(email: string, password: string, walletAddress: string): any {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = { email, password };
+                const data = { email, password, walletAddress };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/login`,
                     data,
@@ -826,11 +826,20 @@ class AppService {
     async registerOrganisation(
         name: string,
         uen: string,
-        adminWalletAddress: string
+        admin: string
     ) {
         return this.systemContract
             .connect(this.signer)
-            .registerOrganisation(name, uen, adminWalletAddress);
+            .registerOrganisation(name, uen, admin);
+    }
+
+    async registerAwardee(
+        email: string,
+        name: string
+    ) {
+        return this.systemContract
+            .connect(this.signer)
+            .linkAwardee(email, name);
     }
 }
 

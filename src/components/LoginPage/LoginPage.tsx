@@ -89,7 +89,7 @@ const LoginPage: React.FC = () => {
         setLoading(true);
 
         try {
-            await appStore.login(values.email, values.password);
+            await appStore.login(values.email, values.password, walletStore.walletAddress);
             if (appStore.currentUser.accountType === AccountType.ORGANISATION) {
                 router.push('/groups');
             } else if (appStore.currentUser.accountType === AccountType.ADMIN) {
@@ -221,6 +221,7 @@ const LoginPage: React.FC = () => {
                 walletAddress,
                 accountType: isOrganisationRegistration ? AccountType.ORGANISATION : AccountType.AWARDEE,
             };
+
             const userId = await appStore.register(registerRequest);
 
             if (isOrganisationRegistration) {
@@ -231,7 +232,8 @@ const LoginPage: React.FC = () => {
                     ),
                 };
                 await appStore.registerUpload(uploadRequest);
-                await appStore.registerOrganisation(name, uen, walletAddress);
+            } else {
+                await appStore.registerAwardee(name, email);
             }
 
             notification.success({
