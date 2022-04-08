@@ -35,7 +35,7 @@ const Privacy: React.FC = () => {
       title: 'Action',
       key: 'action',
       render: (text, record) => (
-        <Button onClick={() => onClickRemoveAccess(record)} type="primary">Remove Access</Button>
+        <Button key={record} onClick={() => onClickRemoveAccess(record)} type="primary">Remove Access</Button>
       ),
     },
   ];
