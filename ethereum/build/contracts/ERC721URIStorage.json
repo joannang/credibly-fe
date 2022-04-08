@@ -3543,13 +3543,8 @@
     "version": "0.8.12+commit.f00d7308.Emscripten.clang"
   },
   "networks": {},
-<<<<<<< HEAD
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-03-26T04:07:55.830Z",
-=======
-  "schemaVersion": "3.4.6",
-  "updatedAt": "2022-04-04T05:38:04.644Z",
->>>>>>> smartcontracts
+  "updatedAt": "2022-04-07T16:54:32.516Z",
   "devdoc": {
     "details": "ERC721 token with storage based token URI management.",
     "kind": "dev",
