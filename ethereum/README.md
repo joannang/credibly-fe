@@ -1,6 +1,7 @@
 # Workflow
 
 1. Deploy System.sol
+    - Current deployment is at 0xC369c038b2A3808ADACfba0a2FAEE8e5e96C37b1
 
 1. Creating Organisation
     - Create a new Organisation Contract on System.sol: registerOrganisation(name of Organisation : string, UEN of Organisation : string, address of admin : address)
