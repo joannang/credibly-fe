@@ -651,6 +651,22 @@ class AppStore {
         }
     };
 
+    registerAwardee = async (
+        email: string,
+        name: string
+    ) => {
+        try {
+            const res = await this.appService.registerAwardee(
+                email,
+                name
+            );
+            console.log(res);
+        } catch (err) {
+            console.log(err.message);
+            throw err;
+        }
+    };
+
     getWorkExperiences = async (email: string) => {
         try {
             const res = await this.appService.getWorkExperiences(email);

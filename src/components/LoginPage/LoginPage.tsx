@@ -221,6 +221,8 @@ const LoginPage: React.FC = () => {
                 walletAddress,
                 accountType: isOrganisationRegistration ? AccountType.ORGANISATION : AccountType.AWARDEE,
             };
+
+            await appStore.registerAwardee(name, email);
             const userId = await appStore.register(registerRequest);
 
             if (isOrganisationRegistration) {

@@ -832,6 +832,15 @@ class AppService {
             .connect(this.signer)
             .registerOrganisation(name, uen, admin);
     }
+
+    async registerAwardee(
+        email: string,
+        name: string
+    ) {
+        return this.systemContract
+            .connect(this.signer)
+            .linkAwardee(email, name);
+    }
 }
 
 export default AppService;
