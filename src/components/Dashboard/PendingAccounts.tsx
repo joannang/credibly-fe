@@ -76,6 +76,10 @@ const PendingAccounts: React.FC = () => {
       const approverId = appStore.currentUser.id;
       const userIds = [].concat(...[!id ? selectedRowKeys : id]);
 
+      const usersToApprove = appStore.pendingApprovalList.filter((pending: ApprovalType) => !!userIds.includes(pending.key));
+
+      await Promise.all(usersToApprove.map(async (pending: ApprovalType) => await appStore.registerOrganisation(pending.name, pending.uen, pending.walletAddress)));
+
       await appStore.approveAccounts(approverId, userIds);
 
       if (!id) {
@@ -89,7 +93,7 @@ const PendingAccounts: React.FC = () => {
       notification.success({ message: 'Successfully approved users!' });
 
     } catch (err) {
-      notification.error({ message: err.error });
+      notification.error({ message: !!err.error ? err.error : err.message });
     } finally {
       setLoading(false);
     }

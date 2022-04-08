@@ -66,6 +66,7 @@ export type ApprovalType = {
     name: string;
     email: string;
     uen: string;
+    walletAddress: string;
     documents: DocumentDto[];
 };
 
@@ -123,7 +124,7 @@ class AppStore {
     pendingApprovalList: ApprovalType[] = [];
     certificateTemplates: CertificateTemplateType[] = [];
     awardeeGroups: AwardeeGroupType[] = [];
-    searchResults: Awardee[] = []
+    searchResults: Awardee[] = [];
 
     constructor(uiState: UiState) {
         makeObservable(this, {
@@ -233,8 +234,8 @@ class AppStore {
         await this.appService.registerUploadAsync(registerUpload);
     };
 
-    login = async (email: string, password: string) => {
-        const { data } = await this.appService.loginAsync(email, password);
+    login = async (email: string, password: string, walletAddress: string) => {
+        const { data } = await this.appService.loginAsync(email, password, walletAddress);
         this.currentUser = { ...data };
         this.isAuthenticated = 'true';
         sessionStorage.setItem('authenticated', 'true');
@@ -303,7 +304,10 @@ class AppStore {
     // @action
     setCertificateTemplates = async (organisationId: number) => {
         try {
-            const { data } = await this.appService.getCertificateTemplatesAsync(organisationId, this.currentUser.token);
+            const { data } = await this.appService.getCertificateTemplatesAsync(
+                organisationId,
+                this.currentUser.token
+            );
 
             runInAction(() => (this.certificateTemplates = [...data]));
         } catch (err) {
@@ -328,7 +332,11 @@ class AppStore {
         organisationId: number
     ) => {
         try {
-            await this.appService.deleteCertificateTemplateAsync(certificateName, organisationId, this.currentUser.token);
+            await this.appService.deleteCertificateTemplateAsync(
+                certificateName,
+                organisationId,
+                this.currentUser.token
+            );
         } catch (err) {
             console.log(err);
         }
@@ -337,7 +345,10 @@ class AppStore {
     // @action
     setSearchResults = async (query: string) => {
         try {
-            const { data } = await this.appService.searchAwardeesAsync(query, this.currentUser.token);
+            const { data } = await this.appService.searchAwardeesAsync(
+                query,
+                this.currentUser.token
+            );
 
             runInAction(() => (this.searchResults = [...data]));
         } catch (err) {
@@ -405,10 +416,10 @@ class AppStore {
         const { data } = await this.appService.getPendingTransferRequests(
             this.currentUser.id,
             this.currentUser.token
-        )
+        );
         console.log(data);
         return data as PendingTransferRequests[];
-    }
+    };
 
     approveTransferRequests = async (transferRequestIds: number[]) => {
         await this.appService.approveTransferRequests(
@@ -456,10 +467,7 @@ class AppStore {
         return this.awardeeGroups;
     };
 
-    // awardee = employee apparently...
-    getAwardeesFromOrganisation = async (
-        orgId: number
-    ) => {
+    getAwardeesFromOrganisation = async (orgId: number) => {
         try {
             const res = await this.appService.getAwardeesFromOrganisationAsync(
                 orgId,
@@ -469,7 +477,7 @@ class AppStore {
         } catch (err) {
             console.log(err);
         }
-    }
+    };
 
     addAwardeeToOrganisation = async (
         uen: string,
@@ -481,6 +489,32 @@ class AppStore {
                 uen,
                 email,
                 name
+            );
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    getEmployeesFromOrganisationContract = async (uen: string) => {
+        try {
+            const res = await this.appService.getEmployeesFromOrganisation(uen);
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    bulkAddAwardeesToOrganisation = async (
+        uen: string,
+        emails: string[],
+        names: string[]
+    ) => {
+        try {
+            const res = await this.appService.bulkAddAwardeesToOrganisation(
+                uen,
+                emails,
+                names
             );
             return res;
         } catch (err) {
@@ -527,6 +561,26 @@ class AppStore {
         }
     };
 
+    bulkAwardCertificates = async (
+        uen: string,
+        groupId: number,
+        ipfsHashes: string[],
+        emails: string[]
+    ) => {
+        try {
+            const res = await this.appService.bulkAwardCertificates(
+                uen,
+                emails,
+                groupId,
+                ipfsHashes
+            );
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
     addWorkExperience = async (
         email: string,
         position: string,
@@ -549,6 +603,26 @@ class AppStore {
         }
     };
 
+    endWorkExperience = async (
+        email: string,
+        position: string,
+        endDate: string,
+        uen: string
+    ) => {
+        try {
+            const res = await this.appService.endWorkExperience(
+                email,
+                position,
+                endDate,
+                uen
+            );
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
     getOrganisation = async (uen: string) => {
         try {
             const res = await this.appService.getOrganisation(uen);
@@ -562,23 +636,90 @@ class AppStore {
     registerOrganisation = async (
         name: string,
         uen: string,
-        adminWalletAddress: string
+        admin: string
     ) => {
         try {
             const res = await this.appService.registerOrganisation(
                 name,
                 uen,
-                adminWalletAddress
+                admin
             );
             console.log(res);
         } catch (err) {
             console.log(err.message);
+            throw err;
+        }
+    };
+
+    registerAwardee = async (
+        email: string,
+        name: string
+    ) => {
+        try {
+            const res = await this.appService.registerAwardee(
+                email,
+                name
+            );
+            console.log(res);
+        } catch (err) {
+            console.log(err.message);
+            throw err;
         }
     };
 
     getWorkExperiences = async (email: string) => {
         try {
             const res = await this.appService.getWorkExperiences(email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
+    getProfileVisibility = async () => {
+        try {
+            const res = await this.appService.getProfileVisibility(this.currentUser.email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    setProfileVisibility = async (isProfileVisible: boolean) => {
+        try {
+            const res = await this.appService.setProfileVisibility(this.currentUser.email, isProfileVisible);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    getAuthorisedUsers = async () => {
+        try {
+            const res = await this.appService.getAuthorisedUsers(this.currentUser.email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    addAuthorisedUser = async (authorisedUserWalletAddress: string) => {
+        try {
+            const res = await this.appService.addAuthorisedUser(this.currentUser.email, authorisedUserWalletAddress);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    removeAuthorisedUser = async (authorisedUserWalletAddress: string) => {
+        try {
+            const res = await this.appService.removeAuthorisedUser(this.currentUser.email, authorisedUserWalletAddress);
             console.log(res);
             return res;
         } catch (err) {

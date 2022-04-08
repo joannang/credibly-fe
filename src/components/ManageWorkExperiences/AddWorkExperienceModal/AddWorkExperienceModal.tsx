@@ -26,7 +26,7 @@ const AddWorkExperienceModal: React.FC = () => {
             message.loading({
                 content: 'Loading...',
                 key: 'workexp-msg',
-                duration: 60,
+                duration: 120,
             });
 
             if (!position || !description || !startDate) {
@@ -46,15 +46,17 @@ const AddWorkExperienceModal: React.FC = () => {
                 uen
             );
             console.log(res);
-
-            message.success({
-                content: 'Success!',
-                key: 'workexp-msg',
-            });
-            uiState.setModalOpen(false);
-            setPosition('');
-            setDescription('');
-            setStartDate('');
+            setTimeout(() => {
+                message.success({
+                    content: 'Success!',
+                    key: 'workexp-msg',
+                });
+                uiState.setToggle(!uiState.toggle);
+                uiState.setModalOpen(false);
+                setPosition('');
+                setDescription('');
+                setStartDate('');
+            }, 5000);
         } catch (err) {
             console.log(err.message);
             message.error({
@@ -62,10 +64,6 @@ const AddWorkExperienceModal: React.FC = () => {
                 key: 'workexp-msg',
             });
         }
-    };
-
-    const validateEmail = (email: string) => {
-        return email.match(/\S+@\S+\.\S+/);
     };
 
     return (
@@ -88,6 +86,7 @@ const AddWorkExperienceModal: React.FC = () => {
                 onChange={(e) => setDescription(e.target.value)}
             />
              <Input
+                addonBefore='Start Date:'
                 type="date"
                 placeholder="Date"
                 value={startDate}

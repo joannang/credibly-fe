@@ -68,11 +68,6 @@ class AppService {
             this.provider
         );
 
-        this.systemContract = new ethers.Contract(
-            SYSTEM_ADDRESS,
-            System.abi,
-            this.provider
-        )
         this.ipfsClient = create({
             host: 'ipfs.infura.io',
             port: 5001,
@@ -80,8 +75,7 @@ class AppService {
             headers: {
                 authorization: auth,
             },
-        });;
-
+        });
     }
 
     createAwardeesAsync(
@@ -199,7 +193,10 @@ class AppService {
         });
     }
 
-    getCertificateTemplatesAsync(organisationId: number, accessToken: string): any {
+    getCertificateTemplatesAsync(
+        organisationId: number,
+        accessToken: string
+    ): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restGet({
@@ -247,8 +244,8 @@ class AppService {
             } catch (err) {
                 reject(err.response.data.error);
             }
-        })
-    };
+        });
+    }
 
     searchAwardeesAsync(query: string, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
@@ -312,10 +309,10 @@ class AppService {
         });
     }
 
-    loginAsync(email: string, password: string): any {
+    loginAsync(email: string, password: string, walletAddress: string): any {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = { email, password };
+                const data = { email, password, walletAddress };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/login`,
                     data,
@@ -558,7 +555,42 @@ class AppService {
     ) {
         return this.systemContract
             .connect(this.signer)
-            .addAwardeeToOrganisation(uen, email, awardee, {
+            .addAwardeeToOrganisation(uen, email, awardee);
+    }
+
+    async getEmployeesFromOrganisation(uen: string) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        const awardeeAddresses = await organisationContract.connect(this.signer).getAwardees();
+        const awardees: {name?: string, email?: string}[] = [];
+        for (let i = 0; i < awardeeAddresses.length; i++) {
+            const awardeeContract = new ethers.Contract(
+                awardeeAddresses[i],
+                Awardee.abi,
+                this.provider
+            );
+            const email = await awardeeContract
+                .connect(this.signer)
+                .email(); 
+            const name = await awardeeContract.connect(this.signer).name();
+            awardees.push({name: name, email: email});
+        }
+
+        return awardees;
+    }
+
+    async bulkAddAwardeesToOrganisation(
+        uen: string,
+        emails: string[],
+        names: string[]
+    ) {
+        return this.systemContract
+            .connect(this.signer)
+            .addAwardeesToOrganisation(uen, emails, names, {
                 gasLimit: 2500000,
             });
     }
@@ -594,7 +626,9 @@ class AppService {
 
         let workExperiences = [];
 
-        const workExpAddresses = await awardeeContract.connect(this.signer).getWorkExperiences();
+        const workExpAddresses = await awardeeContract
+            .connect(this.signer)
+            .getWorkExperiences();
         console.log(workExpAddresses);
         for (let i = 0; i < workExpAddresses.length; i++) {
             const workExpContract = new ethers.Contract(
@@ -602,7 +636,9 @@ class AppService {
                 WorkExperience.abi,
                 this.provider
             );
-            const workExp = await workExpContract.connect(this.signer).data(); // ! problem
+            const workExp = await workExpContract
+                .connect(this.signer)
+                .details(); 
             console.log(workExp);
             workExperiences.push(workExp);
         }
@@ -630,6 +666,23 @@ class AppService {
             });
     }
 
+    async endWorkExperience(
+        email: string,
+        position: string,
+        endDate: string,
+        uen: string
+    ) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract.connect(this.signer).endWorkExperience(email, position, endDate, {
+            gasLimit: 2500000,
+        });
+    }
+
     async getOrganisation(uen: string) {
         return this.systemContract.connect(this.signer).organisations(uen, {
             gasLimit: 2500000,
@@ -655,8 +708,29 @@ class AppService {
             });
     }
 
+    async bulkAwardCertificates(
+        uen: string,
+        emails: string[],
+        groupId: number,
+        ipfsHashes: string[]
+    ) {
+        const organisation_addr = await this.getOrganisation(uen);
+        const organisationContract = new ethers.Contract(
+            organisation_addr,
+            Organisation.abi,
+            this.provider
+        );
+        return organisationContract
+            .connect(this.signer)
+            .awardCertificates(emails, groupId, ipfsHashes, {
+                gasLimit: 2500000,
+            });
+    }
+
     async retrieveCertificateInfo(tokenId: number) {
-        var res: [string, string, string] = await this.certificateContract.connect(this.signer).getData(tokenId);
+        var res: [string, string, string] = await this.certificateContract
+            .connect(this.signer)
+            .getData(tokenId);
 
         const chunks = [];
         for await (const chunk of this.ipfsClient.cat(res[0])) {
@@ -750,11 +824,78 @@ class AppService {
     async registerOrganisation(
         name: string,
         uen: string,
-        adminWalletAddress: string
+        admin: string
     ) {
-        return this.systemContract.connect(this.signer).registerOrganisation(name, uen, adminWalletAddress, {
-            gasLimit: 2500000,
-        });
+        console.log(name, uen, admin);
+        return this.systemContract
+            .connect(this.signer)
+            .registerOrganisation(name, uen, admin, {
+                gasLimit: 2500000
+            });
+    }
+
+    async registerAwardee(
+        email: string,
+        name: string
+    ) {
+        return this.systemContract
+            .connect(this.signer)
+            .linkAwardee(email, name);
+    }
+
+    async getProfileVisibility(email: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+        return awardeeContract.connect(this.signer).publicVisibility();
+    }
+
+    async setProfileVisibility(email: string, isProfileVisible: boolean) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+        return awardeeContract.connect(this.signer).setVisibility(isProfileVisible);
+    }
+
+    async getAuthorisedUsers(email: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+        const authorisedUsers = await awardeeContract.connect(this.signer).getApprovedAccess()
+        return authorisedUsers
+    }
+
+    async addAuthorisedUser(email: string, authorisedUserWalletAddress: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+
+        authorisedUserWalletAddress = ethers.utils.getAddress(authorisedUserWalletAddress)
+        await awardeeContract.connect(this.signer).addAccessRights(authorisedUserWalletAddress)
+    }
+
+    async removeAuthorisedUser(email: string, authorisedUserWalletAddress: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+
+        authorisedUserWalletAddress = ethers.utils.getAddress(authorisedUserWalletAddress)
+        await awardeeContract.connect(this.signer).removeAccessRights(authorisedUserWalletAddress)
     }
 }
 

@@ -93,6 +93,4 @@ In the official Metamask documentation, it is recommended to only start the `wal
 
 While this is ideal, the **mobile** version of Metamask **does not throw** the same error codes. As such, if the checking of error codes was used, the adding and switching of ethereum chains will **not work** on mobile Metamask.
 
-_This issue still exists as of 20 October 2021_
-
 ---

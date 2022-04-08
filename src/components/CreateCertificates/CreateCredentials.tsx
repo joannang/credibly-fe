@@ -26,6 +26,7 @@ const CreateCertificates: React.FC = () => {
     const { appStore } = useStores();
     const [templateId, setTemplateId] = useState(0);
 
+    const groupId = parseInt(window.location.search.substring(4));
     const [awardees, setAwardees] = useState<AwardeeType[]>([]); // list of awardees
 
     useEffect(() => {
@@ -93,7 +94,6 @@ const CreateCertificates: React.FC = () => {
         }
 
         const orgId = JSON.parse(sessionStorage.getItem('user')).id;
-        const groupId = parseInt(window.location.search.substring(4));
 
         try {
             // create awardees
@@ -107,13 +107,10 @@ const CreateCertificates: React.FC = () => {
             const uen = JSON.parse(sessionStorage.getItem('user')).uen;
 
             // add awardees to blockchain
-            for (let i = 0; i < response.length; i++) {
-                await appStore.addAwardeeToOrganisation(
-                    uen,
-                    response[i].email,
-                    response[i].name
-                );
-            }
+            const emails = response.map(x => x.email);
+            const names = response.map(x => x.name);
+            const bcResp = await appStore.bulkAddAwardeesToOrganisation(uen, emails, names);
+            console.log(bcResp);
 
             addIssueDate(response);
 
@@ -124,6 +121,11 @@ const CreateCertificates: React.FC = () => {
                 const awardees = JSON.parse(localStorage.getItem(key)).awardees;
                 response = awardees.concat(response);
             };
+
+            response = response.map(x => ({
+                ...x,
+                published: x.published ? true: false
+            }));
 
             const awardeesToStoreInLocalStorage = {
                 organisationId: orgId,
@@ -205,6 +207,12 @@ const CreateCertificates: React.FC = () => {
                     <PageHeader
                         title="Create Credentials"
                         subTitle="Step 1 of 2"
+                        extra={[
+                            <Button key='1' onClick={() => redirect(`/publishcerts?id=${groupId}`)}>
+                                View Existing Credentials
+                            </Button>,
+                        ]   
+                        }
                     />
                     <AwardeeList />
                     <div className={styles.buttonContainer}>

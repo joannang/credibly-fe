@@ -7,32 +7,41 @@ import '@openzeppelin/contracts/utils/Counters.sol';
 
 contract Certificate is ERC721URIStorage, ERC721Enumerable {
     using Counters for Counters.Counter;
-    Counters.Counter private tokenIdTracker;
+    Counters.Counter private tokenIdTracker; // unique NFT token Id counter
 
     string public certificateId;
     string public description;
     string public organisation;
 
+    address admin; // admin wallet address of the Organisation that created this Certificate instance
 
-    constructor(string memory name, string memory _certificateId, string memory _description, string memory _organisation) ERC721(name, 'Credibly') {
+    constructor(string memory name, string memory _certificateId, string memory _description, string memory _organisation, address _admin) ERC721(name, 'Credibly') {
         certificateId = _certificateId;
         description = _description;
         organisation = _organisation;
+        admin = _admin;
     }
 
-    function create(address admin, string memory ipfs) public returns (uint256) {
+    modifier onlyAdmin { // only the admin wallet address can execute the function
+        require(tx.origin == admin, "Unauthorised user.");
+        _;
+    }
+
+    // Mint Certificate NFT to Awardee Contract Address with an IPFS Hash containing certificate data
+    function create(address owner, string memory ipfsHash) public onlyAdmin returns (uint256) {
         uint256 tokenId = tokenIdTracker.current();
         tokenIdTracker.increment();
-        _mint(admin, tokenId);
-        _setTokenURI(tokenId, ipfs);
+        _mint(owner, tokenId);
+        _setTokenURI(tokenId, ipfsHash);
         return tokenId;
     }
 
+    // Retrieve Data of Certificate NFT
     function getData(uint256 tokenId) view public returns(string memory, string memory, string memory) {
         return (tokenURI(tokenId), description, organisation);
     }
 
-    // overriding functions
+    // Overriding Functions
 
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
