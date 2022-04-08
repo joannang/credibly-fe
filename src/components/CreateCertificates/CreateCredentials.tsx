@@ -26,6 +26,7 @@ const CreateCertificates: React.FC = () => {
     const { appStore } = useStores();
     const [templateId, setTemplateId] = useState(0);
 
+    const groupId = parseInt(window.location.search.substring(4));
     const [awardees, setAwardees] = useState<AwardeeType[]>([]); // list of awardees
 
     useEffect(() => {
@@ -93,7 +94,6 @@ const CreateCertificates: React.FC = () => {
         }
 
         const orgId = JSON.parse(sessionStorage.getItem('user')).id;
-        const groupId = parseInt(window.location.search.substring(4));
 
         try {
             // create awardees
@@ -207,6 +207,12 @@ const CreateCertificates: React.FC = () => {
                     <PageHeader
                         title="Create Credentials"
                         subTitle="Step 1 of 2"
+                        extra={[
+                            <Button key='1' onClick={() => redirect(`/publishcerts?id=${groupId}`)}>
+                                View Existing Credentials
+                            </Button>,
+                        ]   
+                        }
                     />
                     <AwardeeList />
                     <div className={styles.buttonContainer}>

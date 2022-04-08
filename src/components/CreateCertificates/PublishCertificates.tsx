@@ -45,7 +45,7 @@ const PublishCertificates: React.FC = () => {
     const getAwardees = async () => {
         // Revised: getting awardees from localStorage so that i can get the issue dates
         const key = `awardees/${orgId}/${groupId}`;
-        const awardees = JSON.parse(localStorage.getItem(key)).awardees;
+        const awardees = JSON.parse(localStorage.getItem(key)) ? JSON.parse(localStorage.getItem(key)).awardees : [];
         setAwardees(awardees);
         console.log(awardees);
     };
@@ -208,13 +208,7 @@ const PublishCertificates: React.FC = () => {
                                 Publish Credentials
                             </Button>,
                         ]}
-                    >
-                        <Descriptions size="small">
-                            <Descriptions.Item>
-                                Unpublished Credentials
-                            </Descriptions.Item>
-                        </Descriptions>
-                    </PageHeader>
+                    />
                     {awardees && awardees.length !== 0 ? (
                         <Table
                             rowSelection={rowSelection}

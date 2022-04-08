@@ -826,9 +826,12 @@ class AppService {
         uen: string,
         admin: string
     ) {
+        console.log(name, uen, admin);
         return this.systemContract
             .connect(this.signer)
-            .registerOrganisation(name, uen, admin);
+            .registerOrganisation(name, uen, admin, {
+                gasLimit: 2500000
+            });
     }
 
     async registerAwardee(
