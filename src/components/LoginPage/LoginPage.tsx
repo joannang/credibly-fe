@@ -233,7 +233,7 @@ const LoginPage: React.FC = () => {
                 };
                 await appStore.registerUpload(uploadRequest);
             } else {
-                await appStore.registerAwardee(name, email);
+                await appStore.registerAwardee(email, name);
             }
 
             notification.success({
