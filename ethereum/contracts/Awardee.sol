@@ -110,7 +110,7 @@ contract Awardee {
         return workExperiences;
     }
 
-    function getApprovedAccess() public view onlyOwner returns(address[] memory) {
+    function getApprovedAccess() public view returns(address[] memory) {
         return approvedAccess;
     }
 
