@@ -676,6 +676,56 @@ class AppStore {
             console.log(err.message);
         }
     };
+
+    getProfileVisibility = async () => {
+        try {
+            const res = await this.appService.getProfileVisibility(this.currentUser.email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    setProfileVisibility = async (isProfileVisible: boolean) => {
+        try {
+            const res = await this.appService.setProfileVisibility(this.currentUser.email, isProfileVisible);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    getAuthorisedUsers = async () => {
+        try {
+            const res = await this.appService.getAuthorisedUsers(this.currentUser.email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    addAuthorisedUser = async (authorisedUserWalletAddress: string) => {
+        try {
+            const res = await this.appService.addAuthorisedUser(this.currentUser.email, authorisedUserWalletAddress);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    removeAuthorisedUser = async (authorisedUserWalletAddress: string) => {
+        try {
+            const res = await this.appService.removeAuthorisedUser(this.currentUser.email, authorisedUserWalletAddress);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
 }
 
 export default AppStore;
