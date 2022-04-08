@@ -4,7 +4,7 @@ import {
     Web3Provider,
     JsonRpcSigner,
 } from '@ethersproject/providers';
-import { ENDPOINT, SYSTEM_ADDRESS } from '../settings';
+import { ENDPOINT, IPFS_PROJECT_ID, IPFS_PROJECT_SECRET, SYSTEM_ADDRESS } from '../settings';
 import restGet from '../lib/restGet';
 import restPost from '../lib/restPost';
 import {
@@ -12,6 +12,7 @@ import {
     RegisterUploadType,
     AwardeeType,
     TransferRequestUploadType,
+    CertificateDetails,
 } from './AppStore';
 import Certificate from '../../ethereum/build/contracts/Certificate.json';
 import Organisation from '../../ethereum/build/contracts/Organisation.json';
@@ -27,10 +28,10 @@ declare global {
     }
 }
 
-const projectId = '26bbuL0MXuph9BdyJbp4ZefpS34';
-const projectSecret = '2263bf12ad5bbe8ac4a1106387fe5737';
 const auth =
-    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    'Basic ' +
+    Buffer.from(IPFS_PROJECT_ID + ':' + IPFS_PROJECT_SECRET).toString('base64');
+
 interface AppService {
     provider: JsonRpcProvider | Web3Provider; // ethers provider
     signer: JsonRpcSigner;
@@ -729,98 +730,51 @@ class AppService {
             });
     }
 
-    async retrieveCertificateInfo(tokenId: number) {
-        var res: [string, string, string] = await this.certificateContract
+    async retrieveCertificateInfo(certificateAddr: string, tokenId: string) {
+        const certificateContract = new ethers.Contract(
+            certificateAddr,
+            Certificate.abi,
+            this.provider
+        );
+        const response = await certificateContract
             .connect(this.signer)
-            .getData(tokenId);
+            .getData(tokenId); 
+
+        const certificate: CertificateDetails = JSON.parse(response[0]);
 
         const chunks = [];
-        for await (const chunk of this.ipfsClient.cat(res[0])) {
+        for await (const chunk of this.ipfsClient.cat(certificate.image)) {
             chunks.push(chunk);
         }
-        console.log(Buffer.concat(chunks).toString());
-        return {
-            awardeeName: 'John Doe',
-            description: res[1],
-            orgName: res[2],
-            certificateName: 'North Korean Fine Citizen Award',
-            dateOfIssue: '22/02/2022',
-        };
-        // return new Promise(async (resolve, reject) => {
-        //     try {
-        //         resolve({
-        //             awardeeName: 'Mark Tan Jun Xuan',
-        //             orgName: 'National University of Singapore',
-        //             certificateName: 'North Korean Fine Citizen Award',
-        //             dateOfIssue: '22/02/2022',
-        //             description:
-        //                 "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
-        //         });
-        //     } catch (err) {
-        //         reject(err.response.data.error);
-        //     }
-        // });
+        let options: Intl.DateTimeFormatOptions  = { year: "numeric", month: 'long', day: 'numeric' };
+        certificate.dateOfIssue = ((new Date(certificate.dateOfIssue)).toLocaleDateString("en-GB", options));
+        certificate.description = response[1];
+        certificate.image = Buffer.concat(chunks).toString();
+        certificate.certificateId = certificateAddr + "_" + tokenId;
+        certificate.orgName = response[2];
+        console.log(certificate);
+        return certificate;
     }
-    retrieveProfileDetails(certificateId: string): any {
-        return new Promise(async (resolve, reject) => {
-            try {
-                resolve([
-                    {
-                        awardeeName: 'Mark Tan Jun Xuan',
-                        orgName: 'National University of Singapore',
-                        certificateName:
-                            'IS Management Knkowledge Area (Distinction)',
-                        dateOfIssue: '22/02/2022',
-                        description:
-                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
-                        imageUrl:
-                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
-                    },
-                    {
-                        awardeeName: 'Mark Tan Jun Xuan',
-                        orgName: 'National University of Singapore',
-                        certificateName:
-                            'ICT Solutioning Knowledge Area (Distinction)',
-                        dateOfIssue: '22/02/2022',
-                        description:
-                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
-                        imageUrl:
-                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
-                    },
-                    {
-                        awardeeName: 'Mark Tan Jun Xuan',
-                        orgName: 'National University of Singapore',
-                        certificateName: "Dean's List",
-                        dateOfIssue: '22/02/2022',
-                        description:
-                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
-                        imageUrl:
-                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
-                    },
-                    {
-                        awardeeName: 'Mark Tan Jun Xuan',
-                        orgName: 'National University of Singapore',
-                        certificateName: 'Orbital Apollo 11',
-                        dateOfIssue: '22/02/2022',
-                        description:
-                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
-                        imageUrl: '',
-                    },
-                    {
-                        awardeeName: 'Mark Tan Jun Xuan',
-                        orgName: 'National University of Singapore',
-                        certificateName: 'North Korean Fine Citizen Award',
-                        dateOfIssue: '22/02/2022',
-                        description:
-                            "The School of Computing awards the following certificates of merit and distinction to help students highlight their areas of strength. For details on the criteria of the award, please click on the Issuer's Website link above.",
-                        imageUrl:
-                            'https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg',
-                    },
-                ]);
-            } catch (err) {
-                reject(err.response.data.error);
-            }
-        });
+    async retrieveProfileDetails(email: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+
+        let certificates: CertificateDetails[] = [];
+
+        const certificateTokens = await awardeeContract
+            .connect(this.signer)
+            .getCertificates();
+
+        for (let i = 0; i < certificateTokens.length; i++) {
+            let certDetails = await this.retrieveCertificateInfo(certificateTokens[i].certificate, certificateTokens[i].tokenId)
+            certificates.push(certDetails);
+        }
+        
+        return certificates;
     }
 
     async registerOrganisation(

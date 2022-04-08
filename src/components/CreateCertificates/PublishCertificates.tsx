@@ -2,7 +2,7 @@ import { Button, Descriptions, Empty, message, PageHeader, Table } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { AwardeeType } from '../../stores/AppStore';
+import { AwardeeType, CertificateDetails } from '../../stores/AppStore';
 import { useStores } from '../../stores/StoreProvider';
 import styles from './CreateCredentials.module.css';
 import { create } from 'ipfs-http-client';
@@ -124,8 +124,14 @@ const PublishCertificates: React.FC = () => {
 
                 const { path } = await client.add(Buffer.from(encodedImg));
 
-                const hash = path + '/' + response[i].issueDate;
-                ipfsHashes.push(hash);
+                const hash: CertificateDetails = {
+                    awardeeName: response[i].awardeeName,
+                    dateOfIssue: response[i].issueDate,
+                    image: path,
+                    certificateName: certName
+                }
+
+                ipfsHashes.push(JSON.stringify(hash));
 
                 // const chunks = [];
                 // for await (const chunk of client.cat(path)) {
@@ -148,7 +154,7 @@ const PublishCertificates: React.FC = () => {
         }
     };
 
-    const awardCertificates = async(ipfsHashes: string[], emails) => {
+    const awardCertificates = async (ipfsHashes: string[], emails) => {
         const res: any = await appStore.bulkAwardCertificates(
             uen, groupId, ipfsHashes, emails
         )
@@ -159,7 +165,7 @@ const PublishCertificates: React.FC = () => {
         var storageAwardees = JSON.parse(localStorage.getItem(key)).awardees;
         storageAwardees = storageAwardees.map(x => ({
             ...x,
-            published: emails.includes(x.email) ? true: x.published,
+            published: emails.includes(x.email) ? true : x.published,
         }));
 
         const awardeesToStoreInLocalStorage = {

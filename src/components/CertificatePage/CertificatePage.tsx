@@ -23,13 +23,18 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
     React.useEffect(() => {
         setLoading(true);
         async function retrieveCertDetails() {
-            let certificate = await appStore.retrieveCertificateInfo(parseInt(props.cid));
+            const params = props?.cid.split('_') || [];
+            let certificate = await appStore.retrieveCertificateInfo(params[0], params[1]);
             setCertifcate(certificate);
+            setLoading(false);
         }
         retrieveCertDetails()
-        setLoading(false);
     }, []);
 
+    const handleImageError = (e) => {
+        e.target.src =
+            'https://image.freepik.com/free-vector/certificate-template-vertical_1284-4551.jpg';
+    };
     return (<BaseLayout>{
         !loading && certificate ?
 
@@ -39,8 +44,9 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                     padding: "40px"
                 }}>
                     <Image height='100%' width='auto'
+                    onError={handleImageError}
                         preview={{ visible: false }}
-                        src="https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
+                        src={certificate.image}
                     />
                 </div>
 

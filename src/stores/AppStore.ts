@@ -94,15 +94,22 @@ export type Awardee = {
     name: string;
     email: string;
 };
-
-export type CertificateDetails = {
-    awardeeName: string;
-    orgName: string;
-    dateOfIssue: string;
-    certificateName: string;
+export type WorkExperience = {
+    end: boolean;
+    startDate: string;
+    endDate: string;
     description: string;
-    imageUrl: string;
-    certificateId: string;
+    position: string;
+    organisation: string;
+}
+export type CertificateDetails = {
+    awardeeName?: string;
+    orgName?: string;
+    dateOfIssue?: string;
+    certificateName?: string;
+    description?: string;
+    image?: string;
+    certificateId?: string;
 };
 
 export type TransferRequestType = {
@@ -430,10 +437,10 @@ class AppStore {
 
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
 
-    retrieveCertificateInfo = async (certificateId: number) => {
+    retrieveCertificateInfo = async (certificateAddr:string, tokenId: string) => {
         try {
             const data = await this.appService.retrieveCertificateInfo(
-                certificateId
+                certificateAddr, tokenId
             );
             return data as CertificateDetails;
         } catch (err) {

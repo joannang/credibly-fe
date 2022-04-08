@@ -1,6 +1,6 @@
 .box {
     transition: box-shadow .3s;
-    width: 300px;
+    width: 350px;
     height: 500px;
     border-radius: 10px;
     border: 1px solid #ccc;
@@ -9,10 +9,28 @@
     box-shadow: "0 0 5px 2px #dfdfdf";
 }
 
+.exp {
+    display: flex;
+    width: 1200px;
+    min-height: 250px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    margin: auto
+}
+
 .box:hover {
     box-shadow: 0 0 21px rgba(22, 22, 22, .3) !important;
 }
 
-.meta {
-    font-size: 120%
+.image {
+    height: auto;
+    width: 100%;
+    padding: 10%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
 }
