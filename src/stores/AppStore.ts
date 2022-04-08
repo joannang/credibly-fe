@@ -633,20 +633,21 @@ class AppStore {
         }
     };
 
-    registerOrganisations = async (
-        names: string[],
-        uens: string[],
-        admins: string[]
+    registerOrganisation = async (
+        name: string,
+        uen: string,
+        admin: string
     ) => {
         try {
-            const res = await this.appService.registerOrganisations(
-                names,
-                uens,
-                admins
+            const res = await this.appService.registerOrganisation(
+                name,
+                uen,
+                admin
             );
             console.log(res);
         } catch (err) {
             console.log(err.message);
+            throw err;
         }
     };
 

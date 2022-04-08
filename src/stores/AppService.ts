@@ -823,14 +823,14 @@ class AppService {
         });
     }
 
-    async registerOrganisations(
-        names: string[],
-        uens: string[],
-        admins: string[]
+    async registerOrganisation(
+        name: string,
+        uen: string,
+        admin: string
     ) {
         return this.systemContract
             .connect(this.signer)
-            .registerOrganisations(names, uens, admins);
+            .registerOrganisation(name, uen, admin);
     }
 }
 
