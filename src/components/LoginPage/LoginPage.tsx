@@ -222,7 +222,6 @@ const LoginPage: React.FC = () => {
                 accountType: isOrganisationRegistration ? AccountType.ORGANISATION : AccountType.AWARDEE,
             };
 
-            await appStore.registerAwardee(name, email);
             const userId = await appStore.register(registerRequest);
 
             if (isOrganisationRegistration) {
@@ -233,6 +232,8 @@ const LoginPage: React.FC = () => {
                     ),
                 };
                 await appStore.registerUpload(uploadRequest);
+            } else {
+                await appStore.registerAwardee(name, email);
             }
 
             notification.success({
