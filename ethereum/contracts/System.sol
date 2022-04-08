@@ -87,7 +87,6 @@ contract System {
         string memory oldEmail,
         string memory newEmail
     ) public {
-        require (address(awardees[oldEmail]) != address(awardees[newEmail]));
         require (address(awardees[oldEmail]) != address(0), "Awardee does not exist."); // requires Awardee instance to exist
         // update email in Awardee instance
         awardees[oldEmail].updateEmail(newEmail); // reverts if tx.origin is not owner of Awardee contract
