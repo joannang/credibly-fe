@@ -10,6 +10,7 @@ contract Awardee {
     address public walletAddress; // wallet address of Awardee (wallet address of the owner of this email address)
     CertificateToken[] certificates; // list of Certificate Token struct instances under this Awardee instance
     WorkExperience[] workExperiences; // list of Work Experience instances under this Awardee instance
+    address[] approvedAccess; // list of wallet address given the access rights to view the Certificates and Work Experience instances under this Awardee instance?
     bool public linkedWalletAddress; // has the Awardee linked their wallet address to this Awardee instance?
     bool public publicVisibility; // are the Certificates and Work Experiences publically visible?
     mapping (address => bool) accessRights; // which wallet addresses are given access rights to view the Certificates and Work Experience instances under this Awardee instance?
@@ -61,12 +62,23 @@ contract Awardee {
 
     // Give Access Rights to Wallet Address
     function addAccessRights(address user) public onlyOwner {
-        accessRights[user] = true;
+        if (accessRights[user] == false) {
+            accessRights[user] = true;
+            approvedAccess.push(user);
+        }
     }
 
     // Remove Access Rights from Wallet Address
     function removeAccessRights(address user) public onlyOwner {
-        accessRights[user] = false;
+        if (accessRights[user] == true) {
+            accessRights[user] = false;
+            for (uint i = 0; i < approvedAccess.length; i++) {
+                if (approvedAccess[i] == user) {
+                    approvedAccess[i] = approvedAccess[approvedAccess.length - 1];
+                    approvedAccess.pop();
+                }
+            }
+        }
     }
 
     // Add Certificate Contract Instances to certificates Mapping
@@ -96,6 +108,10 @@ contract Awardee {
 
     function getWorkExperiences() public view privacySettings returns (WorkExperience[] memory){
         return workExperiences;
+    }
+
+    function getApprovedAccess() public view returns(address[] memory) {
+        return approvedAccess;
     }
 
 }

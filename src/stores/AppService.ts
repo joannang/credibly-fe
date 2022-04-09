@@ -310,10 +310,10 @@ class AppService {
         });
     }
 
-    loginAsync(email: string, password: string): any {
+    loginAsync(email: string, password: string, walletAddress: string): any {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = { email, password };
+                const data = { email, password, walletAddress };
                 const response = await restPost({
                     endpoint: `${ENDPOINT}/auth/login`,
                     data,
@@ -556,9 +556,7 @@ class AppService {
     ) {
         return this.systemContract
             .connect(this.signer)
-            .addAwardeeToOrganisation(uen, email, awardee, {
-                gasLimit: 2500000,
-            });
+            .addAwardeeToOrganisation(uen, email, awardee);
     }
 
     async getEmployeesFromOrganisation(uen: string) {
@@ -780,11 +778,78 @@ class AppService {
     async registerOrganisation(
         name: string,
         uen: string,
-        adminWalletAddress: string
+        admin: string
+    ) {
+        console.log(name, uen, admin);
+        return this.systemContract
+            .connect(this.signer)
+            .registerOrganisation(name, uen, admin, {
+                gasLimit: 2500000
+            });
+    }
+
+    async registerAwardee(
+        email: string,
+        name: string
     ) {
         return this.systemContract
             .connect(this.signer)
-            .registerOrganisation(name, uen, adminWalletAddress);
+            .linkAwardee(email, name);
+    }
+
+    async getProfileVisibility(email: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+        return awardeeContract.connect(this.signer).publicVisibility();
+    }
+
+    async setProfileVisibility(email: string, isProfileVisible: boolean) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+        return awardeeContract.connect(this.signer).setVisibility(isProfileVisible);
+    }
+
+    async getAuthorisedUsers(email: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+        const authorisedUsers = await awardeeContract.connect(this.signer).getApprovedAccess()
+        return authorisedUsers
+    }
+
+    async addAuthorisedUser(email: string, authorisedUserWalletAddress: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+
+        authorisedUserWalletAddress = ethers.utils.getAddress(authorisedUserWalletAddress)
+        await awardeeContract.connect(this.signer).addAccessRights(authorisedUserWalletAddress)
+    }
+
+    async removeAuthorisedUser(email: string, authorisedUserWalletAddress: string) {
+        const awardee_addr = await this.getAwardeeContractAddr(email);
+        const awardeeContract = new ethers.Contract(
+            awardee_addr,
+            Awardee.abi,
+            this.provider
+        );
+
+        authorisedUserWalletAddress = ethers.utils.getAddress(authorisedUserWalletAddress)
+        await awardeeContract.connect(this.signer).removeAccessRights(authorisedUserWalletAddress)
     }
 }
 

@@ -66,6 +66,7 @@ export type ApprovalType = {
     name: string;
     email: string;
     uen: string;
+    walletAddress: string;
     documents: DocumentDto[];
 };
 
@@ -240,8 +241,8 @@ class AppStore {
         await this.appService.registerUploadAsync(registerUpload);
     };
 
-    login = async (email: string, password: string) => {
-        const { data } = await this.appService.loginAsync(email, password);
+    login = async (email: string, password: string, walletAddress: string) => {
+        const { data } = await this.appService.loginAsync(email, password, walletAddress);
         this.currentUser = { ...data };
         this.isAuthenticated = 'true';
         sessionStorage.setItem('authenticated', 'true');
@@ -642,17 +643,34 @@ class AppStore {
     registerOrganisation = async (
         name: string,
         uen: string,
-        adminWalletAddress: string
+        admin: string
     ) => {
         try {
             const res = await this.appService.registerOrganisation(
                 name,
                 uen,
-                adminWalletAddress
+                admin
             );
             console.log(res);
         } catch (err) {
             console.log(err.message);
+            throw err;
+        }
+    };
+
+    registerAwardee = async (
+        email: string,
+        name: string
+    ) => {
+        try {
+            const res = await this.appService.registerAwardee(
+                email,
+                name
+            );
+            console.log(res);
+        } catch (err) {
+            console.log(err.message);
+            throw err;
         }
     };
 
@@ -665,6 +683,56 @@ class AppStore {
             console.log(err.message);
         }
     };
+
+    getProfileVisibility = async () => {
+        try {
+            const res = await this.appService.getProfileVisibility(this.currentUser.email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    setProfileVisibility = async (isProfileVisible: boolean) => {
+        try {
+            const res = await this.appService.setProfileVisibility(this.currentUser.email, isProfileVisible);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    getAuthorisedUsers = async () => {
+        try {
+            const res = await this.appService.getAuthorisedUsers(this.currentUser.email);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    addAuthorisedUser = async (authorisedUserWalletAddress: string) => {
+        try {
+            const res = await this.appService.addAuthorisedUser(this.currentUser.email, authorisedUserWalletAddress);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+    removeAuthorisedUser = async (authorisedUserWalletAddress: string) => {
+        try {
+            const res = await this.appService.removeAuthorisedUser(this.currentUser.email, authorisedUserWalletAddress);
+            console.log(res);
+            return res;
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
 }
 
 export default AppStore;

@@ -33,19 +33,6 @@ contract System {
         organisations[uen] = organisation;
     }
 
-    // Registers Multiple Organisations
-    // Calls registerOrganisations() method repeatedly
-    function registerOrganisations(
-        string[] memory names,
-        string[] memory uens,
-        address[] memory admins
-    ) public {
-        require(uens.length == names.length && uens.length == admins.length, "Invalid data."); // requires all arrays to be of equal length
-        for (uint i = 0; i < uens.length; i++) {
-            registerOrganisation(names[i], uens[i], admins[i]);
-        }
-    }
-
     // Register Awardee
     // Creates a new Awardee contract instance
     // Returns Awardee contract instance
