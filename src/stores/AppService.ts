@@ -748,6 +748,13 @@ class AppService {
             data: data,
             credentials: { accessToken },
         });
+        await restPost({
+            endpoint: `${ENDPOINT}/awardee/updateAwardee`,
+            data: {
+                oldEmail, newEmail
+            },
+            credentials: { accessToken },
+        });
         console.log(response.data);
         
         return await this.systemContract

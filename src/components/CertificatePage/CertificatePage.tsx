@@ -23,7 +23,7 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
     React.useEffect(() => {
         setLoading(true);
         async function retrieveCertDetails() {
-            const params = props?.cid.split('_') || [];
+            const params = props?.cid?.split('_') || [];
             let certificate = await appStore.retrieveCertificateInfo(params[0], params[1]);
             setCertifcate(certificate);
             setLoading(false);

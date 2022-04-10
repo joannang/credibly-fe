@@ -58,7 +58,6 @@ const ProfilePage: React.FC<ProfileProps> = (props: ProfileProps) => {
             );
             setAwardee(awardee);
             setWorkExperiences(experiences);
-            console.log(experiences)
             setCertifcates(certificates);
             setLoading(false);
         }
@@ -92,6 +91,7 @@ const ProfilePage: React.FC<ProfileProps> = (props: ProfileProps) => {
                         <Avatar
                             alt="1234"
                             style={{
+                                marginTop: '10px',
                                 backgroundColor: randomHSL(),
                                 color: '#193D61',
                                 cursor: 'pointer',
@@ -105,10 +105,11 @@ const ProfilePage: React.FC<ProfileProps> = (props: ProfileProps) => {
                                 .map((n) => n[0])
                                 .join('')}
                         </Avatar>
-                        <Col style={{ marginLeft: '10px' }}>
+                        <Col style={{ marginLeft: '15px' }}>
                             <p
                                 style={{
-                                    fontSize: '200%',
+                                    fontSize: '250%',
+                                    fontWeight: 600,
                                     margin: '0',
                                 }}
                             >
@@ -127,10 +128,10 @@ const ProfilePage: React.FC<ProfileProps> = (props: ProfileProps) => {
                     </Row>
                     <Divider style={{ backgroundColor: '#ececec' }}></Divider>
 
-                    <Tabs defaultActiveKey="1" style={{ margin: '0 10%', padding: '2%' }} tabBarStyle={{fontWeight: '600' }}>
+                    <Tabs defaultActiveKey="1" style={{ margin: '0 5%', padding: '0 2%' }} tabBarStyle={{fontWeight: '600' }}>
                         <TabPane tab="Credentials" key="1">
                             <List
-                                grid={{ gutter: 16, column: 3 }}
+                                grid={{ gutter: 16, sm:3, md:4, xl:5 }}
                                 dataSource={certificates}
                                 renderItem={(item) => (
                                     <List.Item>
