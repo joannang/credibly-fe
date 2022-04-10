@@ -121,7 +121,7 @@ const ProfilePage: React.FC<ProfileProps> = (props: ProfileProps) => {
                                     color: '#737373',
                                 }}
                             >
-                                {`${certificates?.length} Credentials`}
+                                {`${certificates?.length || 0} Credentials`}
                             </p>
                         </Col>
                     </Row>
@@ -130,7 +130,7 @@ const ProfilePage: React.FC<ProfileProps> = (props: ProfileProps) => {
                     <Tabs defaultActiveKey="1" style={{ margin: '0 10%', padding: '2%' }} tabBarStyle={{fontWeight: '600' }}>
                         <TabPane tab="Credentials" key="1">
                             <List
-                                grid={{ gutter: 16, column: 4 }}
+                                grid={{ gutter: 16, column: 3 }}
                                 dataSource={certificates}
                                 renderItem={(item) => (
                                     <List.Item>

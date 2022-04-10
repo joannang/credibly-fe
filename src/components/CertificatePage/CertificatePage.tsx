@@ -1,4 +1,4 @@
-import { Avatar, Button, Col, Divider, Row, Space, Spin } from 'antd';
+import { Avatar, Button, Col, Divider, message, Row, Space, Spin } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useStores } from '../../stores/StoreProvider';
@@ -31,6 +31,17 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
         retrieveCertDetails()
     }, []);
 
+    const getImage = async (data: string) => {
+        try {
+            const link = document.createElement('a');
+            link.href = data;
+            link.download = `${certificate.awardeeName}-${certificate.certificateName}.png`;
+            link.click();
+        } catch (err) {
+            message.error({ message: err.error });
+        }
+    }
+
     const handleImageError = (e) => {
         e.target.src =
             'https://image.freepik.com/free-vector/certificate-template-vertical_1284-4551.jpg';
@@ -44,7 +55,7 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                     padding: "40px"
                 }}>
                     <Image height='100%' width='auto'
-                    onError={handleImageError}
+                        onError={handleImageError}
                         preview={{ visible: false }}
                         src={certificate.image}
                     />
@@ -113,7 +124,7 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                     </Col>
                     <Col span={6}>
                         <Row>
-                            <Button ghost style={{
+                            <Button ghost onClick={() => getImage(certificate.image)} style={{
                                 borderColor: '#737373',
                                 color: '#737373',
                             }} type="primary" icon={<FilePdfOutlined />} size={"large"}>

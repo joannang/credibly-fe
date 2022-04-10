@@ -1,6 +1,7 @@
 import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Tag, Tooltip, Upload } from 'antd';
 import { observer } from 'mobx-react';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { useStores } from '../../stores/StoreProvider';
 import styles from './Settings.module.css';
@@ -9,19 +10,12 @@ export type TransferRequestTabProps = {};
 
 const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
     const { appStore } = useStores();
+    const router = useRouter();
+
     const userId = appStore.currentUser.id;
     const [loading, setLoading] = React.useState<boolean>(false);
     const [transferTo, setTransferTo] = React.useState<string>('');
     const [confirmEmail, setConfirmEmail] = React.useState<string>('');
-    // const [fileList, setFileList] = React.useState<any>([]);
-
-    const organisationId = 2;
-    const fileUpload = (e: any) => {
-        if (Array.isArray(e)) {
-            return e;
-        }
-        return e && e.fileList;
-    };
 
     const handleTransferRequest = async (values: any) => {
         setLoading(true);
@@ -29,38 +23,20 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
 
         if (emailsMatch) {
             try {
-                const transferRequestId = await appStore.createTransferRequest(
-                    userId,
-                    organisationId,
-                    values.transferTo
-                );
-
-                const uploadRequest = {
-                    transferRequestId,
-                    documents: values.documents.map(
-                        (doc: any) => doc.originFileObj
-                    ),
-                };
-
-                await appStore.transferRequestUpload(uploadRequest);
-
-                setTimeout(() => {
-                    window.location.href = '/privacySettings';
-                    setTransferTo('');
-                    setConfirmEmail('');
-                }, 1000);
-
-                message.success('Success!');
-                return {};
+                await appStore.changeEmail(appStore?.currentUser?.email, values.transferTo);
+                message.success('Success! Please re-login with your new email!');
+                setTransferTo('');
+                setConfirmEmail('');
+                setTimeout(()=> appStore.onLogout(router), 2000);
+                
             } catch (err) {
-                // uiState.setError(err.error);
+                message.error(err)
                 console.log(err);
                 if (err) {
                     message.error(err.error);
                 }
             } finally {
                 setLoading(false);
-                return {};
             }
         } else {
             message.error('Emails entered do not match!');
@@ -80,11 +56,11 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
             <h3>Create Certificates & Work Experiences Transfer Request</h3>
             <Tag color="cyan" className={styles.transferRequestTag}>
                 <>
-                    <InfoCircleOutlined /> FOR YOUR INFORMATION: This is a
-                    formal request that will be sent to your organisation/
-                    institution. You are requesting to transfer all associated
-                    certificates and work experiences to this a new email
+                    <InfoCircleOutlined /> FOR YOUR INFORMATION: You are requesting to transfer all associated
+                    certificates and work experiences to this new email
                     address. Credibly will not be able to reverse this action.
+                    Your account details for Credibly will also be updated to reflect the new email address. You 
+                    will be required to re-login.
                 </>
             </Tag>
             <Form
@@ -138,32 +114,6 @@ const TransferRequestTab: React.FC<TransferRequestTabProps> = () => {
                             onChange={(e) => setConfirmEmail(e.target.value)}
                         />
                     </div>
-                </Form.Item>
-                <Form.Item
-                    name="documents"
-                    label={
-                        <Tooltip
-                            title="Upload at least 1 identification document (e.g. photo of your passport)"
-                            placement="bottomLeft"
-                        >
-                            Supporting Documents
-                        </Tooltip>
-                    }
-                    valuePropName="fileList"
-                    getValueFromEvent={fileUpload}
-                    rules={[
-                        {
-                            required: true,
-                            message:
-                                'Please upload at least one supporting document!',
-                        },
-                    ]}
-                >
-                    <Upload multiple accept="application/pdf">
-                        <Button icon={<UploadOutlined />}>
-                            Click to Upload
-                        </Button>
-                    </Upload>
                 </Form.Item>
             </Form>
             <Button

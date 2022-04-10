@@ -775,6 +775,21 @@ class AppService {
         return certificates;
     }
 
+    async changeEmail(oldEmail: string, newEmail: string, accessToken: string, data) {
+        
+        const response = await restPost({
+            endpoint: `${ENDPOINT}/user/update`,
+            data: data,
+            credentials: { accessToken },
+        });
+        console.log(response.data);
+        
+        return await this.systemContract
+        .connect(this.signer)
+        .changeEmail(oldEmail, newEmail, {
+            gasLimit: 2500000,
+        });
+    }
     async registerOrganisation(
         name: string,
         uen: string,
@@ -783,9 +798,7 @@ class AppService {
         console.log(name, uen, admin);
         return this.systemContract
             .connect(this.signer)
-            .registerOrganisation(name, uen, admin, {
-                gasLimit: 2500000
-            });
+            .registerOrganisation(name, uen, admin);
     }
 
     async registerAwardee(

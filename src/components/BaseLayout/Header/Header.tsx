@@ -5,7 +5,7 @@ import { useStores } from '../../../stores/StoreProvider';
 import styles from '../BaseLayout.module.css';
 import { HeaderTabs } from './HeaderTabs';
 import { observer } from 'mobx-react';
-import { useRouter } from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
 import Link from 'next/link';
 
 type HeaderProps = {};
@@ -15,17 +15,10 @@ const Header: React.FC<HeaderProps> = ({ }) => {
 
     const router = useRouter();
 
-    const onLogout = () => {
-        router.push('/login');
-        appStore.setCurrentUser({ name: '' });
-        appStore.setIsAuthenticated('');
-        sessionStorage.removeItem('authenticated');
-        sessionStorage.removeItem('user');
-    }
 
     const menu =
         <Menu>
-            <Menu.Item onClick={onLogout} icon={<LogoutOutlined />}>
+            <Menu.Item onClick={()=>appStore.onLogout(router)} icon={<LogoutOutlined />}>
                 Logout
             </Menu.Item>
         </Menu>

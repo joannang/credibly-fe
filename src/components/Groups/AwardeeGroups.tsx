@@ -26,8 +26,8 @@ const AwardeeGroups: React.FC = () => {
             width: '25%',
             render: (image) => (
                 <Image
-                    height="auto"
-                    width="100%"
+                    height="100px"
+                    width="auto"
                     preview={false}
                     src={`data:image/png;base64,${image}`}
                 />

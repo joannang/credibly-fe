@@ -2,6 +2,7 @@ import { observable, makeObservable, action, runInAction } from 'mobx';
 import AppService from './AppService';
 import UiState from './UiState';
 import { ContractTransaction } from 'ethers';
+import { NextRouter } from 'next/router';
 
 /**
  * Only mutable data should be made observable.
@@ -149,6 +150,14 @@ class AppStore {
             setSearchResults: action,
         });
         this.uiState = uiState;
+    }
+
+    onLogout = (router: NextRouter) => {
+        router.push('/login');
+        this.setCurrentUser({ name: '' });
+        this.setIsAuthenticated('');
+        sessionStorage.removeItem('authenticated');
+        sessionStorage.removeItem('user');
     }
 
     createAwardees = async (
@@ -438,7 +447,7 @@ class AppStore {
 
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
 
-    retrieveCertificateInfo = async (certificateAddr:string, tokenId: string) => {
+    retrieveCertificateInfo = async (certificateAddr: string, tokenId: string) => {
         try {
             const data = await this.appService.retrieveCertificateInfo(
                 certificateAddr, tokenId
@@ -629,6 +638,22 @@ class AppStore {
             console.log(err.message);
         }
     };
+    
+    changeEmail = async (oldEmail: string, newEmail: string) => {
+        try {
+            const res = await this.appService.changeEmail(oldEmail, newEmail,
+                this.currentUser.token,
+                {
+                    userId: this.currentUser.id,
+                    email: newEmail
+                }
+            );
+            console.log(res)
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     getOrganisation = async (uen: string) => {
         try {
