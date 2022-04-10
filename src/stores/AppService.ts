@@ -339,40 +339,6 @@ class AppService {
         });
     }
 
-    getPendingTransferRequests(id: number, accessToken: string): any {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const response = await restGet({
-                    endpoint: `${ENDPOINT}/transferRequest/pendingApprovals`,
-                    _id: `${id}`,
-                    credentials: { accessToken },
-                });
-                resolve(response.data);
-            } catch (err) {
-                reject(err.response.data.error);
-            }
-        });
-    }
-
-    approveTransferRequests(
-        approverId: number,
-        transferRequestIds: number[],
-        accessToken: string
-    ): any {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const response = await restPost({
-                    endpoint: `${ENDPOINT}/transferRequest/approve`,
-                    data: { approverId, transferRequestIds },
-                    credentials: { accessToken },
-                });
-                resolve(response.data);
-            } catch (err) {
-                reject(err.response.data.error);
-            }
-        });
-    }
-
     getRegistrationDocument(id: number, accessToken: string): any {
         return new Promise(async (resolve, reject) => {
             try {

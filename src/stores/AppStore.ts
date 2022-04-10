@@ -71,12 +71,6 @@ export type ApprovalType = {
     documents: DocumentDto[];
 };
 
-export type PendingTransferRequests = {
-    key: number;
-    user: UserDto;
-    documents: DocumentDto[];
-};
-
 export type CertificateTemplateType = {
     certificateId: string;
     certificateName: string;
@@ -428,23 +422,6 @@ class AppStore {
         await this.appService.transferRequestUploadAsync(transferRequestUpload);
     };
 
-    getTransferRequestsByOrganisation = async () => {
-        const { data } = await this.appService.getPendingTransferRequests(
-            this.currentUser.id,
-            this.currentUser.token
-        );
-        console.log(data);
-        return data as PendingTransferRequests[];
-    };
-
-    approveTransferRequests = async (transferRequestIds: number[]) => {
-        await this.appService.approveTransferRequests(
-            this.currentUser.id,
-            transferRequestIds,
-            this.currentUser.token
-        );
-    };
-
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
 
     retrieveCertificateInfo = async (certificateAddr: string, tokenId: string) => {
@@ -638,7 +615,7 @@ class AppStore {
             console.log(err.message);
         }
     };
-    
+
     changeEmail = async (oldEmail: string, newEmail: string) => {
         try {
             const res = await this.appService.changeEmail(oldEmail, newEmail,
