@@ -136,12 +136,19 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
             </div>
             : !loading ?
                 <div
-                    style={{
-                        padding: '64px 16px 16px 64px',
-                        textAlign: 'center',
-                    }}
+                    style={{ display: "flex", justifyContent: "center" }}
                 >
-                    Certificate not found!
+                    <Col>
+                        <div style={{ textAlign: 'center', fontSize: "150%", fontWeight: "700" }}>
+                            Whoops! Looking at the wrong place?
+                        </div>
+                        <Image
+                            width={'80vh'}
+                            preview={false}
+                            src="/images/not-found.png"
+                        />
+                    </Col>
+
                 </div>
                 :
                 <Spin size='large' style={{
