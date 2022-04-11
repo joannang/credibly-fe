@@ -357,7 +357,6 @@ class AppStore {
         try {
             const { data } = await this.appService.searchAwardeesAsync(
                 query,
-                this.currentUser.token
             );
 
             runInAction(() => (this.searchResults = [...data]));

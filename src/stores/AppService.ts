@@ -248,7 +248,7 @@ class AppService {
         });
     }
 
-    searchAwardeesAsync(query: string, accessToken: string): any {
+    searchAwardeesAsync(query: string): any {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await restPost({
@@ -256,7 +256,6 @@ class AppService {
                     data: {
                         query: query,
                     },
-                    credentials: { accessToken },
                 });
                 resolve(response.data);
             } catch (err) {
@@ -533,7 +532,7 @@ class AppService {
             this.provider
         );
         const awardeeAddresses = await organisationContract.connect(this.signer).getAwardees();
-        const awardees: {name?: string, email?: string}[] = [];
+        const awardees: { name?: string, email?: string }[] = [];
         for (let i = 0; i < awardeeAddresses.length; i++) {
             const awardeeContract = new ethers.Contract(
                 awardeeAddresses[i],
@@ -542,9 +541,9 @@ class AppService {
             );
             const email = await awardeeContract
                 .connect(this.signer)
-                .email(); 
+                .email();
             const name = await awardeeContract.connect(this.signer).name();
-            awardees.push({name: name, email: email});
+            awardees.push({ name: name, email: email });
         }
 
         return awardees;
@@ -605,7 +604,7 @@ class AppService {
             );
             const workExp = await workExpContract
                 .connect(this.signer)
-                .details(); 
+                .details();
             console.log(workExp);
             workExperiences.push(workExp);
         }
