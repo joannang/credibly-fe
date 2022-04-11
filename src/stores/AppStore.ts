@@ -2,6 +2,7 @@ import { observable, makeObservable, action, runInAction } from 'mobx';
 import AppService from './AppService';
 import UiState from './UiState';
 import { ContractTransaction } from 'ethers';
+import { NextRouter } from 'next/router';
 
 /**
  * Only mutable data should be made observable.
@@ -70,12 +71,6 @@ export type ApprovalType = {
     documents: DocumentDto[];
 };
 
-export type PendingTransferRequests = {
-    key: number;
-    user: UserDto;
-    documents: DocumentDto[];
-};
-
 export type CertificateTemplateType = {
     certificateId: string;
     certificateName: string;
@@ -95,15 +90,22 @@ export type Awardee = {
     name: string;
     email: string;
 };
-
-export type CertificateDetails = {
-    awardeeName: string;
-    orgName: string;
-    dateOfIssue: string;
-    certificateName: string;
+export type WorkExperience = {
+    end: boolean;
+    startDate: string;
+    endDate: string;
     description: string;
-    imageUrl: string;
-    certificateId: string;
+    position: string;
+    organisation: string;
+}
+export type CertificateDetails = {
+    awardeeName?: string;
+    orgName?: string;
+    dateOfIssue?: string;
+    certificateName?: string;
+    description?: string;
+    image?: string;
+    certificateId?: string;
 };
 
 export type TransferRequestType = {
@@ -142,6 +144,14 @@ class AppStore {
             setSearchResults: action,
         });
         this.uiState = uiState;
+    }
+
+    onLogout = (router: NextRouter) => {
+        router.push('/login');
+        this.setCurrentUser({ name: '' });
+        this.setIsAuthenticated('');
+        sessionStorage.removeItem('authenticated');
+        sessionStorage.removeItem('user');
     }
 
     createAwardees = async (
@@ -347,7 +357,6 @@ class AppStore {
         try {
             const { data } = await this.appService.searchAwardeesAsync(
                 query,
-                this.currentUser.token
             );
 
             runInAction(() => (this.searchResults = [...data]));
@@ -412,29 +421,12 @@ class AppStore {
         await this.appService.transferRequestUploadAsync(transferRequestUpload);
     };
 
-    getTransferRequestsByOrganisation = async () => {
-        const { data } = await this.appService.getPendingTransferRequests(
-            this.currentUser.id,
-            this.currentUser.token
-        );
-        console.log(data);
-        return data as PendingTransferRequests[];
-    };
-
-    approveTransferRequests = async (transferRequestIds: number[]) => {
-        await this.appService.approveTransferRequests(
-            this.currentUser.id,
-            transferRequestIds,
-            this.currentUser.token
-        );
-    };
-
     // ------------------------- BLOCKCHAIN CALLS -------------------------------------------------
 
-    retrieveCertificateInfo = async (certificateId: number) => {
+    retrieveCertificateInfo = async (certificateAddr: string, tokenId: string) => {
         try {
             const data = await this.appService.retrieveCertificateInfo(
-                certificateId
+                certificateAddr, tokenId
             );
             return data as CertificateDetails;
         } catch (err) {
@@ -622,6 +614,22 @@ class AppStore {
             console.log(err.message);
         }
     };
+
+    changeEmail = async (oldEmail: string, newEmail: string) => {
+        try {
+            const res = await this.appService.changeEmail(oldEmail, newEmail,
+                this.currentUser.token,
+                {
+                    userId: this.currentUser.id,
+                    email: newEmail
+                }
+            );
+            console.log(res)
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     getOrganisation = async (uen: string) => {
         try {

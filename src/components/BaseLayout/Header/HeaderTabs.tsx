@@ -26,11 +26,6 @@ export const HeaderTabs = () => {
                             Manage Employees
                         </Link>
                     </div>
-                    <div>
-                        <Link href={'/transferRequests'} passHref>
-                        Transfer Requests
-                        </Link>
-                    </div>
                 </div>
             )}
             {appStore?.currentUser?.accountType === AccountType.AWARDEE && (

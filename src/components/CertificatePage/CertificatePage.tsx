@@ -1,4 +1,4 @@
-import { Avatar, Button, Col, Divider, Row, Space, Spin } from 'antd';
+import { Avatar, Button, Col, Divider, message, Row, Space, Spin } from 'antd';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useStores } from '../../stores/StoreProvider';
@@ -23,13 +23,29 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
     React.useEffect(() => {
         setLoading(true);
         async function retrieveCertDetails() {
-            let certificate = await appStore.retrieveCertificateInfo(parseInt(props.cid));
+            const params = props?.cid?.split('_') || [];
+            let certificate = await appStore.retrieveCertificateInfo(params[0], params[1]);
             setCertifcate(certificate);
+            setLoading(false);
         }
         retrieveCertDetails()
-        setLoading(false);
     }, []);
 
+    const getImage = async (data: string) => {
+        try {
+            const link = document.createElement('a');
+            link.href = data;
+            link.download = `${certificate.awardeeName}-${certificate.certificateName}.png`;
+            link.click();
+        } catch (err) {
+            message.error({ message: err.error });
+        }
+    }
+
+    const handleImageError = (e) => {
+        e.target.src =
+            'https://image.freepik.com/free-vector/certificate-template-vertical_1284-4551.jpg';
+    };
     return (<BaseLayout>{
         !loading && certificate ?
 
@@ -39,8 +55,9 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                     padding: "40px"
                 }}>
                     <Image height='100%' width='auto'
+                        onError={handleImageError}
                         preview={{ visible: false }}
-                        src="https://thumbs.dreamstime.com/b/certificate-template-diploma-letter-size-vector-vertical-62172702.jpg"
+                        src={certificate.image}
                     />
                 </div>
 
@@ -107,7 +124,7 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
                     </Col>
                     <Col span={6}>
                         <Row>
-                            <Button ghost style={{
+                            <Button ghost onClick={() => getImage(certificate.image)} style={{
                                 borderColor: '#737373',
                                 color: '#737373',
                             }} type="primary" icon={<FilePdfOutlined />} size={"large"}>
@@ -119,12 +136,19 @@ const CertificatePage: React.FC<CertificateProps> = (props: CertificateProps) =>
             </div>
             : !loading ?
                 <div
-                    style={{
-                        padding: '64px 16px 16px 64px',
-                        textAlign: 'center',
-                    }}
+                    style={{ display: "flex", justifyContent: "center" }}
                 >
-                    Certificate not found!
+                    <Col>
+                        <div style={{ textAlign: 'center', fontSize: "150%", fontWeight: "700" }}>
+                            Whoops! Looking at the wrong place?
+                        </div>
+                        <Image
+                            width={'80vh'}
+                            preview={false}
+                            src="/images/not-found.png"
+                        />
+                    </Col>
+
                 </div>
                 :
                 <Spin size='large' style={{
