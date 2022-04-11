@@ -347,7 +347,6 @@ class AppStore {
         try {
             const { data } = await this.appService.searchAwardeesAsync(
                 query,
-                this.currentUser.token
             );
 
             runInAction(() => (this.searchResults = [...data]));
@@ -699,7 +698,9 @@ class AppStore {
 
     getAuthorisedUsers = async () => {
         try {
+            console.log("in appstore before")
             const res = await this.appService.getAuthorisedUsers(this.currentUser.email);
+            console.log("in appstore after")
             console.log(res);
             return res;
         } catch (err) {

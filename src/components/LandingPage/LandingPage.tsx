@@ -11,6 +11,7 @@ const LandingPage: React.FC = () => {
     const { uiState, appStore } = useStores();
 
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [hasSearched, setHasSearched] = React.useState<boolean>(false);
 
     const searchResults = appStore.getSearchResults();
 
@@ -19,6 +20,7 @@ const LandingPage: React.FC = () => {
         try {
             await appStore.setSearchResults(userInput);
             message.success('Success!');
+            setHasSearched(true)
         } catch (err) {
             // uiState.setError(err.error);
             console.log(err);
@@ -49,7 +51,7 @@ const LandingPage: React.FC = () => {
                             prefix={
                                 <UserOutlined className="site-form-item-icon" />
                             }
-                            placeholder="Please enter user's email"
+                            placeholder="Search for a user"
                         />
                     </Form.Item>
                     <Form.Item>
@@ -66,16 +68,15 @@ const LandingPage: React.FC = () => {
         </div>
     );
 
-    const onClickSearchCard = (awardeeId: string) => {
-        // TODO
-        // Find out how to pass awardeeId to certificates page
-        console.log(awardeeId);
+    const onClickSearchCard = (awardeeEmail: string) => {
+        console.log(awardeeEmail);
+        window.location.href = `/profile/${awardeeEmail}`
     }
 
     const SearchCard = ({ awardee }) => (
-        <Card hoverable key={awardee.awardeeId + Math.random()} onClick={() => onClickSearchCard(awardee.awardeeId)}>
-            <Card.Meta className={styles.meta} title={awardee.awardeeName} />
-            <Text>{awardee.awardeeEmail}</Text>
+        <Card hoverable key={Math.random()} onClick={() => onClickSearchCard(awardee.email)}>
+            <Card.Meta className={styles.meta} title={awardee.name} />
+            <Text>{awardee.email}</Text>
         </Card>
     );
 
@@ -117,6 +118,8 @@ const LandingPage: React.FC = () => {
                     {renderSearchForm()}
                     {searchResults.length != 0
                         && renderSearchResults()}
+                    {searchResults.length == 0 && hasSearched
+                        && <div>No search results</div>}
                 </div>
             </div>
         </div>
